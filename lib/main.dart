@@ -52,17 +52,29 @@ class MainScreen extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   onPressed: (){},
-                  child: Text('View Results'),
+                  child: Text(
+                    'View Results',
+                    style: TextStyle(
+                      fontSize: 30.00,
+                    ),),
                   color: Colors.lightBlue,
                 ),
                 FlatButton(
                   onPressed: (){},
-                  child: Text('Time Games'),
+                  child: Text(
+                    'Time Games',
+                    style: TextStyle(
+                      fontSize: 30.00,
+                    ),),
                   color: Colors.lightBlue,
                 ),
                 FlatButton(
                   onPressed: (){},
-                  child: Text('Create Tournament'),
+                  child: Text(
+                    'Create Tournament',
+                    style: TextStyle(
+                      fontSize: 30.00,
+                    ),),
                   color: Colors.lightBlue,
                 ),
               ],
