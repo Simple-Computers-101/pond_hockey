@@ -49,34 +49,48 @@ class MainScreen extends StatelessWidget {
               ),
             ),
             new Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
-                  onPressed: (){},
-                  child: Text(
-                    'View Results',
-                    style: TextStyle(
-                      fontSize: 30.00,
-                    ),),
-                  color: Colors.lightBlue,
+                Container(
+                  //padding: EdgeInsets.fromLTRB(0, 250, 0, 0),
+                  child: FlatButton(
+                    onPressed: (){},
+                    child: Text(
+                      'View Results',
+                      style: TextStyle(
+                        fontSize: 30.00,
+                      ),),
+                    color: Colors.lightBlue,
+                  ),
+
                 ),
-                FlatButton(
-                  onPressed: (){},
-                  child: Text(
-                    'Time Games',
-                    style: TextStyle(
-                      fontSize: 30.00,
-                    ),),
-                  color: Colors.lightBlue,
+                Container(
+                  //padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: FlatButton(
+                    onPressed: (){},
+                    child: Text(
+                      'Time Games',
+                      style: TextStyle(
+                        fontSize: 30.00,
+                      ),),
+                    color: Colors.lightBlue,
+                  ),
+
                 ),
-                FlatButton(
-                  onPressed: (){},
-                  child: Text(
-                    'Create Tournament',
-                    style: TextStyle(
-                      fontSize: 30.00,
-                    ),),
-                  color: Colors.lightBlue,
+                Container(
+                  //padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: FlatButton(
+                    onPressed: (){},
+                    child: Text(
+                      'Create Tournament',
+                      style: TextStyle(
+                        fontSize: 30.00,
+                      ),),
+                    color: Colors.lightBlue,
+                  ),
+
                 ),
+
               ],
             ),
 
