@@ -33,18 +33,35 @@ import 'package:splashscreen/splashscreen.dart';
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.blue,
+    return new Scaffold(
+        appBar: AppBar(
+          title: Text('Pond Hockey Timing'),
           centerTitle: true,
-          title: Text('Pond Hockey Scoring')
-      ),
-      body: Center(
-        child: Text(
-          'MainScreen',
-          style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+          backgroundColor: Colors.blue,
         ),
-      ),
+        body: new Stack(
+          children: <Widget>[
+            new Container(
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  image: new AssetImage("assets/img/largebg.jpg"),
+                  fit: BoxFit.cover,),
+              ),
+            ),
+            new Column(
+              children: <Widget>[
+                Text('Create Tournment')
+              ],
+            ),
+            new Center(
+              child: new FlatButton(
+                  onPressed: (){},
+                  child: Text('View Results'),
+                  color: Colors.lightBlue,
+                  )
+            ),
+          ],
+        )
     );
   }
 }
