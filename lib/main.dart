@@ -50,16 +50,24 @@ class MainScreen extends StatelessWidget {
             ),
             new Column(
               children: <Widget>[
-                Text('Create Tournment')
-              ],
-            ),
-            new Center(
-              child: new FlatButton(
+                FlatButton(
                   onPressed: (){},
                   child: Text('View Results'),
                   color: Colors.lightBlue,
-                  )
+                ),
+                FlatButton(
+                  onPressed: (){},
+                  child: Text('Time Games'),
+                  color: Colors.lightBlue,
+                ),
+                FlatButton(
+                  onPressed: (){},
+                  child: Text('Create Tournament'),
+                  color: Colors.lightBlue,
+                ),
+              ],
             ),
+
           ],
         )
     );
