@@ -35,7 +35,7 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: Text('Pond Hockey Timing'),
+          title: Text('Pond Hockey Scoring'),
           centerTitle: true,
           backgroundColor: Colors.blue,
         ),
@@ -52,41 +52,62 @@ class MainScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  //padding: EdgeInsets.fromLTRB(0, 250, 0, 0),
+                  child:
+                  Image.asset('assets/img/pondhockey.png'),
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                  margin: EdgeInsets.fromLTRB(100, 0, 100, 0),
                   child: FlatButton(
                     onPressed: (){},
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0),
+                        side: BorderSide(color: Colors.black)
+                    ),
                     child: Text(
                       'View Results',
                       style: TextStyle(
                         fontSize: 30.00,
                       ),),
                     color: Colors.lightBlue,
+                    padding: EdgeInsets.all(8.0),
                   ),
 
                 ),
                 Container(
-                  //padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                   child: FlatButton(
                     onPressed: (){},
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0),
+                        side: BorderSide(color: Colors.black)
+                    ),
                     child: Text(
-                      'Time Games',
+                      'Score Games',
                       style: TextStyle(
                         fontSize: 30.00,
                       ),),
                     color: Colors.lightBlue,
+                    padding: EdgeInsets.all(8.0),
                   ),
 
                 ),
                 Container(
-                  //padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                   child: FlatButton(
                     onPressed: (){},
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0),
+                        side: BorderSide(color: Colors.black)
+                    ),
                     child: Text(
                       'Create Tournament',
                       style: TextStyle(
                         fontSize: 30.00,
                       ),),
                     color: Colors.lightBlue,
+                    padding: EdgeInsets.all(8.0),
                   ),
 
                 ),
