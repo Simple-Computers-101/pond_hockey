@@ -48,72 +48,74 @@ class MainScreen extends StatelessWidget {
                   fit: BoxFit.cover,),
               ),
             ),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  child:
-                  Image.asset('assets/img/pondhockey.png'),
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                  margin: EdgeInsets.fromLTRB(100, 0, 100, 0),
-                  child: FlatButton(
-                    onPressed: (){},
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
-                        side: BorderSide(color: Colors.black)
-                    ),
-                    child: Text(
-                      'View Results',
-                      style: TextStyle(
-                        fontSize: 30.00,
-                      ),),
-                    color: Colors.lightBlue,
-                    padding: EdgeInsets.all(8.0),
+
+            Center (
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child:
+                    Image.asset('assets/img/pondhockeybrand.png'),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                   ),
-
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                  child: FlatButton(
-                    onPressed: (){},
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
-                        side: BorderSide(color: Colors.black)
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: FlatButton(
+                      onPressed: (){},
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(20.0),
+                          side: BorderSide(color: Colors.black)
+                      ),
+                      child: Text(
+                        'View Results',
+                        style: TextStyle(
+                          fontSize: 30.00,
+                        ),),
+                      color: Colors.lightBlue,
+                      padding: EdgeInsets.all(8.0),
                     ),
-                    child: Text(
-                      'Score Games',
-                      style: TextStyle(
-                        fontSize: 30.00,
-                      ),),
-                    color: Colors.lightBlue,
-                    padding: EdgeInsets.all(8.0),
-                  ),
 
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                  child: FlatButton(
-                    onPressed: (){},
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
-                        side: BorderSide(color: Colors.black)
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: FlatButton(
+                      onPressed: (){},
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(20.0),
+                          side: BorderSide(color: Colors.black)
+                      ),
+                      child: Text(
+                        'Score Games',
+                        style: TextStyle(
+                          fontSize: 30.00,
+                        ),),
+                      color: Colors.lightBlue,
+                      padding: EdgeInsets.all(8.0),
                     ),
-                    child: Text(
-                      'Create Tournament',
-                      style: TextStyle(
-                        fontSize: 30.00,
-                      ),),
-                    color: Colors.lightBlue,
-                    padding: EdgeInsets.all(8.0),
+
                   ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: FlatButton(
+                      onPressed: (){},
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(20.0),
+                          side: BorderSide(color: Colors.black)
+                      ),
+                      child: Text(
+                        'Create Tournament',
+                        style: TextStyle(
+                          fontSize: 30.00,
+                        ),),
+                      color: Colors.lightBlue,
+                      padding: EdgeInsets.all(8.0),
+                    ),
 
-                ),
-
-              ],
+                  ),
+                ],
+              ),
             ),
+
 
           ],
         )
