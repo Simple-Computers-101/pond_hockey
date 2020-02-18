@@ -1,0 +1,13 @@
+include: package:effective_dart/analysis_options.yaml
+
+analyzer:
+  errors:
+    missing_required_param: error
+    missing_return: warning
+    todo: ignore
+    sdk_version_async_exported_from_core: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false
+    prefer_relative_imports: false
