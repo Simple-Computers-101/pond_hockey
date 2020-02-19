@@ -5,15 +5,28 @@ abstract class LoginEvent extends Equatable {
   LoginEvent();
 }
 
-class LoginButtonPressed extends LoginEvent {
+class GoogleLoginButtonPressed extends LoginEvent {
   final AuthCredential authCredential;
 
-  LoginButtonPressed(this.authCredential);
+  GoogleLoginButtonPressed(this.authCredential);
 
   @override
   List<Object> get props => [authCredential];
 
   @override
   String toString() =>
-      'LoginButtonPressed { authCredential: $authCredential }';
+      'GoogleLoginButtonPressed { authCredential: $authCredential }';
+}
+
+class AppleLoginButtonPressed extends LoginEvent {
+  final AuthCredential authCredential;
+
+  AppleLoginButtonPressed(this.authCredential);
+
+  @override
+  List<Object> get props => [authCredential];
+
+  @override
+  String toString() =>
+      'AppleLoginButtonPressed { authCredential: $authCredential }';
 }

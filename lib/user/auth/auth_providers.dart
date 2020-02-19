@@ -10,4 +10,6 @@ class AuthProvider {
   Future<FirebaseUser> getCurrentUser() {
     return _auth.currentUser();
   }
+
+
 }

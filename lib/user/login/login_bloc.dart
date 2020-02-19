@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/user/auth/auth_bloc.dart';
@@ -21,18 +22,33 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(
-      LoginEvent event,
-      ) async* {
-    if (event is LoginButtonPressed) {
+    LoginEvent event,
+  ) async* {
+    if (event is GoogleLoginButtonPressed) {
       yield LoginLoading();
       try {
-//        final token = await userRepository.signInWithCredential(event.authCredential);
+        final token =
+            await userRepository.signInWithCredentials(event.authCredential);
 
-       // authenticationBloc.add(LoggedIn(token: token));
+        authenticationBloc.add(LoggedIn(token: token));
         yield LoginInitial();
       } on Exception catch (error) {
         yield LoginFailure(error: error.toString());
       }
     }
+  }
+
+  Future<AuthCredential> signInWithGoogle() async {
+    final googleSignInAccount = await userRepository.googleSignIn.signIn();
+    final googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    this.add(GoogleLoginButtonPressed(credential));
+
+    return credential;
   }
 }

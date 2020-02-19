@@ -5,6 +5,8 @@ import 'package:pond_hockey/user/login/login_bloc.dart';
 import 'package:pond_hockey/user/login/login_state.dart';
 
 class LoginBody extends StatefulWidget {
+  LoginBody({@required this.scaffoldKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<StatefulWidget> createState() {
     return _LoginBodyState();
@@ -32,7 +34,18 @@ class _LoginBodyState extends State<LoginBody> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               GoogleSignInButton(
-                onPressed: () {},
+                onPressed: () {
+                  try {
+                    BlocProvider.of<LoginBloc>(context).signInWithGoogle();
+                  } on Exception catch (error) {
+                    widget.scaffoldKey.currentState.removeCurrentSnackBar();
+                    widget.scaffoldKey.currentState.showSnackBar(
+                      SnackBar(
+                        content: Text(error.toString()),
+                      ),
+                    );
+                  }
+                },
               ),
               SizedBox(
                 height: 10.0,

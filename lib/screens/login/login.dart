@@ -7,6 +7,7 @@ import 'package:pond_hockey/user/user_repository.dart';
 
 class LoginScreen extends StatelessWidget{
   final UserRepository userRepository;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   LoginScreen({Key key, @required this.userRepository})
       : assert(userRepository != null),
@@ -15,6 +16,7 @@ class LoginScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Login'),
       ),
@@ -25,7 +27,7 @@ class LoginScreen extends StatelessWidget{
               authenticationBloc:
               BlocProvider.of<AuthenticationBloc>(blocContext));
         },
-        child: LoginBody(),
+        child: LoginBody(scaffoldKey: _scaffoldKey,),
       ),
     );
   }
