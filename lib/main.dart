@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_state.dart';
+import 'package:pond_hockey/components/loading/loading.dart';
 import 'package:pond_hockey/screens/home/home.dart';
-import 'package:pond_hockey/screens/loading/loading.dart';
 import 'package:pond_hockey/screens/login/login.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
@@ -51,9 +51,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
       ],
       child: BlocProvider<AuthenticationBloc>(
-        create: (_) {
+        create: (blocContext) {
           return AuthenticationBloc(
-            userRepository: Provider.of<UserRepository>(context),
+            userRepository: Provider.of<UserRepository>(
+              blocContext,
+              listen: false,
+            ),
           );
         },
         child: MaterialApp(

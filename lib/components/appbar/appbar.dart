@@ -5,16 +5,25 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     Key key,
     @required this.title,
     this.actions = const <Widget>[],
+    this.transparentBackground = false,
   }) : super(key: key);
 
   final String title;
   final List<Widget> actions;
+  final bool transparentBackground;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.headline,
+      ),
+      centerTitle: true,
       actions: actions,
+      backgroundColor: transparentBackground
+          ? Colors.transparent
+          : Theme.of(context).scaffoldBackgroundColor,
     );
   }
 

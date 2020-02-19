@@ -19,7 +19,6 @@ dependencies:
   flutter_bloc: ^3.2.0
   equatable: ^0.1.6
   flutter_secure_storage: ^3.3.1+1
-  flutter_auth_buttons: ^0.6.0
   http: ^0.12.0+4
 
   # Firebase
@@ -46,11 +45,7 @@ flutter:
   uses-material-design: true
 
   assets:
-     - assets/img/logo.png
-     - assets/img/loading.gif
-     - assets/img/largebg.jpg
-     - assets/img/pondhockey.png
-     - assets/img/pondhockeybrand.png
+     - assets/img/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
