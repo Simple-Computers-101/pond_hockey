@@ -13,7 +13,13 @@ dependencies:
   enum_to_string: ^1.0.8
   shared_preferences: ^0.5.6+1
   google_fonts: ^0.3.9
-  
+
+  bloc: ^3.0.0
+  flutter_bloc: ^3.2.0
+  equatable: ^0.1.6
+  flutter_secure_storage: ^3.3.1+1
+  flutter_auth_buttons: ^0.6.0
+
   # Firebase
   google_sign_in: ^4.1.1
   firebase_auth: ^0.15.4
