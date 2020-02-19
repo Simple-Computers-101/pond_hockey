@@ -1,0 +1,1 @@
+enum GameType { qualifier, semiFinal, closing }
