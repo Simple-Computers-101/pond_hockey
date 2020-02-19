@@ -1,16 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:pond_hockey/user/auth/auth_events.dart';
-import 'package:pond_hockey/user/auth/auth_state.dart';
-import 'package:pond_hockey/user/user_repository.dart';
+import 'package:pond_hockey/bloc/auth/auth_events.dart';
+import 'package:pond_hockey/bloc/auth/auth_state.dart';
+import 'package:pond_hockey/services/databases/user_repository.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
 
   AuthenticationBloc({@required this.userRepository})
-      : assert(userRepository != null){
-    this.add(AppStarted());
+      : assert(userRepository != null) {
+    add(AppStarted());
   }
 
   @override

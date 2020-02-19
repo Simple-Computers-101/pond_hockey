@@ -15,12 +15,27 @@ export const updateScore = functions.firestore.document('games/{gameId}').onUpda
     const teamOneScore: number = newData.teamOne.get('score')!
     const teamTwoScore: number = newData.teamTwo.get('score')!
 
-    return change.after.ref.set({
+    return change.after.ref.update({
         teamOne: {
             differential: teamOneScore - teamTwoScore
         },
         teamTwo: {
             differential: teamTwoScore - teamOneScore
         }
-    }, {merge: true});
+    });
 });
+
+async function grantOwnerRole(email: string): Promise<void> {
+    const user = await admin.auth().getUserByEmail(email);
+    if (user.customClaims && (user.customClaims as any).owner === true) {
+        return;
+    }
+    return admin.auth().setCustomUserClaims(user.uid, {
+        owner: true,
+        scorer: true,
+    });
+}
+
+async function grandScorerRole(email: string): Promise<void> {
+
+}

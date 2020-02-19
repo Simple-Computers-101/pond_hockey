@@ -11,6 +11,8 @@ class Tournament {
   String details;
   GameStatus status;
   int year;
+  DateTime startDate;
+  DateTime endDate;
   DocumentReference owner;
   Map<int, bool> scorers;
 
@@ -20,6 +22,8 @@ class Tournament {
     this.details,
     this.status,
     this.year,
+    this.startDate,
+    this.endDate,
     this.owner,
     this.scorers,
   });
@@ -31,6 +35,8 @@ class Tournament {
       'details': details,
       'status': EnumToString.parseCamelCase(status),
       'year': year,
+      'startDate': startDate,
+      'endDate': startDate,
       'owner': owner.path,
       'scorers': Map<String, bool>.from(scorers),
     };
@@ -48,6 +54,8 @@ class Tournament {
         map['status'],
       ),
       year: map['year'],
+      startDate: map['startDate'],
+      endDate: map['endDate'],
       owner: Firestore.instance.document(map['owner']),
       scorers: Map<int, bool>.from(map['scorers']),
     );

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:pond_hockey/user/auth/auth_providers.dart';
+import 'package:pond_hockey/bloc/auth/auth_providers.dart';
 
 class UserRepository {
   final _authProvider = AuthProvider();

@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
+import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/screens/login/login_body.dart';
-import 'package:pond_hockey/user/auth/auth_bloc.dart';
-import 'package:pond_hockey/user/login/login_bloc.dart';
-import 'package:pond_hockey/user/user_repository.dart';
+import 'package:pond_hockey/services/databases/user_repository.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
-  final UserRepository userRepository;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  LoginScreen({Key key, @required this.userRepository})
-      : assert(userRepository != null),
-        super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
+    FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Login'),
       ),
       body: BlocProvider<LoginBloc>(
         create: (blocContext) {
           return LoginBloc(
-              userRepository: userRepository,
-              authenticationBloc:
-                  BlocProvider.of<AuthenticationBloc>(blocContext));
+            userRepository: Provider.of<UserRepository>(context),
+            authenticationBloc:
+                BlocProvider.of<AuthenticationBloc>(blocContext),
+          );
         },
-        child: LoginBody(
-            scaffoldKey: _scaffoldKey, userRepository: userRepository),
+        child: LoginBody(),
       ),
     );
   }

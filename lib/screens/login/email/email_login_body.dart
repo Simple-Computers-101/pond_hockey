@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pond_hockey/user/login/login_bloc.dart';
-import 'package:pond_hockey/user/login/login_events.dart';
-import 'package:pond_hockey/user/login/login_state.dart';
+import 'package:pond_hockey/bloc/login/login_bloc.dart';
+import 'package:pond_hockey/bloc/login/login_events.dart';
+import 'package:pond_hockey/bloc/login/login_state.dart';
 
 class EmailLoginBody extends StatefulWidget {
-  EmailLoginBody({@required this.scaffoldKey});
-  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
-  State<StatefulWidget> createState() {
-    return _EmailLoginBodyState();
-  }
+  State<StatefulWidget> createState() => _EmailLoginBodyState();
 }
 
 class _EmailLoginBodyState extends State<EmailLoginBody> {
@@ -21,16 +17,13 @@ class _EmailLoginBodyState extends State<EmailLoginBody> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
-      builder: (
-        blocContext,
-        state,
-      ) {
+      builder: (blocContext, state) {
         if (state is LoginFailure) {
           _onWidgetDidBuild(() {
-            widget.scaffoldKey.currentState.removeCurrentSnackBar();
-            widget.scaffoldKey.currentState.showSnackBar(
+            Scaffold.of(context).removeCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(
               SnackBar(
-                content: Text('${state.error.toString()}'),
+                content: Text('${state.error}'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -39,8 +32,7 @@ class _EmailLoginBodyState extends State<EmailLoginBody> {
 
         if (state is LoginInitial) {
           if (!state.isInitial) {
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.popUntil(context, (route) {
                 return route.settings.name == "/";
               });
@@ -64,8 +56,9 @@ class _EmailLoginBodyState extends State<EmailLoginBody> {
           decoration: InputDecoration(
             hintText: 'Email',
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            ),
           ),
           validator: validateEmail,
         );
@@ -77,8 +70,9 @@ class _EmailLoginBodyState extends State<EmailLoginBody> {
           decoration: InputDecoration(
             hintText: 'Password',
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            ),
           ),
           validator: (value) {
             if (value.isEmpty) {
@@ -96,14 +90,14 @@ class _EmailLoginBodyState extends State<EmailLoginBody> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
-            onPressed: state is! LoginLoading
-                ? () {
-                    if (_formKey.currentState.validate()) {
-                      _onLoginButtonPressed();
-                      FocusScope.of(context).unfocus();
-                    }
-                  }
-                : null,
+            onPressed: () {
+              if (state is! LoginLoading) {
+                if (_formKey.currentState.validate()) {
+                  FocusScope.of(context).unfocus(); 
+                  _onLoginButtonPressed();
+                }
+              }
+            },
             padding: EdgeInsets.all(12),
             color: Colors.lightBlueAccent,
             child: Text('Login', style: TextStyle(color: Colors.white)),
