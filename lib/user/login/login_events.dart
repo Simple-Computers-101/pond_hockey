@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 abstract class LoginEvent extends Equatable {
   LoginEvent();
@@ -29,4 +30,21 @@ class AppleLoginButtonPressed extends LoginEvent {
   @override
   String toString() =>
       'AppleLoginButtonPressed { authCredential: $authCredential }';
+}
+
+class EmailLoginButtonPressed extends LoginEvent {
+  final String email;
+  final String password;
+
+  EmailLoginButtonPressed({
+    @required this.email,
+    @required this.password,
+  });
+
+  @override
+  List<Object> get props => [email, password];
+
+  @override
+  String toString() =>
+      'EmailLoginButtonPressed { email: $email, password: $password }';
 }

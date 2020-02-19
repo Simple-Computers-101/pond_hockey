@@ -25,6 +25,20 @@ class UserRepository {
     return user.uid;
   }
 
+  Future<String> signInWithEmailAndPassword(
+      String email, String password) async {
+    final authResult =
+        await _authProvider.signInWithEmailAndPassword(email, password);
+    final user = authResult.user;
+
+    assert(!user.isAnonymous);
+//    assert(user.isEmailVerified);
+
+    final currentUser = await _authProvider.getCurrentUser();
+    assert(user.uid == currentUser.uid);
+    return user.uid;
+  }
+
   Future<void> deleteToken() async {
     /// delete from keystore/keychain
     await Future.delayed(Duration(seconds: 1));

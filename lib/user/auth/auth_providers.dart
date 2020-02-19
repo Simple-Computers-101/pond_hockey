@@ -7,9 +7,11 @@ class AuthProvider {
     return _auth.signInWithCredential(credential);
   }
 
+  Future<AuthResult> signInWithEmailAndPassword(String email, String password) {
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
   Future<FirebaseUser> getCurrentUser() {
     return _auth.currentUser();
   }
-
-
 }

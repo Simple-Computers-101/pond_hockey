@@ -18,7 +18,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         assert(authenticationBloc != null);
 
   @override
-  LoginState get initialState => LoginInitial();
+  LoginState get initialState => LoginInitial(isInitial: true);
 
   @override
   Stream<LoginState> mapEventToState(
@@ -31,7 +31,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await userRepository.signInWithCredentials(event.authCredential);
 
         authenticationBloc.add(LoggedIn(token: token));
-        yield LoginInitial();
+        yield LoginInitial(isInitial: false);
+      } on Exception catch (error) {
+        yield LoginFailure(error: error.toString());
+      }
+    }
+    if (event is EmailLoginButtonPressed) {
+      yield LoginLoading();
+      try {
+        final token = await userRepository.signInWithEmailAndPassword(
+            event.email, event.password);
+
+        authenticationBloc.add(LoggedIn(token: token));
+        yield LoginInitial(isInitial: false);
       } on Exception catch (error) {
         yield LoginFailure(error: error.toString());
       }

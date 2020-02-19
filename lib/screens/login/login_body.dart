@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pond_hockey/screens/login/email/email_login.dart';
 import 'package:pond_hockey/user/login/login_bloc.dart';
 import 'package:pond_hockey/user/login/login_state.dart';
+import 'package:pond_hockey/user/user_repository.dart';
 
 class LoginBody extends StatefulWidget {
-  LoginBody({@required this.scaffoldKey});
+  LoginBody({@required this.scaffoldKey, @required this.userRepository});
+  final UserRepository userRepository;
   final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<StatefulWidget> createState() {
@@ -52,7 +55,22 @@ class _LoginBodyState extends State<LoginBody> {
               ),
               AppleSignInButton(
                 onPressed: () {},
-              )
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              RaisedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => EmailLoginScreen(
+                              userRepository: widget.userRepository),
+                          fullscreenDialog: true),
+                    );
+                  },
+                  icon: Icon(Icons.email),
+                  label: Text("Sign in with Email"))
             ],
           ),
         );

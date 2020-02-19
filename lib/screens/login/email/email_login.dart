@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pond_hockey/screens/login/login_body.dart';
+import 'package:pond_hockey/screens/login/email/email_login_body.dart';
 import 'package:pond_hockey/user/auth/auth_bloc.dart';
 import 'package:pond_hockey/user/login/login_bloc.dart';
 import 'package:pond_hockey/user/user_repository.dart';
 
-class LoginScreen extends StatelessWidget {
+class EmailLoginScreen extends StatelessWidget{
   final UserRepository userRepository;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  LoginScreen({Key key, @required this.userRepository})
+  EmailLoginScreen({Key key, @required this.userRepository})
       : assert(userRepository != null),
         super(key: key);
 
@@ -18,18 +18,18 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Login with email address'),
       ),
       body: BlocProvider<LoginBloc>(
         create: (blocContext) {
           return LoginBloc(
               userRepository: userRepository,
               authenticationBloc:
-                  BlocProvider.of<AuthenticationBloc>(blocContext));
+              BlocProvider.of<AuthenticationBloc>(blocContext));
         },
-        child: LoginBody(
-            scaffoldKey: _scaffoldKey, userRepository: userRepository),
+        child: EmailLoginBody(scaffoldKey: _scaffoldKey,),
       ),
     );
   }
+
 }
