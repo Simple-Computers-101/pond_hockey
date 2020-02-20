@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route_annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -6,6 +5,41 @@ import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
+
+//class LoginBody extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+//
+//    return
+//    SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
+//        LoginFailure>(
+//      builder: (blocContext, states) {
+//        return states(
+//          (initial) => _LoginUI(),
+//          (loading) => Center(child: CircularProgressIndicator()),
+//          (failure) {
+//            return Container(
+//              child: Column(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                children: <Widget>[
+//                  Text(
+//                    'Uh oh!',
+//                    style: Theme.of(context).textTheme.display2,
+//                  ),
+//                  Text(
+//                    'Something went wrong, try again later.',
+//                    style: Theme.of(context).textTheme.display1,
+//                  ),
+//                ],
+//              ),
+//            );
+//          },
+//        );
+//      },
+//    );
+//  }
+//}
 
 class LoginBody extends StatelessWidget {
   @override
@@ -19,21 +53,17 @@ class LoginBody extends StatelessWidget {
           (initial) => _LoginUI(),
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
-            return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Uh oh!',
-                    style: Theme.of(context).textTheme.display2,
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    failure.error,
                   ),
-                  Text(
-                    'Something went wrong, try again later.',
-                    style: Theme.of(context).textTheme.display1,
-                  ),
-                ],
-              ),
-            );
+                ),
+              );
+            });
+            return _LoginUI();
           },
         );
       },
