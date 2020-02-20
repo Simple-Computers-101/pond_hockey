@@ -36,7 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage);
+          yield LoginState.failure(error: errorMessage,isSignUp: false);
         }
       }
     }
@@ -52,7 +52,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage);
+          yield LoginState.failure(error: errorMessage,isSignUp: false);
         }
       }
     }
@@ -69,7 +69,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage);
+          yield LoginState.failure(error: errorMessage,isSignUp: true);
         }
       }
     }

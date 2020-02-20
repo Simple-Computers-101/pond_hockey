@@ -15,9 +15,9 @@ class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
 
   factory LoginState.loading() => LoginState._(unions.second(LoginLoading()));
 
-  factory LoginState.failure({String error}) => LoginState._(
+  factory LoginState.failure({String error,bool isSignUp}) => LoginState._(
         unions.third(
-          LoginFailure(error: error),
+          LoginFailure(error: error,isSignUp: isSignUp),
         ),
       );
 }
@@ -31,9 +31,10 @@ class LoginInitial {
 class LoginLoading {}
 
 class LoginFailure {
+  final bool isSignUp;
   final String error;
 
-  LoginFailure({this.error});
+  LoginFailure({this.error,this.isSignUp});
 
   @override
   String toString() => 'LoginFailure { error: $error }';

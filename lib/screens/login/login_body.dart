@@ -65,7 +65,7 @@ class LoginBody extends StatelessWidget {
                 ),
               );
             });
-            return _loginUi;
+            return failure.isSignUp ? CreateAccountForm() : _loginUi;
           },
         );
       },
