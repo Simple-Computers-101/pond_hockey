@@ -45,12 +45,12 @@ class LoginBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-
     return SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
         LoginFailure>(
       builder: (blocContext, states) {
+        var _loginUi = _LoginUI();
         return states(
-          (initial) => _LoginUI(),
+          (initial) => _loginUi,
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -63,7 +63,7 @@ class LoginBody extends StatelessWidget {
                 ),
               );
             });
-            return _LoginUI();
+            return _loginUi;
           },
         );
       },

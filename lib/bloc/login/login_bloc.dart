@@ -18,7 +18,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         assert(authenticationBloc != null);
 
   @override
-  LoginState get initialState => LoginState.initial(isInitial: true);
+  LoginState get initialState => LoginState.initial();
 
   @override
   Stream<LoginState> mapEventToState(
@@ -31,7 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await userRepository.signInWithCredentials(event.authCredential);
 
         authenticationBloc.add(LoggedIn(token: token));
-        yield LoginState.initial(isInitial: false);
+        yield LoginState.initial();
       } on Exception catch (error) {
         yield LoginState.failure(error: error.toString());
       }
@@ -43,7 +43,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             event.email, event.password);
 
         authenticationBloc.add(LoggedIn(token: token));
-        yield LoginState.initial(isInitial: false);
+        yield LoginState.initial();
       // ignore: avoid_catches_without_on_clauses
       } catch (error) {
         String errorMessage;
