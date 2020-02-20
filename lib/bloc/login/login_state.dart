@@ -7,9 +7,9 @@ class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
   LoginState._(Union3<LoginInitial, LoginLoading, LoginFailure> union)
       : super(union);
 
-  factory LoginState.initial() => LoginState._(
+  factory LoginState.initial({bool isSignUp}) => LoginState._(
         unions.first(
-          LoginInitial(),
+          LoginInitial(isSignUp: isSignUp),
         ),
       );
 
@@ -22,7 +22,11 @@ class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
       );
 }
 
-class LoginInitial {}
+class LoginInitial {
+  final bool isSignUp;
+
+  LoginInitial({this.isSignUp});
+}
 
 class LoginLoading {}
 

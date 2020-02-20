@@ -38,6 +38,19 @@ class UserRepository {
     return user;
   }
 
+  Future<FirebaseUser> signUpWithEmail(String email, String password) async {
+    final authResult = await _authProvider.signUpWithEmail(email, password);
+    final user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final currentUser = await _authProvider.getCurrentUser();
+    assert(user.uid == currentUser.uid);
+
+    return user;
+  }
+
   Future<void> deleteToken() async {
     /// delete from keystore/keychain
     await Future.delayed(Duration(seconds: 1));

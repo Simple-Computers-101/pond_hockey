@@ -19,7 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         assert(authenticationBloc != null);
 
   @override
-  LoginState get initialState => LoginState.initial();
+  LoginState get initialState => LoginState.initial(isSignUp: false);
 
   @override
   Stream<LoginState> mapEventToState(
@@ -32,7 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await userRepository.signInWithCredentials(event.authCredential);
         await addUserInfoToFireStore(user);
         authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial();
+        yield LoginState.initial(isSignUp: false);
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
@@ -47,7 +47,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             event.email, event.password);
         await addUserInfoToFireStore(user);
         authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial();
+        yield LoginState.initial(isSignUp: false);
         // ignore: avoid_catches_without_on_clauses
       } catch (error) {
         var errorMessage = _errorMessage(error);
@@ -55,6 +55,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           yield LoginState.failure(error: errorMessage);
         }
       }
+    }
+
+    if (event is SignUpButtonPressed) {
+      yield LoginState.loading();
+      try {
+        final user =
+            await userRepository.signUpWithEmail(event.email, event.password);
+        await addUserInfoToFireStore(user);
+        authenticationBloc.add(LoggedIn(token: user.uid));
+        yield LoginState.initial(isSignUp: true);
+        // ignore: avoid_catches_without_on_clauses
+      } catch (error) {
+        var errorMessage = _errorMessage(error);
+        if (errorMessage != null) {
+          yield LoginState.failure(error: errorMessage);
+        }
+      }
+    }
+
+    if (event is ToggleUiButtonPressed){
+      yield LoginState.initial(isSignUp: event.isSignUp);
     }
   }
 
@@ -81,6 +102,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       'uid': currentUser.uid,
     });
   }
+
 
   String _errorMessage(error) {
     String errorMessage;

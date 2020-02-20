@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
+import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
+import 'package:pond_hockey/screens/login/create_account.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
@@ -50,7 +52,7 @@ class LoginBody extends StatelessWidget {
       builder: (blocContext, states) {
         var _loginUi = _LoginUI();
         return states(
-          (initial) => _loginUi,
+          (initial) => initial.isSignUp ? CreateAccountForm() : _loginUi,
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -95,9 +97,20 @@ class _LoginUI extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   LoginForm(),
-                  Text(
-                    'Forgot password?',
-                    style: Theme.of(context).textTheme.subhead,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text(
+                        'Forgot password?',
+                        style: Theme.of(context).textTheme.subhead,
+                      ),
+                      FlatButton(
+                          onPressed: () {
+                            BlocProvider.of<LoginBloc>(context)
+                                .add(ToggleUiButtonPressed(isSignUp: true));
+                          },
+                          child: Text("Create Account"))
+                    ],
                   ),
                   const Divider(
                     thickness: 2,
@@ -160,9 +173,20 @@ class _LoginUI extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       LoginForm(),
-                      Text(
-                        'Forgot password?',
-                        style: Theme.of(context).textTheme.subhead,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text(
+                            'Forgot password?',
+                            style: Theme.of(context).textTheme.subhead,
+                          ),
+                          FlatButton(
+                              onPressed: () {
+                                BlocProvider.of<LoginBloc>(context)
+                                    .add(ToggleUiButtonPressed(isSignUp: true));
+                              },
+                              child: Text("Create Account"))
+                        ],
                       ),
                     ],
                   ),
