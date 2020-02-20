@@ -18,34 +18,34 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         assert(authenticationBloc != null);
 
   @override
-  LoginState get initialState => LoginInitial(isInitial: true);
+  LoginState get initialState => LoginState.initial(isInitial: true);
 
   @override
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
     if (event is GoogleLoginButtonPressed) {
-      yield LoginLoading();
+      yield LoginState.loading();
       try {
         final token =
             await userRepository.signInWithCredentials(event.authCredential);
 
         authenticationBloc.add(LoggedIn(token: token));
-        yield LoginInitial(isInitial: false);
+        yield LoginState.initial(isInitial: false);
       } on Exception catch (error) {
-        yield LoginFailure(error: error.toString());
+        yield LoginState.failure(error: error.toString());
       }
     }
     if (event is EmailLoginButtonPressed) {
-      yield LoginLoading();
+      yield LoginState.loading();
       try {
         final token = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
 
         authenticationBloc.add(LoggedIn(token: token));
-        yield LoginInitial(isInitial: false);
+        yield LoginState.initial(isInitial: false);
       } on Exception catch (error) {
-        yield LoginFailure(error: error.toString());
+        yield LoginState.failure(error: error.toString());
       }
     }
   }

@@ -12,3 +12,4 @@ linter:
     public_member_api_docs: false
     prefer_relative_imports: false
     prefer_mixin: false
+    type_annotate_public_apis: false

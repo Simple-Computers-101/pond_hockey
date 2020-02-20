@@ -1,27 +1,39 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
-abstract class LoginState extends Equatable {
-  LoginState();
+class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
+  static final unions =
+      const Triplet<LoginInitial, LoginLoading, LoginFailure>();
 
-  @override
-  List<Object> get props => [];
+  LoginState._(Union3<LoginInitial, LoginLoading, LoginFailure> union)
+      : super(union);
+
+  factory LoginState.initial({bool isInitial}) => LoginState._(
+        unions.first(
+          LoginInitial(isInitial: isInitial),
+        ),
+      );
+
+  factory LoginState.loading() => LoginState._(unions.second(LoginLoading()));
+
+  factory LoginState.failure({String error}) => LoginState._(
+        unions.third(
+          LoginFailure(error: error),
+        ),
+      );
 }
 
-class LoginInitial extends LoginState {
+class LoginInitial {
   final bool isInitial;
-  LoginInitial({@required this.isInitial});
+
+  LoginInitial({this.isInitial});
 }
 
-class LoginLoading extends LoginState {}
+class LoginLoading {}
 
-class LoginFailure extends LoginState {
+class LoginFailure {
   final String error;
 
-  LoginFailure({@required this.error});
-
-  @override
-  List<Object> get props => [error];
+  LoginFailure({this.error});
 
   @override
   String toString() => 'LoginFailure { error: $error }';

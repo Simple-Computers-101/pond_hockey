@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
-import 'package:pond_hockey/bloc/login/login_state.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({Key key, @required this.state}) : super(key: key);
-
-  final LoginState state;
-
   @override
   State<StatefulWidget> createState() => _LoginFormState();
 }
@@ -47,11 +42,9 @@ class _LoginFormState extends State<LoginForm> {
           borderRadius: BorderRadius.circular(24),
           splashColor: Colors.white.withOpacity(0.05),
           onTap: () {
-            if (widget.state is! LoginLoading) {
-              if (_formKey.currentState.validate()) {
-                FocusScope.of(context).unfocus();
-                _onLoginButtonPressed();
-              }
+            if (_formKey.currentState.validate()) {
+              FocusScope.of(context).unfocus();
+              _onLoginButtonPressed();
             }
           },
           child: Center(
@@ -136,13 +129,6 @@ class _LoginFormState extends State<LoginForm> {
             ),
             SizedBox(height: 24.0),
             loginButton,
-            Center(
-              child: Container(
-                child: widget.state is LoginLoading
-                    ? CircularProgressIndicator()
-                    : null,
-              ),
-            ),
           ],
         ),
       ),
