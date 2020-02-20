@@ -1,9 +1,9 @@
+import 'package:auto_route/auto_route_annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
-import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
@@ -16,16 +16,7 @@ class LoginBody extends StatelessWidget {
         LoginFailure>(
       builder: (blocContext, states) {
         return states(
-          (initial) {
-            if (!initial.isInitial) {
-              Router.navigator.popUntil((route) {
-                return route.settings.name == "/";
-              });
-              return Container();
-            } else {
-              return _LoginUI();
-            }
-          },
+          (initial) => _LoginUI(),
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
             return Container(
