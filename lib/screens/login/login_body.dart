@@ -115,19 +115,18 @@ class _LoginUI extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       _GoogleSignInButton(
-                        onPressed: () {
-                          try {
-                            BlocProvider.of<LoginBloc>(context)
-                                .signInWithGoogle();
-                          } on Exception {
+                        onPressed: () async {
+                          await BlocProvider.of<LoginBloc>(context)
+                              .signInWithGoogle()
+                              .catchError((error) {
                             Scaffold.of(context).hideCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('An error occured'),
+                                content: Text('Sign in with google failed'),
                                 duration: Duration(seconds: 5),
                               ),
                             );
-                          }
+                          });
                         },
                       ),
                       _AppleSignInButton(
