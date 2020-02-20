@@ -10,10 +10,10 @@ class TournamentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stream = Provider.of<TournamentsRepository>(context).ref.snapshots();
+    final repo = Provider.of<TournamentsRepository>(context);
 
     Widget buildLoading() {
-      return CircularProgressIndicator();
+      return Center(child: CircularProgressIndicator());
     }
 
     Widget buildError(Object error) {
@@ -39,26 +39,16 @@ class TournamentsScreen extends StatelessWidget {
           ),
         ),
         child: StreamBuilder<QuerySnapshot>(
-          stream: stream,
+          stream: Firestore.instance.collection('tournaments').snapshots(),
           builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return buildLoading();
-              case ConnectionState.waiting:
-                return buildLoading();
-              case ConnectionState.active:
-                return buildLoading();
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  buildError(snapshot.error);
-                }
-                if (snapshot.hasData) {
-                  return TournamentsList(
-                    documents: snapshot.data.documents,
-                  );
-                }
+            if (!snapshot.hasData) {
+              return buildLoading();
+            } else if (snapshot.hasError) {
+              return buildError(snapshot.error);
             }
-            return null;
+            return TournamentsList(
+              documents: snapshot.data.documents,
+            );
           },
         ),
       ),

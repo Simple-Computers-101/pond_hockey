@@ -11,7 +11,7 @@ void main() {
   group('JSON Game tests', () {
     test('toJson', () {
       final test = {
-        'id': 1,
+        'id': '1',
         'status': "Not started",
         'teamOne': {'1': 2},
         'teamTwo': {
@@ -21,7 +21,7 @@ void main() {
         'type': 'Closing'
       };
       final game = Game(
-        id: 1,
+        id: '1',
         status: GameStatus.notStarted,
         teamOne: {
           '1': 2,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -37,7 +38,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 25),
                   _PortraitMenuButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Router.navigator.pushNamed(Router.tournaments);
+                    },
                     text: 'View Results',
                   ),
                   const SizedBox(height: 30),

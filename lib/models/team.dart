@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Team {
-  int id;
+  String id;
   String name;
   DocumentReference currentTournament;
 

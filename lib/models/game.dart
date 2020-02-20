@@ -7,7 +7,7 @@ import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 
 class Game {
-  int id;
+  String id;
   GameStatus status;
   Map<String, int> teamOne;
   Map<String, int> teamTwo;

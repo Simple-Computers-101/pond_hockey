@@ -6,15 +6,16 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 
 class Tournament {
-  int id;
+  String id;
   String name;
   String details;
   GameStatus status;
   int year;
+  String location;
   DateTime startDate;
   DateTime endDate;
-  DocumentReference owner;
-  Map<int, bool> scorers;
+  String owner;
+  List<String> scorers;
 
   Tournament({
     this.id,
@@ -22,6 +23,7 @@ class Tournament {
     this.details,
     this.status,
     this.year,
+    this.location,
     this.startDate,
     this.endDate,
     this.owner,
@@ -35,10 +37,11 @@ class Tournament {
       'details': details,
       'status': EnumToString.parseCamelCase(status),
       'year': year,
+      'location': location,
       'startDate': startDate,
       'endDate': startDate,
-      'owner': owner.path,
-      'scorers': Map<String, bool>.from(scorers),
+      'owner': owner,
+      'scorers': scorers,
     };
   }
 
@@ -54,10 +57,11 @@ class Tournament {
         map['status'],
       ),
       year: map['year'],
+      location: map['location'],
       startDate: map['startDate'],
       endDate: map['endDate'],
-      owner: Firestore.instance.document(map['owner']),
-      scorers: Map<int, bool>.from(map['scorers']),
+      owner: map['owner'],
+      scorers: map['scorers'].cast<String>(),
     );
   }
 
