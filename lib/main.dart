@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_state.dart';
-import 'package:pond_hockey/components/loading/loading.dart';
-import 'package:pond_hockey/screens/home/home.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
 import 'package:pond_hockey/theme/style.dart';
 import 'package:provider/provider.dart';
-import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
-
-import 'screens/home/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -63,17 +58,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           debugShowCheckedModeBanner: false,
           title: 'Pond Hockey',
           theme: Style().lightTheme,
-          home: SealedBlocBuilder4<AuthenticationBloc, AuthenticationState,
-              UnAuthenticated, Authenticated, AuthUninitialized, AuthLoading>(
-            builder: (blocContext, states) {
-              return states(
-                (unAuthenticated) => HomeScreen(),
-                (authenticated) => HomeScreen(),
-                (unInitialized) => LoadingScreen(),
-                (loading) => LoadingScreen(),
-              );
-            },
-          ),
+          navigatorKey: Router.navigatorKey,
+          onGenerateRoute: Router.onGenerateRoute,
         ),
       ),
     );
