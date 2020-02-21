@@ -4,7 +4,7 @@ description: Pond Hockey Tournament Application
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -16,13 +16,16 @@ dependencies:
   flutter_statusbarcolor: ^0.2.3
   auto_route: ^0.2.2
   uuid: ^2.0.4
+  assorted_layout_widgets: ^1.0.15
+  intl: ^0.16.1
+  flutter_form_builder: ^3.8.0+1
 
   bloc: ^3.0.0
   flutter_bloc: ^3.2.0
   equatable: ^0.1.6
   flutter_secure_storage: ^3.3.1+1
   http: ^0.12.0+4
-  sealed_flutter_bloc: ^3.0.0
+  sealed_flutter_bloc: ^3.0.0  
 
   # Firebase
   google_sign_in: ^4.1.1
@@ -50,7 +53,7 @@ flutter:
   uses-material-design: true
 
   assets:
-     - assets/img/
+    - assets/img/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

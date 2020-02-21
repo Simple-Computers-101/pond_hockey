@@ -1,5 +1,8 @@
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/details/tournament_details.dart';
 
 class TournamentItem extends StatelessWidget {
   const TournamentItem(this.tournament, {Key key}) : super(key: key);
@@ -16,7 +19,15 @@ class TournamentItem extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Router.navigator.push(
+              MaterialPageRoute(
+                builder: (_) => TournamentDetails(
+                  tournament: tournament,
+                ),
+              ),
+            );
+          },
           borderRadius: BorderRadius.circular(16),
           splashColor: Colors.lightBlue.withOpacity(0.25),
           child: Padding(
@@ -30,10 +41,10 @@ class TournamentItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(
-                      child: Text(
+                      child: TextOneLine(
                         tournament.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.headline.copyWith(
+                        overflow: TextOverflow.clip,
+                        style: Theme.of(context).textTheme.headline5.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -43,19 +54,26 @@ class TournamentItem extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           tournament.year.toString(),
-                          style: Theme.of(context).textTheme.subtitle,
+                          style: Theme.of(context).textTheme.subtitle2,
                         ),
                         Text(
                           tournament.location ?? 'Nowhere',
-                          style: Theme.of(context).textTheme.subtitle,
+                          style: Theme.of(context).textTheme.subtitle2,
                         ),
                       ],
                     ),
                   ],
                 ),
+                Divider(
+                  thickness: 2,
+                  indent: 30,
+                  endIndent: 30,
+                ),
                 Text(
-                  tournament.details ?? '',
-                  maxLines: 1,
+                  tournament.details.trim().isEmpty
+                      ? tournament.name
+                      : tournament.details,
+                  maxLines: 2,
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
                 )

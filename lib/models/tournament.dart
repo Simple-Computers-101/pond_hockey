@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
-
 import 'package:pond_hockey/enums/game_status.dart';
 
 class Tournament {
@@ -61,7 +60,25 @@ class Tournament {
       startDate: map['startDate'],
       endDate: map['endDate'],
       owner: map['owner'],
-      scorers: map['scorers'].cast<String>(),
+      scorers: map['scorers']?.cast<String>(),
+    );
+  }
+
+  static Tournament fromDocument(DocumentSnapshot doc) {
+    var data = doc.data;
+    var startTimestamp = data['startDate'] as Timestamp;
+    var endTimestamp = data['endDate'] as Timestamp;
+    return Tournament(
+      startDate: startTimestamp?.toDate(),
+      endDate: endTimestamp?.toDate(),
+      name: data['name'],
+      details: data['details'],
+      id: data['id'],
+      location: data['location'],
+      owner: data['owner'],
+      scorers: data['scorers']?.cast<String>(),
+      status: EnumToString.fromString(GameStatus.values, data['status']),
+      year: data['year'],
     );
   }
 

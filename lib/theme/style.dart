@@ -13,6 +13,8 @@ class Style {
       elevation: 0,
       color: Colors.white,
     ),
-    textTheme: GoogleFonts.mondaTextTheme(),
+    textTheme: GoogleFonts.mondaTextTheme().copyWith(
+      bodyText1: GoogleFonts.poppins(),
+    ),
   );
 }

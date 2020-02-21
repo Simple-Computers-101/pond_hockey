@@ -50,8 +50,10 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   _PortraitMenuButton(
-                    onPressed: () {},
-                    text: 'Create Tournament',
+                    onPressed: () {
+                      Router.navigator.pushNamed(Router.addTournament);
+                    },
+                    text: 'Manage Tournaments',
                   ),
                 ],
               );
@@ -73,7 +75,9 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       _LandscapeMenuButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Router.navigator.pushNamed(Router.tournaments);
+                        },
                         text: 'View Results',
                       ),
                       const SizedBox(height: 30),
@@ -83,7 +87,9 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       _LandscapeMenuButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Router.navigator.pushNamed(Router.addTournament);
+                        },
                         text: 'Manage Tournaments',
                       ),
                     ],

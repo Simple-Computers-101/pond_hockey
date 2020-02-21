@@ -13,20 +13,21 @@ class TournamentsList extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setNavigationBarColor(Color(0xFFE9E9E9));
 
-    final tournaments = documents.map(
-      (snapshot) => Tournament.fromMap(snapshot.data),
-    );
+    final tournaments = documents.map(Tournament.fromDocument).toList();
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFE9E9E9),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(50))
-      ),
-      child: ListView(
+          color: Color(0xFFE9E9E9),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
+      child: ListView.separated(
         primary: false,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        children: tournaments.map((e) {
-          return TournamentItem(e);
-        }).toList(),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 32),
+        itemCount: tournaments.length,
+        itemBuilder: (cntx, indx) {
+          return TournamentItem(tournaments[indx]);
+        },
+        separatorBuilder: (cntx, indx) {
+          return SizedBox(height: MediaQuery.of(context).size.height * 0.02);
+        },
       ),
     );
   }

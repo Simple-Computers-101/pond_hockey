@@ -11,17 +11,20 @@ import 'package:pond_hockey/initial_screen.dart';
 import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
+import 'package:pond_hockey/screens/tournaments/add_tournament/add_tournament.dart';
 
 class Router {
   static const init = '/';
   static const home = '/home';
   static const login = '/login';
   static const tournaments = '/tournaments';
+  static const addTournament = '/add-tournament';
   static const routes = [
     init,
     home,
     login,
     tournaments,
+    addTournament,
   ];
   static GlobalKey<NavigatorState> get navigatorKey =>
       getNavigatorKey<Router>();
@@ -56,6 +59,11 @@ class Router {
         final typedArgs = args as Key;
         return MaterialPageRoute(
           builder: (_) => TournamentsScreen(key: typedArgs),
+          settings: settings,
+        );
+      case Router.addTournament:
+        return MaterialPageRoute(
+          builder: (_) => AddTournamentScreen(),
           settings: settings,
         );
       default:

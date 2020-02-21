@@ -3,6 +3,7 @@ import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_state.dart';
 import 'package:pond_hockey/components/loading/loading.dart';
 import 'package:pond_hockey/screens/home/home.dart';
+import 'package:pond_hockey/screens/login/login.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
 class InitialScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class InitialScreen extends StatelessWidget {
         UnAuthenticated, Authenticated, AuthUninitialized, AuthLoading>(
       builder: (_, states) {
         return states(
-          (unAuthenticated) => HomeScreen(),
+          (unAuthenticated) => LoginScreen(),
           (authenticated) => HomeScreen(),
           (unInitialized) => LoadingScreen(),
           (loading) => LoadingScreen(),

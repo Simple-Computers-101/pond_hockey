@@ -9,8 +9,8 @@ import 'package:pond_hockey/enums/game_type.dart';
 class Game {
   String id;
   GameStatus status;
-  Map<String, int> teamOne;
-  Map<String, int> teamTwo;
+  Map<String, dynamic> teamOne;
+  Map<String, dynamic> teamTwo;
   DocumentReference tournament;
   GameType type;
 
@@ -40,8 +40,8 @@ class Game {
     return Game(
       id: map['id'],
       status: EnumToString.fromString(GameStatus.values, map['status']),
-      teamOne: Map<String, int>.from(map['teamOne']),
-      teamTwo: Map<String, int>.from(map['teamTwo']),
+      teamOne: map['teamOne'],
+      teamTwo: map['teamTwo'],
       tournament: Firestore.instance.document(map['tournament']),
       type: EnumToString.fromString(GameType.values, map['type']),
     );

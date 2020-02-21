@@ -22,7 +22,7 @@ class TournamentsScreen extends StatelessWidget {
         children: <Widget>[
           Text(
             'Uh oh!',
-            style: Theme.of(context).textTheme.display3,
+            style: Theme.of(context).textTheme.headline2,
           ),
           Text(error.toString()),
         ],
@@ -39,7 +39,7 @@ class TournamentsScreen extends StatelessWidget {
           ),
         ),
         child: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection('tournaments').snapshots(),
+          stream: repo.ref.snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return buildLoading();

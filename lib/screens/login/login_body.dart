@@ -34,11 +34,11 @@ class LoginBody extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Uh oh!',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text(
                     'Something went wrong, try again later.',
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ],
               ),
@@ -73,10 +73,10 @@ class _LoginUI extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  LoginForm(),
+                  LoginForm(orientation: orientation),
                   Text(
                     'Forgot password?',
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
                   const Divider(
                     thickness: 2,
@@ -87,7 +87,7 @@ class _LoginUI extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     'Or sign in with these providers',
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -138,11 +138,12 @@ class _LoginUI extends StatelessWidget {
                 flex: 2,
                 child: SafeArea(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      LoginForm(),
+                      LoginForm(orientation: orientation),
                       Text(
                         'Forgot password?',
-                        style: Theme.of(context).textTheme.subhead,
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                     ],
                   ),
@@ -159,7 +160,7 @@ class _LoginUI extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'Or sign in with these providers',
-                      style: Theme.of(context).textTheme.subhead,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     _GoogleSignInButton(
                       onPressed: () {

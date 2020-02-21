@@ -4,6 +4,10 @@ import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 
 class LoginForm extends StatefulWidget {
+  const LoginForm({Key key, this.orientation}) : super(key: key);
+
+  final Orientation orientation;
+
   @override
   State<StatefulWidget> createState() => _LoginFormState();
 }
@@ -23,8 +27,8 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginButton = Container(
-      width: 150,
-      height: 50,
+      width: MediaQuery.of(context).size.width * 0.35,
+      height: MediaQuery.of(context).size.height * 0.1,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -51,7 +55,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Text(
               'Login',
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -61,10 +65,12 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
 
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(30.0),
+    return Container(
+      width: widget.orientation == Orientation.portrait
+          ? MediaQuery.of(context).size.width * 0.75
+          : MediaQuery.of(context).size.width * 0.5,
+      child: Form(
+        key: _formKey,
         child: Column(
           children: [
             Container(
