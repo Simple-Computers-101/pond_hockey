@@ -76,8 +76,30 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
           } else if (snapshot.hasError) {
             return buildError(snapshot.error);
           }
-          return TournamentsList(
-            documents: snapshot.data.documents,
+          return Column(
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Visibility(
+                  visible: snapshot.data.documents.isNotEmpty,
+                  child: TournamentsList(
+                    documents: snapshot.data.documents,
+                  ),
+                  replacement: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'There are no tournaments!',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        'Check back later.',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
         },
       );
@@ -85,16 +107,18 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
     Widget buildScorerOrEditorView() {
       if (canEdit()) {
-        return TournamentEditorView(uid);
+        return ManageTournamentView(uid: uid, editor: true);
       } else if (canScore()) {
-        return TournamentScorerView(uid);
+        return ManageTournamentView(uid: uid);
       }
       return SizedBox();
     }
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: canEditOrScore() ? 'Your Tournaments' : 'Tournaments',
+        title: canEdit()
+            ? 'Manage Tournaments'
+            : canScore() ? 'Score Tournaments' : 'Tournaments',
       ),
       floatingActionButton: canEdit()
           ? FloatingActionButton(
@@ -119,70 +143,67 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
   }
 }
 
-class TournamentEditorView extends StatelessWidget {
-  const TournamentEditorView(this.uid);
+class ManageTournamentView extends StatelessWidget {
+  const ManageTournamentView({
+    @required this.uid,
+    this.editor = false,
+  });
 
   final String uid;
+  final bool editor;
 
   @override
   Widget build(BuildContext context) {
+    final repo = Provider.of<TournamentsRepository>(context);
     return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0, top: 16),
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Column(
-              children: <Widget>[
-                Text('Coins'),
-                Text('0'),
-              ],
+        if (editor)
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0, top: 16),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                children: <Widget>[
+                  Text('Coins'),
+                  Text('0'),
+                ],
+              ),
             ),
           ),
-        ),
         SingleChildScrollView(
           child: FutureBuilder(
-            future: Provider.of<TournamentsRepository>(context)
-                .getOwnedTournaments(uid),
+            future: editor
+                ? repo.getOwnedTournaments(uid)
+                : repo.getScorerTournaments(uid),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return TournamentsList(
-                  documents: snapshot.data,
-                );
-              } else {
-                return LoadingScreen();
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class TournamentScorerView extends StatelessWidget {
-  const TournamentScorerView(this.uid);
-
-  final String uid;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SingleChildScrollView(
-          child: FutureBuilder(
-            future: Provider.of<TournamentsRepository>(context)
-                .getScorerTournaments(uid),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return TournamentsList(
-                  documents: snapshot.data,
-                );
-              } else {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
+              } else if (snapshot.connectionState == ConnectionState.active ||
+                  snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return TournamentsList(
+                    documents: snapshot.data,
+                  );
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'You don\'t have any tournaments!',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        'Create some or be invited.',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ],
+                  );
+                }
               }
+              return null;
             },
           ),
         ),

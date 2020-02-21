@@ -21,33 +21,17 @@ class TournamentsList extends StatelessWidget {
     }
     return Container(
       width: double.infinity,
-      child: Visibility(
-        visible: tournaments.isNotEmpty,
-        child: ListView.separated(
-          primary: false,
-          shrinkWrap: true,
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 32),
-          itemCount: tournaments.length,
-          itemBuilder: (cntx, indx) {
-            return TournamentItem(tournaments[indx]);
-          },
-          separatorBuilder: (cntx, indx) {
-            return SizedBox(height: MediaQuery.of(context).size.height * 0.02);
-          },
-        ),
-        replacement: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You don\'t have any tournaments!',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            Text(
-              'Create some or be invited.',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ],
-        ),
+      child: ListView.separated(
+        primary: false,
+        shrinkWrap: true,
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 32),
+        itemCount: tournaments.length,
+        itemBuilder: (cntx, indx) {
+          return TournamentItem(tournaments[indx]);
+        },
+        separatorBuilder: (cntx, indx) {
+          return SizedBox(height: MediaQuery.of(context).size.height * 0.02);
+        },
       ),
     );
   }
