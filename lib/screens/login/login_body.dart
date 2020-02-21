@@ -4,46 +4,10 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
-import 'package:pond_hockey/screens/login/create_account.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
-
-//class LoginBody extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-//
-//    return
-//    SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
-//        LoginFailure>(
-//      builder: (blocContext, states) {
-//        return states(
-//          (initial) => _LoginUI(),
-//          (loading) => Center(child: CircularProgressIndicator()),
-//          (failure) {
-//            return Container(
-//              child: Column(
-//                mainAxisAlignment: MainAxisAlignment.center,
-//                children: <Widget>[
-//                  Text(
-//                    'Uh oh!',
-//                    style: Theme.of(context).textTheme.display2,
-//                  ),
-//                  Text(
-//                    'Something went wrong, try again later.',
-//                    style: Theme.of(context).textTheme.display1,
-//                  ),
-//                ],
-//              ),
-//            );
-//          },
-//        );
-//      },
-//    );
-//  }
-//}
 
 class LoginBody extends StatelessWidget {
   @override

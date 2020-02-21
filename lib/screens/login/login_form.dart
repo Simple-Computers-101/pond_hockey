@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
+import 'package:pond_hockey/components/form/background.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key key, this.orientation}) : super(key: key);
@@ -71,71 +72,50 @@ class _LoginFormState extends State<LoginForm> {
       border: InputBorder.none,
     );
 
-    return FormBuilder(
-      key: _formKey,
-      autovalidate: true,
-      child: Container(
-        width: widget.orientation == Orientation.portrait
-            ? double.infinity
-            : MediaQuery.of(context).size.width * 0.5,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 20.0,
-                    offset: Offset(10, 10),
-                  ),
-                ],
+    return Container(
+      width: widget.orientation == Orientation.portrait
+          ? double.infinity
+          : MediaQuery.of(context).size.width * 0.5,
+      child: FormBackground(
+        key: _formKey,
+        bottom: <Widget>[
+          SizedBox(height: 24.0),
+          loginButton,
+        ],
+        fields: <Widget>[
+          Column(
+            children: <Widget>[
+              FormFieldBackground(
+                field: FormBuilderTextField(
+                  attribute: 'email-sign_in',
+                  keyboardType: TextInputType.emailAddress,
+                  controller: _emailController,
+                  decoration: defaultDecoration.copyWith(hintText: 'Email'),
+                  validators: [
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.email(),
+                  ],
+                ),
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.grey[100]),
-                      ),
-                    ),
-                    child: FormBuilderTextField(
-                      attribute: 'email-sign_in',
-                      keyboardType: TextInputType.emailAddress,
-                      controller: _emailController,
-                      decoration: defaultDecoration.copyWith(hintText: 'Email'),
-                      validators: [
-                        FormBuilderValidators.required(),
-                        FormBuilderValidators.email(),
-                      ],
-                    ),
+              FormFieldBackground(
+                bottom: true,
+                field: FormBuilderTextField(
+                  attribute: 'password-sign_in',
+                  controller: _passwordController,
+                  obscureText: true,
+                  maxLines: 1,
+                  decoration: defaultDecoration.copyWith(
+                    hintText: 'Password',
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: FormBuilderTextField(
-                      attribute: 'password-sign_in',
-                      controller: _passwordController,
-                      obscureText: true,
-                      maxLines: 1,
-                      decoration: defaultDecoration.copyWith(
-                        hintText: 'Password',
-                      ),
-                      validators: [
-                        FormBuilderValidators.required(),
-                        FormBuilderValidators.minLength(6),
-                      ],
-                    ),
-                  ),
-                ],
+                  validators: [
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.minLength(6),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 24.0),
-            loginButton,
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
