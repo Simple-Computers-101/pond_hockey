@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Login',
+        title: 'Login / Sign up',
         transparentBackground: true,
       ),
       extendBody: true,

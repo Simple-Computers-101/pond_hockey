@@ -53,12 +53,16 @@ class Router {
           settings: settings,
         );
       case Router.tournaments:
-        if (hasInvalidArgs<Key>(args)) {
-          return misTypedArgsRoute<Key>(args);
+        if (hasInvalidArgs<TournamentsScreenArguments>(args)) {
+          return misTypedArgsRoute<TournamentsScreenArguments>(args);
         }
-        final typedArgs = args as Key;
+        final typedArgs =
+            args as TournamentsScreenArguments ?? TournamentsScreenArguments();
         return MaterialPageRoute(
-          builder: (_) => TournamentsScreen(key: typedArgs),
+          builder: (_) => TournamentsScreen(
+              key: typedArgs.key,
+              scoringMode: typedArgs.scoringMode,
+              editMode: typedArgs.editMode),
           settings: settings,
         );
       case Router.addTournament:
@@ -70,4 +74,17 @@ class Router {
         return unknownRoutePage(settings.name);
     }
   }
+}
+
+//**************************************************************************
+// Arguments holder classes
+//***************************************************************************
+
+//TournamentsScreen arguments holder class
+class TournamentsScreenArguments {
+  final Key key;
+  final bool scoringMode;
+  final bool editMode;
+  TournamentsScreenArguments(
+      {this.key, this.scoringMode = false, this.editMode = false});
 }

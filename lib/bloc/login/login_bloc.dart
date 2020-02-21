@@ -36,7 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage,isSignUp: false);
+          yield LoginState.failure(error: errorMessage, isSignUp: false);
         }
       }
     }
@@ -52,7 +52,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage,isSignUp: false);
+          yield LoginState.failure(error: errorMessage, isSignUp: false);
         }
       }
     }
@@ -69,12 +69,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
-          yield LoginState.failure(error: errorMessage,isSignUp: true);
+          yield LoginState.failure(error: errorMessage, isSignUp: true);
         }
       }
     }
 
-    if (event is ToggleUiButtonPressed){
+    if (event is ToggleUiButtonPressed) {
       yield LoginState.initial(isSignUp: event.isSignUp);
     }
   }
@@ -94,15 +94,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> addUserInfoToFireStore(FirebaseUser currentUser) async {
-    await Firestore.instance
+    return Firestore.instance
         .collection('users')
         .document(currentUser.uid)
         .setData({
       'email': currentUser.email,
       'uid': currentUser.uid,
+      'coins': 0,
     });
   }
-
 
   String _errorMessage(error) {
     String errorMessage;

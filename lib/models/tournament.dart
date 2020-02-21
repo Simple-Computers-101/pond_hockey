@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:equatable/equatable.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 
-class Tournament {
+class Tournament extends Equatable {
   String id;
   String name;
   String details;
@@ -15,6 +16,20 @@ class Tournament {
   DateTime endDate;
   String owner;
   List<String> scorers;
+
+  @override
+  List<Object> get props => [
+        id,
+        name,
+        details,
+        status,
+        year,
+        location,
+        startDate,
+        endDate,
+        owner,
+        scorers,
+      ];
 
   Tournament({
     this.id,

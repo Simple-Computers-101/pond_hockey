@@ -7,27 +7,47 @@ import 'package:pond_hockey/screens/tournaments/widgets/tournament_item.dart';
 class TournamentsList extends StatelessWidget {
   const TournamentsList({Key key, this.documents}) : super(key: key);
 
-  final List<DocumentSnapshot> documents;
+  final List<dynamic> documents;
 
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setNavigationBarColor(Color(0xFFE9E9E9));
-
-    final tournaments = documents.map(Tournament.fromDocument).toList();
+    var tournaments;
+    if (documents is! List<Tournament>) {
+      var docs = List<DocumentSnapshot>.from(documents);
+      tournaments = docs.map(Tournament.fromDocument).toList();
+    } else if (documents is List<Tournament>) {
+      tournaments = documents;
+    }
     return Container(
-      decoration: BoxDecoration(
-          color: Color(0xFFE9E9E9),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
-      child: ListView.separated(
-        primary: false,
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 32),
-        itemCount: tournaments.length,
-        itemBuilder: (cntx, indx) {
-          return TournamentItem(tournaments[indx]);
-        },
-        separatorBuilder: (cntx, indx) {
-          return SizedBox(height: MediaQuery.of(context).size.height * 0.02);
-        },
+      width: double.infinity,
+      child: Visibility(
+        visible: tournaments.isNotEmpty,
+        child: ListView.separated(
+          primary: false,
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 32),
+          itemCount: tournaments.length,
+          itemBuilder: (cntx, indx) {
+            return TournamentItem(tournaments[indx]);
+          },
+          separatorBuilder: (cntx, indx) {
+            return SizedBox(height: MediaQuery.of(context).size.height * 0.02);
+          },
+        ),
+        replacement: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You don\'t have any tournaments!',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            Text(
+              'Create some or be invited.',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ],
+        ),
       ),
     );
   }

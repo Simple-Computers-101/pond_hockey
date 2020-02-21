@@ -45,13 +45,25 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   _PortraitMenuButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Router.navigator.pushNamed(
+                        Router.tournaments,
+                        arguments: TournamentsScreenArguments(
+                          scoringMode: true,
+                        ),
+                      );
+                    },
                     text: 'Score Games',
                   ),
                   const SizedBox(height: 30),
                   _PortraitMenuButton(
                     onPressed: () {
-                      Router.navigator.pushNamed(Router.addTournament);
+                      Router.navigator.pushNamed(
+                        Router.tournaments,
+                        arguments: TournamentsScreenArguments(
+                          editMode: true,
+                        ),
+                      );
                     },
                     text: 'Manage Tournaments',
                   ),
@@ -82,13 +94,26 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       _LandscapeMenuButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Router.navigator.pushNamed(
+                            Router.tournaments,
+                            arguments: TournamentsScreenArguments(
+                              scoringMode: true,
+                            ),
+                          );
+                        },
                         text: 'Score Games',
                       ),
                       const SizedBox(height: 30),
                       _LandscapeMenuButton(
                         onPressed: () {
-                          Router.navigator.pushNamed(Router.addTournament);
+                          Router.navigator.pushNamed(
+                            Router.tournaments,
+                            arguments: TournamentsScreenArguments(
+                              scoringMode: false,
+                              editMode: true,
+                            ),
+                          );
                         },
                         text: 'Manage Tournaments',
                       ),
@@ -117,6 +142,7 @@ class _LandscapeMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var btnSize = MediaQuery.of(context).size.width * 0.35;
+    var fontSize = MediaQuery.of(context).size.width * 0.03;
 
     return Container(
       width: btnSize,
@@ -130,8 +156,9 @@ class _LandscapeMenuButton extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
+          maxLines: 1,
           style: TextStyle(
-            fontSize: 30,
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -152,6 +179,7 @@ class _PortraitMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var btnSize = MediaQuery.of(context).size.width * 0.75;
+    var fontSize = MediaQuery.of(context).size.width * 0.06;
 
     return Container(
       width: btnSize,
@@ -166,7 +194,7 @@ class _PortraitMenuButton extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 30,
+            fontSize: fontSize,
           ),
         ),
       ),

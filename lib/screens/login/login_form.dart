@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 
@@ -15,7 +16,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   void dispose() {
@@ -27,8 +28,8 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginButton = Container(
-      width: MediaQuery.of(context).size.width * 0.35,
-      height: MediaQuery.of(context).size.height * 0.1,
+      width: MediaQuery.of(context).size.width * 0.4,
+      height: MediaQuery.of(context).size.height * 0.07,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -65,14 +66,20 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
 
-    return Container(
-      width: widget.orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width * 0.75
-          : MediaQuery.of(context).size.width * 0.5,
-      child: Form(
-        key: _formKey,
+    const defaultDecoration = InputDecoration(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      border: InputBorder.none,
+    );
+
+    return FormBuilder(
+      key: _formKey,
+      autovalidate: true,
+      child: Container(
+        width: widget.orientation == Orientation.portrait
+            ? double.infinity
+            : MediaQuery.of(context).size.width * 0.5,
         child: Column(
-          children: [
+          children: <Widget>[
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
@@ -83,7 +90,7 @@ class _LoginFormState extends State<LoginForm> {
                     color: Colors.black26,
                     blurRadius: 20.0,
                     offset: Offset(10, 10),
-                  )
+                  ),
                 ],
               ),
               child: Column(
@@ -95,39 +102,31 @@ class _LoginFormState extends State<LoginForm> {
                         bottom: BorderSide(color: Colors.grey[100]),
                       ),
                     ),
-                    child: TextFormField(
+                    child: FormBuilderTextField(
+                      attribute: 'email-sign_in',
                       keyboardType: TextInputType.emailAddress,
                       controller: _emailController,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        hintText: 'Email',
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                        border: InputBorder.none,
-                      ),
-                      validator: validateEmail,
+                      decoration: defaultDecoration.copyWith(hintText: 'Email'),
+                      validators: [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.email(),
+                      ],
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(8),
-                    child: TextFormField(
+                    child: FormBuilderTextField(
+                      attribute: 'password-sign_in',
                       controller: _passwordController,
                       obscureText: true,
-                      autofocus: false,
-                      decoration: InputDecoration(
+                      maxLines: 1,
+                      decoration: defaultDecoration.copyWith(
                         hintText: 'Password',
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                        border: InputBorder.none,
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter password';
-                        } else if (value.length < 6) {
-                          return 'Password is short';
-                        }
-                        return null;
-                      },
+                      validators: [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.minLength(6),
+                      ],
                     ),
                   ),
                 ],
@@ -146,16 +145,5 @@ class _LoginFormState extends State<LoginForm> {
       email: _emailController.text,
       password: _passwordController.text,
     ));
-  }
-
-  String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    var regex = RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Enter Valid Email';
-    } else {
-      return null;
-    }
   }
 }
