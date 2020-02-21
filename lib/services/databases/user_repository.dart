@@ -12,7 +12,7 @@ class UserRepository {
     ],
   );
 
-  Future<String> signInWithCredentials(AuthCredential credential) async {
+  Future<FirebaseUser> signInWithCredentials(AuthCredential credential) async {
     final authResult = await _authProvider.signInWithCredential(credential);
     final user = authResult.user;
 
@@ -21,11 +21,10 @@ class UserRepository {
 
     final currentUser = await _authProvider.getCurrentUser();
     assert(user.uid == currentUser.uid);
-
-    return user.uid;
+    return user;
   }
 
-  Future<String> signInWithEmailAndPassword(
+  Future<FirebaseUser> signInWithEmailAndPassword(
       String email, String password) async {
     final authResult =
         await _authProvider.signInWithEmailAndPassword(email, password);
@@ -36,7 +35,20 @@ class UserRepository {
 
     final currentUser = await _authProvider.getCurrentUser();
     assert(user.uid == currentUser.uid);
-    return user.uid;
+    return user;
+  }
+
+  Future<FirebaseUser> signUpWithEmail(String email, String password) async {
+    final authResult = await _authProvider.signUpWithEmail(email, password);
+    final user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final currentUser = await _authProvider.getCurrentUser();
+    assert(user.uid == currentUser.uid);
+
+    return user;
   }
 
   Future<void> deleteToken() async {

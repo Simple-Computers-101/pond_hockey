@@ -2,47 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
+import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
-import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/login/create_account.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
+
+//class LoginBody extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+//
+//    return
+//    SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
+//        LoginFailure>(
+//      builder: (blocContext, states) {
+//        return states(
+//          (initial) => _LoginUI(),
+//          (loading) => Center(child: CircularProgressIndicator()),
+//          (failure) {
+//            return Container(
+//              child: Column(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                children: <Widget>[
+//                  Text(
+//                    'Uh oh!',
+//                    style: Theme.of(context).textTheme.display2,
+//                  ),
+//                  Text(
+//                    'Something went wrong, try again later.',
+//                    style: Theme.of(context).textTheme.display1,
+//                  ),
+//                ],
+//              ),
+//            );
+//          },
+//        );
+//      },
+//    );
+//  }
+//}
 
 class LoginBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-
     return SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
         LoginFailure>(
       builder: (blocContext, states) {
+        var _loginUi = _LoginUI();
         return states(
-          (initial) {
-            if (!initial.isInitial) {
-              Router.navigator.popUntil((route) {
-                return route.settings.name == "/";
-              });
-              return Container();
-            } else {
-              return _LoginUI();
-            }
-          },
+          (initial) => initial.isSignUp ? CreateAccountForm() : _loginUi,
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
-            return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Uh oh!',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  Text(
-                    'Something went wrong, try again later.',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                ],
-              ),
-            );
+            Scaffold.of(context).hideCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('An error occured'),
+              duration: Duration(seconds: 2),
+            ));
+            return failure.isSignUp ? CreateAccountForm() : _loginUi;
           },
         );
       },
@@ -73,10 +91,21 @@ class _LoginUI extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  LoginForm(orientation: orientation),
-                  Text(
-                    'Forgot password?',
-                    style: Theme.of(context).textTheme.subtitle1,
+                  LoginForm(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text(
+                        'Forgot password?',
+                        style: Theme.of(context).textTheme.subhead,
+                      ),
+                      FlatButton(
+                          onPressed: () {
+                            BlocProvider.of<LoginBloc>(context)
+                                .add(ToggleUiButtonPressed(isSignUp: true));
+                          },
+                          child: Text("Create Account"))
+                    ],
                   ),
                   const Divider(
                     thickness: 2,
@@ -94,19 +123,18 @@ class _LoginUI extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       _GoogleSignInButton(
-                        onPressed: () {
-                          try {
-                            BlocProvider.of<LoginBloc>(context)
-                                .signInWithGoogle();
-                          } on Exception {
+                        onPressed: () async {
+                          await BlocProvider.of<LoginBloc>(context)
+                              .signInWithGoogle()
+                              .catchError((error) {
                             Scaffold.of(context).hideCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('An error occured'),
+                                content: Text('Sign in with google failed'),
                                 duration: Duration(seconds: 5),
                               ),
                             );
-                          }
+                          });
                         },
                       ),
                       _AppleSignInButton(
@@ -140,10 +168,21 @@ class _LoginUI extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      LoginForm(orientation: orientation),
-                      Text(
-                        'Forgot password?',
-                        style: Theme.of(context).textTheme.subtitle1,
+                      LoginForm(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text(
+                            'Forgot password?',
+                            style: Theme.of(context).textTheme.subhead,
+                          ),
+                          FlatButton(
+                              onPressed: () {
+                                BlocProvider.of<LoginBloc>(context)
+                                    .add(ToggleUiButtonPressed(isSignUp: true));
+                              },
+                              child: Text("Create Account"))
+                        ],
                       ),
                     ],
                   ),

@@ -48,3 +48,25 @@ class EmailLoginButtonPressed extends LoginEvent {
   String toString() =>
       'EmailLoginButtonPressed { email: $email, password: $password }';
 }
+
+class SignUpButtonPressed extends LoginEvent {
+  final String email;
+  final String password;
+
+  SignUpButtonPressed({
+    @required this.email,
+    @required this.password,
+  });
+
+  @override
+  List<Object> get props => [email, password];
+
+  @override
+  String toString() =>
+      'SignUpButtonPressed { email: $email, password: $password }';
+}
+
+class ToggleUiButtonPressed extends LoginEvent {
+  final bool isSignUp;
+  ToggleUiButtonPressed({this.isSignUp});
+}
