@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class FormBackground extends StatelessWidget {
   const FormBackground({
-    @required Key key,
     @required this.fields,
     @required this.bottom,
   });
@@ -13,31 +11,27 @@ class FormBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-      key: key,
-      autovalidate: true,
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 20.0,
-                  offset: Offset(10, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: fields,
-            ),
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 20.0,
+                offset: Offset(10, 10),
+              ),
+            ],
           ),
-          ...bottom
-        ],
-      ),
+          child: Column(
+            children: fields,
+          ),
+        ),
+        ...bottom
+      ],
     );
   }
 }

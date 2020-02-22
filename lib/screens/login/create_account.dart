@@ -41,109 +41,112 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
       width: widget.orientation == Orientation.portrait
           ? double.infinity
           : MediaQuery.of(context).size.width * 0.5,
-      child: FormBackground(
+      child: FormBuilder(
         key: _formKey,
-        bottom: <Widget>[
-          SizedBox(height: 24.0),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.4,
-            height: MediaQuery.of(context).size.height * 0.07,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFFC84E89),
-                  Color(0xFFF15F79),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Material(
-              type: MaterialType.transparency,
-              child: InkWell(
+        child: FormBackground(
+          bottom: <Widget>[
+            SizedBox(height: 24.0),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              height: MediaQuery.of(context).size.height * 0.07,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFC84E89),
+                    Color(0xFFF15F79),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
                 borderRadius: BorderRadius.circular(24),
-                splashColor: Colors.white.withOpacity(0.05),
-                onTap: () {
-                  if (_formKey.currentState.validate()) {
-                    FocusScope.of(context).unfocus();
-                    BlocProvider.of<LoginBloc>(context).add(
-                      SignUpButtonPressed(
-                        email: _emailController.text,
-                        password: _passwordController.text,
+              ),
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  splashColor: Colors.white.withOpacity(0.05),
+                  onTap: () {
+                    if (_formKey.currentState.validate()) {
+                      FocusScope.of(context).unfocus();
+                      BlocProvider.of<LoginBloc>(context).add(
+                        SignUpButtonPressed(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        ),
+                      );
+                    }
+                  },
+                  child: Center(
+                    child: Text(
+                      'Create Account',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  }
-                },
-                child: Center(
-                  child: Text(
-                    'Create Account',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-        fields: <Widget>[
-          Column(
-            children: <Widget>[
-              FormFieldBackground(
-                field: FormBuilderTextField(
-                  attribute: 'email-sign_up',
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  decoration: defaultDecoration.copyWith(hintText: 'Email'),
-                  validators: [
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.email(),
-                  ],
-                ),
-              ),
-              FormFieldBackground(
-                field: FormBuilderTextField(
-                  attribute: 'password-sign_up',
-                  controller: _passwordController,
-                  obscureText: true,
-                  maxLines: 1,
-                  decoration: defaultDecoration.copyWith(hintText: 'Password'),
-                  validators: [
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.minLength(6),
-                  ],
-                ),
-              ),
-              FormFieldBackground(
-                bottom: true,
-                field: FormBuilderTextField(
-                  attribute: 'password-confirm',
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  maxLines: 1,
-                  decoration: defaultDecoration.copyWith(
-                    hintText: 'Confirm Password',
+          ],
+          fields: <Widget>[
+            Column(
+              children: <Widget>[
+                FormFieldBackground(
+                  field: FormBuilderTextField(
+                    attribute: 'email-sign_up',
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    decoration: defaultDecoration.copyWith(hintText: 'Email'),
+                    validators: [
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.email(),
+                    ],
                   ),
-                  validators: [
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.minLength(6),
-                    (value) {
-                      var otherPassword = _formKey.currentState
-                          .fields['password-sign_up'].currentState.value;
-                      if (otherPassword == value) {
-                        return null;
-                      }
-                      return 'Passwords must match';
-                    }
-                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                FormFieldBackground(
+                  field: FormBuilderTextField(
+                    attribute: 'password-sign_up',
+                    controller: _passwordController,
+                    obscureText: true,
+                    maxLines: 1,
+                    decoration:
+                        defaultDecoration.copyWith(hintText: 'Password'),
+                    validators: [
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.minLength(6),
+                    ],
+                  ),
+                ),
+                FormFieldBackground(
+                  bottom: true,
+                  field: FormBuilderTextField(
+                    attribute: 'password-confirm',
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    maxLines: 1,
+                    decoration: defaultDecoration.copyWith(
+                      hintText: 'Confirm Password',
+                    ),
+                    validators: [
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.minLength(6),
+                      (value) {
+                        var otherPassword = _formKey.currentState
+                            .fields['password-sign_up'].currentState.value;
+                        if (otherPassword == value) {
+                          return null;
+                        }
+                        return 'Passwords must match';
+                      }
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

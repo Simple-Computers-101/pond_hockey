@@ -130,83 +130,85 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       height: widget.orientation == Orientation.portrait
           ? MediaQuery.of(context).size.height * 0.8
           : null,
-      child: FormBackground(
+      child: FormBuilder(
         key: widget.formKey,
-        bottom: <Widget>[
-          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-          GradientButton(
-            width: MediaQuery.of(context).size.width * 0.35,
-            height: MediaQuery.of(context).size.height * 0.09,
-            colors: [
-              Color(0xFFC84E89),
-              Color(0xFFF15F79),
-            ],
-            onTap: () {
-              if (widget.formKey.currentState.validate()) {
-                FocusScope.of(context).unfocus();
-                submitForm();
-              }
-            },
-            text: 'Create',
-          ),
-        ],
-        fields: <Widget>[
-          FormFieldBackground(
-            height: getFieldHeight(),
-            field: FormBuilderTextField(
-              attribute: 'tournament-name',
-              controller: _nameController,
-              style: Theme.of(context).textTheme.subtitle1,
-              decoration: defaultDecoration.copyWith(
-                hintText: 'Name',
-              ),
-              validators: [
-                FormBuilderValidators.required(),
+        child: FormBackground(
+          bottom: <Widget>[
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            GradientButton(
+              width: MediaQuery.of(context).size.width * 0.35,
+              height: MediaQuery.of(context).size.height * 0.09,
+              colors: [
+                Color(0xFFC84E89),
+                Color(0xFFF15F79),
               ],
+              onTap: () {
+                if (widget.formKey.currentState.validate()) {
+                  FocusScope.of(context).unfocus();
+                  submitForm();
+                }
+              },
+              text: 'Create',
             ),
-          ),
-          FormFieldBackground(
-            height: getFieldHeight(),
-            field: FormBuilderTextField(
-              attribute: 'tournament-location',
-              controller: _locationController,
-              style: Theme.of(context).textTheme.subtitle1,
-              decoration: defaultDecoration.copyWith(
-                hintText: 'Location',
-              ),
-              validators: [
-                FormBuilderValidators.required(),
-              ],
-            ),
-          ),
-          FormFieldBackground(
-            height: getFieldHeight(),
-            field: FormBuilderDateRangePicker(
-              attribute: 'tournament-dates',
-              decoration: defaultDecoration.copyWith(
-                hintText: 'Dates',
-              ),
-              firstDate: DateTime.now().onlyDate,
-              lastDate: DateTime.now().onlyDate.add(Duration(days: 365)),
-              format: DateFormat.yMMMd(),
-              validators: [
-                FormBuilderValidators.required(),
-              ],
-            ),
-          ),
-          FormFieldBackground(
-            height: MediaQuery.of(context).size.height * 0.17,
-            field: TextFormField(
-              controller: _detailsController,
-              maxLines: null,
-              expands: true,
-              style: Theme.of(context).textTheme.subtitle1,
-              decoration: defaultDecoration.copyWith(
-                hintText: 'Details',
+          ],
+          fields: <Widget>[
+            FormFieldBackground(
+              height: getFieldHeight(),
+              field: FormBuilderTextField(
+                attribute: 'tournament-name',
+                controller: _nameController,
+                style: Theme.of(context).textTheme.subtitle1,
+                decoration: defaultDecoration.copyWith(
+                  hintText: 'Name',
+                ),
+                validators: [
+                  FormBuilderValidators.required(),
+                ],
               ),
             ),
-          ),
-        ],
+            FormFieldBackground(
+              height: getFieldHeight(),
+              field: FormBuilderTextField(
+                attribute: 'tournament-location',
+                controller: _locationController,
+                style: Theme.of(context).textTheme.subtitle1,
+                decoration: defaultDecoration.copyWith(
+                  hintText: 'Location',
+                ),
+                validators: [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            FormFieldBackground(
+              height: getFieldHeight(),
+              field: FormBuilderDateRangePicker(
+                attribute: 'tournament-dates',
+                decoration: defaultDecoration.copyWith(
+                  hintText: 'Dates',
+                ),
+                firstDate: DateTime.now().onlyDate,
+                lastDate: DateTime.now().onlyDate.add(Duration(days: 365)),
+                format: DateFormat.yMMMd(),
+                validators: [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            FormFieldBackground(
+              height: MediaQuery.of(context).size.height * 0.17,
+              field: TextFormField(
+                controller: _detailsController,
+                maxLines: null,
+                expands: true,
+                style: Theme.of(context).textTheme.subtitle1,
+                decoration: defaultDecoration.copyWith(
+                  hintText: 'Details',
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

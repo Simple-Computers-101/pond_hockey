@@ -17,11 +17,18 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
-      appBar: AppBar(actions: <Widget>[
-        FlatButton(onPressed: ()async{
-          await BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
-        }, child: Text("Sign Out"))
-      ],),
+      appBar: AppBar(
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () async {
+              await BlocProvider.of<AuthenticationBloc>(context).add(
+                LoggedOut(),
+              );
+            },
+            child: Text("Sign Out"),
+          )
+        ],
+      ),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
