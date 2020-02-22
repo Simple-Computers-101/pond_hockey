@@ -46,8 +46,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (event is AppleLoginButtonPressed) {
       yield LoginState.loading();
       try {
-        final user =
-            await userRepository.signInWithCredentials(event.authCredential);
+        final user = await userRepository
+            .signInWithCredentials(event.authCredential, email: event.email);
         await addUserInfoToFireStore(user);
         authenticationBloc.add(LoggedIn(token: user.uid));
         yield LoginState.initial(isSignUp: false);
@@ -121,14 +121,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           accessToken:
               String.fromCharCodes(appleIdCredential.authorizationCode),
         );
-        add(AppleLoginButtonPressed(credential));
-//        if (scopes.contains(Scope.fullName)) {
-//          final updateUser = UserUpdateInfo();
-//          updateUser.displayName =
-//          '${appleIdCredential.fullName.givenName}
-//          ${appleIdCredential.fullName.familyName}';
-//          await firebaseUser.updateProfile(updateUser);
+//        if (scopes.contains(Scope.email)) {
+//
 //        }
+        add(AppleLoginButtonPressed(credential, appleIdCredential.email));
         break;
       case AuthorizationStatus.error:
         print(result.error.toString());

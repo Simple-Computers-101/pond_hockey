@@ -12,10 +12,13 @@ class UserRepository {
     ],
   );
 
-  Future<FirebaseUser> signInWithCredentials(AuthCredential credential) async {
+  Future<FirebaseUser> signInWithCredentials(AuthCredential credential,
+      {String email}) async {
     final authResult = await _authProvider.signInWithCredential(credential);
     final user = authResult.user;
-
+    if (email != null){
+      await user.updateEmail(email);
+    }
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
 

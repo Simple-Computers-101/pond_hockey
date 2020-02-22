@@ -21,15 +21,17 @@ class GoogleLoginButtonPressed extends LoginEvent {
 
 class AppleLoginButtonPressed extends LoginEvent {
   final AuthCredential authCredential;
+  final String email;
 
-  AppleLoginButtonPressed(this.authCredential);
+  AppleLoginButtonPressed(this.authCredential, this.email);
 
   @override
-  List<Object> get props => [authCredential];
+  List<Object> get props => [authCredential, email];
 
   @override
   String toString() =>
-      'AppleLoginButtonPressed { authCredential: $authCredential }';
+      'AppleLoginButtonPressed { authCredential: $authCredential, '
+          'email: $email}';
 }
 
 class EmailLoginButtonPressed extends LoginEvent {
