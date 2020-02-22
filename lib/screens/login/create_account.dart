@@ -65,10 +65,10 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(24),
                   splashColor: Colors.white.withOpacity(0.05),
-                  onTap: () {
+                  onTap: () async {
                     if (_formKey.currentState.validate()) {
                       FocusScope.of(context).unfocus();
-                      BlocProvider.of<LoginBloc>(context).add(
+                      await BlocProvider.of<LoginBloc>(context).add(
                         SignUpInitial(
                           email: _emailController.text,
                           password: _passwordController.text,

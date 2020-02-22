@@ -12,16 +12,29 @@ class EmailVerification extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: RaisedButton(
-        child: Text("Refresh Status"),
+        child: Text(user.email),
         onPressed: () async {
-          if (user.isEmailVerified) {
-            BlocProvider.of<LoginBloc>(context)
-                .add(SignUpButtonPressed(user: user));
-          } else {
-            Scaffold.of(context).hideCurrentSnackBar();
+          try {
+            final userInfo = UserUpdateInfo();
+            userInfo.displayName = "test";
+            user.updateProfile(userInfo).then((value) async {
+              if (await user.isEmailVerified) {
+                await BlocProvider.of<LoginBloc>(context)
+                    .add(SignUpButtonPressed(user: user));
+              } else {
+                Scaffold.of(context).removeCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Please verify email first"),
+                  ),
+                );
+              }
+            });
+          } on Exception catch (error) {
+            Scaffold.of(context).removeCurrentSnackBar();
             Scaffold.of(context).showSnackBar(
               SnackBar(
-                content: Text("Please very email first"),
+                content: Text(error.toString()),
               ),
             );
           }

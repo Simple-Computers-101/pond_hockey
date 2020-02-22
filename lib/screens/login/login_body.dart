@@ -24,13 +24,16 @@ class LoginBody extends StatelessWidget {
           (initial) => initial.isSignUp ? _signUp : _loginUi,
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
-            Scaffold.of(context).hideCurrentSnackBar();
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text('An error occured'),
-                duration: Duration(seconds: 2),
-              ),
-            );
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('An error occured'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            });
+
             return failure.isSignUp ? _signUp : _loginUi;
           },
           (unverified) => EmailVerification(unverified.user),
