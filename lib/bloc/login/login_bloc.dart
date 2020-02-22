@@ -1,6 +1,8 @@
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/bloc/auth/auth_events.dart';
@@ -26,6 +28,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginEvent event,
   ) async* {
     if (event is GoogleLoginButtonPressed) {
+      yield LoginState.loading();
+      try {
+        final user =
+            await userRepository.signInWithCredentials(event.authCredential);
+        await addUserInfoToFireStore(user);
+        authenticationBloc.add(LoggedIn(token: user.uid));
+        yield LoginState.initial(isSignUp: false);
+      } on Exception catch (error) {
+        var errorMessage = _errorMessage(error);
+        if (errorMessage != null) {
+          yield LoginState.failure(error: errorMessage, isSignUp: false);
+        }
+      }
+    }
+
+    if (event is AppleLoginButtonPressed) {
       yield LoginState.loading();
       try {
         final user =
@@ -79,7 +97,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  Future<AuthCredential> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     final googleSignInAccount = await userRepository.googleSignIn.signIn();
     final googleSignInAuthentication = await googleSignInAccount.authentication;
 
@@ -89,8 +107,44 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     add(GoogleLoginButtonPressed(credential));
+  }
 
-    return credential;
+  Future<void> signInWithApple({List<Scope> scopes = const []}) async {
+    final result = await AppleSignIn.performRequests(
+        [AppleIdRequest(requestedScopes: scopes)]);
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential;
+        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
+        final credential = oAuthProvider.getCredential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+        add(AppleLoginButtonPressed(credential));
+//        if (scopes.contains(Scope.fullName)) {
+//          final updateUser = UserUpdateInfo();
+//          updateUser.displayName =
+//          '${appleIdCredential.fullName.givenName}
+//          ${appleIdCredential.fullName.familyName}';
+//          await firebaseUser.updateProfile(updateUser);
+//        }
+        break;
+      case AuthorizationStatus.error:
+        print(result.error.toString());
+        throw PlatformException(
+          code: 'ERROR_AUTHORIZATION_DENIED',
+          message: result.error.toString(),
+        );
+        break;
+
+      case AuthorizationStatus.cancelled:
+        throw PlatformException(
+          code: 'ERROR_ABORTED_BY_USER',
+          message: 'Sign in aborted by user',
+        );
+        break;
+    }
   }
 
   Future<void> addUserInfoToFireStore(FirebaseUser currentUser) async {

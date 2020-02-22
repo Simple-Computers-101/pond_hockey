@@ -7,6 +7,7 @@ import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
+import 'package:pond_hockey/services/apple/apple_available.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
 class LoginBody extends StatelessWidget {
@@ -17,8 +18,9 @@ class LoginBody extends StatelessWidget {
         LoginFailure>(
       builder: (blocContext, states) {
         var _loginUi = _LoginUI();
+        var _signUp = CreateAccountBody();
         return states(
-          (initial) => initial.isSignUp ? CreateAccountBody() : _loginUi,
+          (initial) => initial.isSignUp ? _signUp : _loginUi,
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
             Scaffold.of(context).hideCurrentSnackBar();
@@ -26,7 +28,7 @@ class LoginBody extends StatelessWidget {
               content: Text('An error occured'),
               duration: Duration(seconds: 2),
             ));
-            return failure.isSignUp ? CreateAccountBody() : _loginUi;
+            return failure.isSignUp ? _signUp : _loginUi;
           },
         );
       },
@@ -109,7 +111,23 @@ class _LoginUI extends StatelessWidget {
                             },
                           ),
                           AppleSignInButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final appleSignInAvailable =
+                              await AppleSignInAvailable.check();
+                              if (appleSignInAvailable.isAvailable) {
+                                await BlocProvider.of<LoginBloc>(context)
+                                    .signInWithApple()
+                                    .catchError((error) {
+                                  Scaffold.of(context).hideCurrentSnackBar();
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(error.toString()),
+                                      duration: Duration(seconds: 5),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -176,11 +194,10 @@ class _LoginUI extends StatelessWidget {
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
                       GoogleSignInButton(
-                        onPressed: () {
-                          try {
-                            BlocProvider.of<LoginBloc>(context)
-                                .signInWithGoogle();
-                          } on Exception {
+                        onPressed: () async {
+                          await BlocProvider.of<LoginBloc>(context)
+                              .signInWithGoogle()
+                              .catchError((error) {
                             Scaffold.of(context).hideCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -188,11 +205,27 @@ class _LoginUI extends StatelessWidget {
                                 duration: Duration(seconds: 5),
                               ),
                             );
-                          }
+                          });
                         },
                       ),
                       AppleSignInButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final appleSignInAvailable =
+                              await AppleSignInAvailable.check();
+                          if (appleSignInAvailable.isAvailable) {
+                            await BlocProvider.of<LoginBloc>(context)
+                                .signInWithApple()
+                                .catchError((error) {
+                              Scaffold.of(context).hideCurrentSnackBar();
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error.toString()),
+                                  duration: Duration(seconds: 5),
+                                ),
+                              );
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),
