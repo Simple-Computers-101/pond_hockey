@@ -62,15 +62,18 @@ class CreateAccountBody extends StatelessWidget {
                             onPressed: () async {
                               await BlocProvider.of<LoginBloc>(context)
                                   .signInWithGoogle()
-                                  .catchError((error) {
-                                Scaffold.of(context).hideCurrentSnackBar();
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Sign up with Google failed'),
-                                    duration: Duration(seconds: 5),
-                                  ),
-                                );
-                              });
+                                  .catchError(
+                                (error) {
+                                  Scaffold.of(context).hideCurrentSnackBar();
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Sign up with Google failed'),
+                                      duration: Duration(seconds: 5),
+                                    ),
+                                  );
+                                },
+                              );
                             },
                           ),
                           AppleSignInButton(

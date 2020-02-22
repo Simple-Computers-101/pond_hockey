@@ -63,6 +63,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final user = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
+        await user.sendEmailVerification();
         await addUserInfoToFireStore(user);
         authenticationBloc.add(LoggedIn(token: user.uid));
         yield LoginState.initial(isSignUp: false);
@@ -80,6 +81,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final user =
             await userRepository.signUpWithEmail(event.email, event.password);
+        await user.sendEmailVerification();
         await addUserInfoToFireStore(user);
         authenticationBloc.add(LoggedIn(token: user.uid));
         yield LoginState.initial(isSignUp: true);

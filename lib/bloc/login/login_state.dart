@@ -1,10 +1,12 @@
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
-class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
-  static final unions =
-      const Triplet<LoginInitial, LoginLoading, LoginFailure>();
+class LoginState extends Union4Impl<LoginInitial, LoginLoading, LoginFailure,
+    LoginUnverified> {
+  static final unions = const Quartet<LoginInitial, LoginLoading, LoginFailure,
+      LoginUnverified>();
 
-  LoginState._(Union3<LoginInitial, LoginLoading, LoginFailure> union)
+  LoginState._(
+      Union4<LoginInitial, LoginLoading, LoginFailure, LoginUnverified> union)
       : super(union);
 
   factory LoginState.initial({bool isSignUp}) => LoginState._(
@@ -15,9 +17,15 @@ class LoginState extends Union3Impl<LoginInitial, LoginLoading, LoginFailure> {
 
   factory LoginState.loading() => LoginState._(unions.second(LoginLoading()));
 
-  factory LoginState.failure({String error,bool isSignUp}) => LoginState._(
+  factory LoginState.failure({String error, bool isSignUp}) => LoginState._(
         unions.third(
-          LoginFailure(error: error,isSignUp: isSignUp),
+          LoginFailure(error: error, isSignUp: isSignUp),
+        ),
+      );
+
+  factory LoginState.unverified() => LoginState._(
+        unions.fourth(
+          LoginUnverified(),
         ),
       );
 }
@@ -30,11 +38,13 @@ class LoginInitial {
 
 class LoginLoading {}
 
+class LoginUnverified {}
+
 class LoginFailure {
   final bool isSignUp;
   final String error;
 
-  LoginFailure({this.error,this.isSignUp});
+  LoginFailure({this.error, this.isSignUp});
 
   @override
   String toString() => 'LoginFailure { error: $error }';

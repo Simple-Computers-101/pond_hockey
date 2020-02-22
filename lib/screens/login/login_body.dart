@@ -6,6 +6,7 @@ import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
+import 'package:pond_hockey/screens/login/verification.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
 import 'package:pond_hockey/services/apple/apple_available.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
@@ -14,8 +15,8 @@ class LoginBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    return SealedBlocBuilder3<LoginBloc, LoginState, LoginInitial, LoginLoading,
-        LoginFailure>(
+    return SealedBlocBuilder4<LoginBloc, LoginState, LoginInitial, LoginLoading,
+        LoginFailure, LoginUnverified>(
       builder: (blocContext, states) {
         var _loginUi = _LoginUI();
         var _signUp = CreateAccountBody();
@@ -24,12 +25,15 @@ class LoginBody extends StatelessWidget {
           (loading) => Center(child: CircularProgressIndicator()),
           (failure) {
             Scaffold.of(context).hideCurrentSnackBar();
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('An error occured'),
-              duration: Duration(seconds: 2),
-            ));
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text('An error occured'),
+                duration: Duration(seconds: 2),
+              ),
+            );
             return failure.isSignUp ? _signUp : _loginUi;
           },
+          (unverified) => EmailVerification(),
         );
       },
     );
@@ -113,7 +117,7 @@ class _LoginUI extends StatelessWidget {
                           AppleSignInButton(
                             onPressed: () async {
                               final appleSignInAvailable =
-                              await AppleSignInAvailable.check();
+                                  await AppleSignInAvailable.check();
                               if (appleSignInAvailable.isAvailable) {
                                 await BlocProvider.of<LoginBloc>(context)
                                     .signInWithApple()
