@@ -33,7 +33,7 @@ class LoginBody extends StatelessWidget {
             );
             return failure.isSignUp ? _signUp : _loginUi;
           },
-          (unverified) => EmailVerification(),
+          (unverified) => EmailVerification(unverified.user),
         );
       },
     );

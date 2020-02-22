@@ -77,14 +77,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
 
     if (event is SignUpButtonPressed) {
+      try {
+        await addUserInfoToFireStore(event.user);
+        authenticationBloc.add(LoggedIn(token: event.user.uid));
+        yield LoginState.initial(isSignUp: true);
+
+        // ignore: avoid_catches_without_on_clauses
+      } catch (error) {
+        var errorMessage = _errorMessage(error);
+        if (errorMessage != null) {
+          yield LoginState.failure(error: errorMessage, isSignUp: true);
+        }
+      }
+    }
+
+    if (event is SignUpInitial) {
       yield LoginState.loading();
       try {
         final user =
             await userRepository.signUpWithEmail(event.email, event.password);
         await user.sendEmailVerification();
-        await addUserInfoToFireStore(user);
-        authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial(isSignUp: true);
+        yield LoginState.unverified(user);
         // ignore: avoid_catches_without_on_clauses
       } catch (error) {
         var errorMessage = _errorMessage(error);
@@ -110,6 +123,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     add(GoogleLoginButtonPressed(credential));
   }
+
 
   Future<void> signInWithApple({List<Scope> scopes = const []}) async {
     final result = await AppleSignIn.performRequests(

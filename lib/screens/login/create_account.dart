@@ -69,7 +69,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     if (_formKey.currentState.validate()) {
                       FocusScope.of(context).unfocus();
                       BlocProvider.of<LoginBloc>(context).add(
-                        SignUpButtonPressed(
+                        SignUpInitial(
                           email: _emailController.text,
                           password: _passwordController.text,
                         ),

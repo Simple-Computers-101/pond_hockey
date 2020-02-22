@@ -31,7 +31,7 @@ class AppleLoginButtonPressed extends LoginEvent {
   @override
   String toString() =>
       'AppleLoginButtonPressed { authCredential: $authCredential, '
-          'email: $email}';
+      'email: $email}';
 }
 
 class EmailLoginButtonPressed extends LoginEvent {
@@ -52,23 +52,40 @@ class EmailLoginButtonPressed extends LoginEvent {
 }
 
 class SignUpButtonPressed extends LoginEvent {
+  final FirebaseUser user;
+
+  SignUpButtonPressed(
+      {@required this.user});
+
+  @override
+  List<Object> get props => [user];
+
+  @override
+  String toString() =>
+      'SignUpButtonPressed { user: $user }';
+}
+
+class ToggleUiButtonPressed extends LoginEvent {
+  final bool isSignUp;
+  ToggleUiButtonPressed({this.isSignUp});
+
+
+}
+
+class SignUpInitial extends LoginEvent {
   final String email;
   final String password;
 
-  SignUpButtonPressed({
-    @required this.email,
-    @required this.password,
-  });
+  SignUpInitial({
+    this.email,
+    this.password,}
+  );
+
 
   @override
   List<Object> get props => [email, password];
 
   @override
   String toString() =>
-      'SignUpButtonPressed { email: $email, password: $password }';
-}
-
-class ToggleUiButtonPressed extends LoginEvent {
-  final bool isSignUp;
-  ToggleUiButtonPressed({this.isSignUp});
+      'SignUpInitial { email: $email, password: $password }';
 }

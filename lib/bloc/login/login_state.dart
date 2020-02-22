@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
 class LoginState extends Union4Impl<LoginInitial, LoginLoading, LoginFailure,
@@ -23,9 +24,9 @@ class LoginState extends Union4Impl<LoginInitial, LoginLoading, LoginFailure,
         ),
       );
 
-  factory LoginState.unverified() => LoginState._(
+  factory LoginState.unverified(FirebaseUser user) => LoginState._(
         unions.fourth(
-          LoginUnverified(),
+          LoginUnverified(user),
         ),
       );
 }
@@ -38,7 +39,11 @@ class LoginInitial {
 
 class LoginLoading {}
 
-class LoginUnverified {}
+class LoginUnverified {
+  final FirebaseUser user;
+  LoginUnverified(this.user);
+
+}
 
 class LoginFailure {
   final bool isSignUp;
