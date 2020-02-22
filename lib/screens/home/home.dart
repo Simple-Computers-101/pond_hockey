@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
+import 'package:pond_hockey/bloc/auth/auth_events.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -14,6 +17,11 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
+      appBar: AppBar(actions: <Widget>[
+        FlatButton(onPressed: ()async{
+          await BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+        }, child: Text("Sign Out"))
+      ],),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
