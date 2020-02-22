@@ -65,7 +65,7 @@ class FormFieldBackground extends StatelessWidget {
                 bottom: BorderSide(color: Colors.grey[100]),
               ),
             )
-          : InputDecoration(),
+          : BoxDecoration(),
       child: field,
     );
   }
