@@ -25,7 +25,7 @@ class _EmailVerificationState extends State<EmailVerification> {
           RaisedButton(
             child: Text("Check Status"),
             onPressed: isVerifying
-                ? null
+                ? () {}
                 : () async {
                     setState(() {
                       isVerifying = true;

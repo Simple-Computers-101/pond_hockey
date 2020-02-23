@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -29,7 +31,7 @@ class LoginBody extends StatelessWidget {
               Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(failure.error),
+                  content: Text('An error occured: ${failure.error}'),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -47,12 +49,41 @@ class LoginBody extends StatelessWidget {
 class _LoginUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    void appleSignIn() async {
+      final appleSignInAvailable = await AppleSignInAvailable.check();
+      if (appleSignInAvailable.isAvailable) {
+        await BlocProvider.of<LoginBloc>(context)
+            .signInWithApple()
+            .catchError((error) {
+          Scaffold.of(context).hideCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+              duration: Duration(seconds: 5),
+            ),
+          );
+        });
+      }
+    }
+
+    void googleSignIn() async {
+      await BlocProvider.of<LoginBloc>(context).signInWithGoogle().catchError(
+        (error) {
+          Scaffold.of(context).hideCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign up with Google failed'),
+              duration: Duration(seconds: 5),
+            ),
+          );
+        },
+      );
+    }
+
     return OrientationBuilder(
       builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
           return Container(
-            width: double.infinity,
-            height: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -63,104 +94,82 @@ class _LoginUI extends StatelessWidget {
                 end: Alignment.centerRight,
               ),
             ),
-            child: SafeArea(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      LoginForm(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => ForgetPassword(context),
-                                    fullscreenDialog: true),
-                              );
-                            },
-                            child: Text(
-                              'Forgot password?',
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                          ),
-                          FlatButton(
-                            onPressed: () {
-                              BlocProvider.of<LoginBloc>(context).add(
-                                ToggleUiButtonPressed(isSignUp: true),
-                              );
-                            },
-                            child: Text(
-                              "Create Account",
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        thickness: 2,
-                        color: Colors.black,
-                        indent: 5,
-                        endIndent: 5,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Or sign in with these providers',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                      const SizedBox(height: 10),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView(
+                  shrinkWrap: true,
+                  primary: false,
+                  children: <Widget>[
+                    LoginForm(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Text(
+                          'Forgot password?',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                        FlatButton(
+                          onPressed: () {
+                            BlocProvider.of<LoginBloc>(context).add(
+                              ToggleUiButtonPressed(isSignUp: true),
+                            );
+                          },
+                          child: Text("Create Account"),
+                        ),
+                      ],
+                    ),
+                    const Divider(
+                      thickness: 2,
+                      color: Colors.black,
+                      indent: 5,
+                      endIndent: 5,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      Platform.isIOS
+                          ? 'Or sign in with these providers'
+                          : 'Sign in with Google',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    const SizedBox(height: 10),
+                    if (Platform.isIOS)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           GoogleSignInButton(
-                            onPressed: () async {
-                              await BlocProvider.of<LoginBloc>(context)
-                                  .signInWithGoogle()
-                                  .catchError((error) {
-                                Scaffold.of(context).hideCurrentSnackBar();
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Sign in with google failed'),
-                                    duration: Duration(seconds: 5),
-                                  ),
-                                );
-                              });
-                            },
+                            onPressed: googleSignIn,
                           ),
                           AppleSignInButton(
-                            onPressed: () async {
-                              final appleSignInAvailable =
-                                  await AppleSignInAvailable.check();
-                              if (appleSignInAvailable.isAvailable) {
-                                await BlocProvider.of<LoginBloc>(context)
-                                    .signInWithApple()
-                                    .catchError((error) {
-                                  Scaffold.of(context).hideCurrentSnackBar();
-                                  Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(error.toString()),
-                                      duration: Duration(seconds: 5),
-                                    ),
-                                  );
-                                });
-                              }
-                            },
+                            onPressed: appleSignIn,
                           ),
                         ],
+                      )
+                    else
+                      GoogleSignInButton(
+                        width: MediaQuery.of(context).size.width / 2,
+                        onPressed: () async {
+                          await BlocProvider.of<LoginBloc>(context)
+                              .signInWithGoogle()
+                              .catchError((error) {
+                            Scaffold.of(context).hideCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Sign in with google failed'),
+                                duration: Duration(seconds: 5),
+                              ),
+                            );
+                          });
+                        },
                       ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ),
           );
         } else {
           return Container(
-            width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -211,43 +220,19 @@ class _LoginUI extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        'Or sign in with these providers',
+                        Platform.isIOS
+                            ? 'Or sign in with these providers'
+                            : 'Sign in with Google',
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
                       GoogleSignInButton(
-                        onPressed: () async {
-                          await BlocProvider.of<LoginBloc>(context)
-                              .signInWithGoogle()
-                              .catchError((error) {
-                            Scaffold.of(context).hideCurrentSnackBar();
-                            Scaffold.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('An error occured'),
-                                duration: Duration(seconds: 5),
-                              ),
-                            );
-                          });
-                        },
+                        onPressed: googleSignIn,
                       ),
-                      AppleSignInButton(
-                        onPressed: () async {
-                          final appleSignInAvailable =
-                              await AppleSignInAvailable.check();
-                          if (appleSignInAvailable.isAvailable) {
-                            await BlocProvider.of<LoginBloc>(context)
-                                .signInWithApple()
-                                .catchError((error) {
-                              Scaffold.of(context).hideCurrentSnackBar();
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(error.toString()),
-                                  duration: Duration(seconds: 5),
-                                ),
-                              );
-                            });
-                          }
-                        },
-                      ),
+                      if (Platform.isIOS)
+                        AppleSignInButton(
+                          onPressed: appleSignIn,
+                        ),
                     ],
                   ),
                 ),

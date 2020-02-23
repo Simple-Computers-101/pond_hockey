@@ -44,7 +44,7 @@ class _LoginFormState extends State<LoginForm> {
             SizedBox(height: 24.0),
             Container(
               width: MediaQuery.of(context).size.width * 0.4,
-              height: MediaQuery.of(context).size.height * 0.07,
+              height: MediaQuery.of(context).size.height * 0.05,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -122,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
 
   _onLoginButtonPressed() {
     BlocProvider.of<LoginBloc>(context).add(EmailLoginButtonPressed(
-      email: _emailController.text,
+      email: _emailController.text.trim(),
       password: _passwordController.text,
     ));
   }

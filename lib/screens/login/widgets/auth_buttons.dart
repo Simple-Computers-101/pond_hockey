@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
-
 class GoogleSignInButton extends StatelessWidget {
-  const GoogleSignInButton({Key key, this.onPressed}) : super(key: key);
+  const GoogleSignInButton({
+    Key key,
+    this.onPressed,
+    this.width = 150,
+    this.height = 50,
+  }) : super(key: key);
 
   final VoidCallback onPressed;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +19,15 @@ class GoogleSignInButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(50),
         color: Colors.white,
       ),
-      height: 50,
-      width: 150,
+      height: height,
+      width: width,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(50),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Align(
@@ -65,6 +72,7 @@ class AppleSignInButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           onTap: onPressed,
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Image.asset(

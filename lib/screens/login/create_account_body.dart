@@ -1,15 +1,49 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/screens/login/create_account.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
+import 'package:pond_hockey/services/apple/apple_available.dart';
 
 class CreateAccountBody extends StatelessWidget {
   const CreateAccountBody({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    void appleSignIn() async {
+      final appleSignInAvailable = await AppleSignInAvailable.check();
+      if (appleSignInAvailable.isAvailable) {
+        await BlocProvider.of<LoginBloc>(context)
+            .signInWithApple()
+            .catchError((error) {
+          Scaffold.of(context).hideCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+              duration: Duration(seconds: 5),
+            ),
+          );
+        });
+      }
+    }
+
+    void googleSignIn() async {
+      await BlocProvider.of<LoginBloc>(context).signInWithGoogle().catchError(
+        (error) {
+          Scaffold.of(context).hideCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign up with Google failed'),
+              duration: Duration(seconds: 5),
+            ),
+          );
+        },
+      );
+    }
+
     return OrientationBuilder(
       builder: (cntx, orientation) {
         if (orientation == Orientation.portrait) {
@@ -51,36 +85,29 @@ class CreateAccountBody extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Or sign up with these providers',
+                        Platform.isIOS
+                            ? 'Or sign in with these providers'
+                            : 'Sign in with Google',
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
                       const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GoogleSignInButton(
-                            onPressed: () async {
-                              await BlocProvider.of<LoginBloc>(context)
-                                  .signInWithGoogle()
-                                  .catchError(
-                                (error) {
-                                  Scaffold.of(context).hideCurrentSnackBar();
-                                  Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('Sign up with Google failed'),
-                                      duration: Duration(seconds: 5),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
+                      Platform.isIOS
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                GoogleSignInButton(
+                                  onPressed: googleSignIn,
+                                ),
+                                AppleSignInButton(
+                                  onPressed: appleSignIn,
+                                ),
+                              ],
+                            )
+                          : GoogleSignInButton(
+                            onPressed: googleSignIn,
+                            width: MediaQuery.of(context).size.width * 0.5,
                           ),
-                          AppleSignInButton(
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
@@ -133,7 +160,9 @@ class CreateAccountBody extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        'Or sign up with these providers',
+                        Platform.isIOS
+                            ? 'Or sign up with these providers'
+                            : 'Sign up with Google',
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
                       GoogleSignInButton(
@@ -152,9 +181,10 @@ class CreateAccountBody extends StatelessWidget {
                           }
                         },
                       ),
-                      AppleSignInButton(
-                        onPressed: () {},
-                      ),
+                      if (Platform.isIOS)
+                        AppleSignInButton(
+                          onPressed: appleSignIn,
+                        ),
                     ],
                   ),
                 ),
