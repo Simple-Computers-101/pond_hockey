@@ -63,10 +63,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final user = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
-        await user.sendEmailVerification();
-        await addUserInfoToFireStore(user);
-        authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial(isSignUp: false);
+        if (await user.isEmailVerified){
+          authenticationBloc.add(LoggedIn(token: user.uid));
+          yield LoginState.initial(isSignUp: false);
+        }else{
+          await user.sendEmailVerification();
+          yield LoginState.unverified(user);
+        }
+
         // ignore: avoid_catches_without_on_clauses
       } catch (error) {
         var errorMessage = _errorMessage(error);

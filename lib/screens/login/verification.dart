@@ -38,7 +38,8 @@ class _EmailVerificationState extends State<EmailVerification> {
                               .currentUser();
                       currentUser.updateProfile(userInfo).then((value) async {
                         if (await currentUser.isEmailVerified) {
-
+                          await BlocProvider.of<LoginBloc>(context)
+                              .add(SignUpButtonPressed(user: currentUser));
                         } else {
                           Scaffold.of(context).removeCurrentSnackBar();
                           Scaffold.of(context).showSnackBar(
@@ -52,7 +53,6 @@ class _EmailVerificationState extends State<EmailVerification> {
                           });
                         }
                       });
-
                     } on Exception catch (error) {
                       Scaffold.of(context).removeCurrentSnackBar();
                       Scaffold.of(context).showSnackBar(
