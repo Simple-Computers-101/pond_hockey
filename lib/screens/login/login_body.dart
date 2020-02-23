@@ -28,7 +28,7 @@ class LoginBody extends StatelessWidget {
               Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('An error occured'),
+                  content: Text(failure.error),
                   duration: Duration(seconds: 2),
                 ),
               );

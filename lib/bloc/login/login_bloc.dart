@@ -124,7 +124,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     add(GoogleLoginButtonPressed(credential));
   }
 
-
   Future<void> signInWithApple({List<Scope> scopes = const []}) async {
     final result = await AppleSignIn.performRequests(
         [AppleIdRequest(requestedScopes: scopes)]);
@@ -157,6 +156,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
         break;
     }
+  }
+
+  Future<FirebaseUser> currentUser() async {
+    return await userRepository.currentUser();
   }
 
   Future<void> addUserInfoToFireStore(FirebaseUser currentUser) async {
@@ -192,7 +195,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         errorMessage = "Signing in with Email and Password is not enabled.";
         break;
       default:
-        errorMessage = "An undefined Error happened.";
+        errorMessage =
+            error.code == null ? "An undefined Error happened." : error.code;
     }
     return errorMessage;
   }
