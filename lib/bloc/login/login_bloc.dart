@@ -140,9 +140,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           accessToken:
               String.fromCharCodes(appleIdCredential.authorizationCode),
         );
-//        if (scopes.contains(Scope.email)) {
-//
-//        }
         add(AppleLoginButtonPressed(credential, appleIdCredential.email));
         break;
       case AuthorizationStatus.error:
@@ -164,6 +161,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<FirebaseUser> currentUser() async {
     return await userRepository.currentUser();
+  }
+
+  Future<FirebaseAuth> getAuthInstance() async {
+    return await userRepository.getAuthInstance();
   }
 
   Future<void> addUserInfoToFireStore(FirebaseUser currentUser) async {

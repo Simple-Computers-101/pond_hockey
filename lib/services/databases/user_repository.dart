@@ -58,6 +58,10 @@ class UserRepository {
     return await _authProvider.getCurrentUser();
   }
 
+  Future<FirebaseAuth> getAuthInstance() async {
+    return await _authProvider.authInstance();
+  }
+
   Future<void> deleteToken() async {
     /// delete from keystore/keychain
     await Future.delayed(Duration(seconds: 1));
