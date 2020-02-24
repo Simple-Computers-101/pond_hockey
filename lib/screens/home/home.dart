@@ -21,9 +21,17 @@ class HomeScreen extends StatelessWidget {
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              await BlocProvider.of<AuthenticationBloc>(context).add(
-                LoggedOut(),
-              );
+              try {
+                await BlocProvider.of<AuthenticationBloc>(context)
+                    .userRepository
+                    .googleSignIn
+                    .signOut();
+                await BlocProvider.of<AuthenticationBloc>(context).add(
+                  LoggedOut(),
+                );
+              } on Exception catch (error) {
+                print(error);
+              }
             },
             child: Text("Sign Out"),
           )
