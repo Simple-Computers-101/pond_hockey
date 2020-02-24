@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pond_hockey/models/tournament.dart';
 
@@ -29,10 +27,12 @@ class TournamentsRepository {
   Future<List<Tournament>> getScorerTournaments(String uid) async {
     final query = await ref.where('scorers', arrayContains: uid).getDocuments();
     final ownedTournaments = await getOwnedTournaments(uid);
+
     final scorableTournaments =
         query.documents.map(Tournament.fromDocument).toList();
-    final allTournaments = [];
-    allTournaments..addAll(ownedTournaments)..addAll(scorableTournaments);
-    return LinkedHashSet<Tournament>.from(allTournaments).toList();
+    final overlappingTournaments = scorableTournaments
+      ..addAll(ownedTournaments);
+
+    return overlappingTournaments.toSet().toList();
   }
 }

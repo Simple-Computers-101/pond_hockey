@@ -10,6 +10,7 @@ import 'package:auto_route/router_utils.dart';
 import 'package:pond_hockey/initial_screen.dart';
 import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
+import 'package:pond_hockey/screens/account/account.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
 import 'package:pond_hockey/screens/tournaments/add_tournament/add_tournament.dart';
 
@@ -17,12 +18,14 @@ class Router {
   static const init = '/';
   static const home = '/home';
   static const login = '/login';
+  static const account = '/account';
   static const tournaments = '/tournaments';
   static const addTournament = '/add-tournament';
   static const routes = [
     init,
     home,
     login,
+    account,
     tournaments,
     addTournament,
   ];
@@ -50,6 +53,15 @@ class Router {
       case Router.login:
         return MaterialPageRoute(
           builder: (_) => LoginScreen(),
+          settings: settings,
+        );
+      case Router.account:
+        if (hasInvalidArgs<Key>(args)) {
+          return misTypedArgsRoute<Key>(args);
+        }
+        final typedArgs = args as Key;
+        return MaterialPageRoute(
+          builder: (_) => AccountScreen(key: typedArgs),
           settings: settings,
         );
       case Router.tournaments:

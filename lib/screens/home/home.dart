@@ -1,8 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_events.dart';
+import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,23 +17,16 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
-      appBar: AppBar(
+      appBar: CustomAppBar(
+        title: '',
+        transparentBackground: true,
         actions: <Widget>[
           FlatButton(
+            color: Colors.white,
             onPressed: () async {
-              try {
-                await BlocProvider.of<AuthenticationBloc>(context)
-                    .userRepository
-                    .googleSignIn
-                    .signOut();
-                await BlocProvider.of<AuthenticationBloc>(context).add(
-                  LoggedOut(),
-                );
-              } on Exception catch (error) {
-                print(error);
-              }
+              Router.navigator.pushNamed(Router.account);
             },
-            child: Text("Sign Out"),
+            child: Text("Account"),
           )
         ],
       ),
@@ -45,78 +38,32 @@ class HomeScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            if (orientation == Orientation.portrait) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/img/pondhockeybrand.png'),
-                  const SizedBox(height: 25),
-                  const Divider(
-                    color: Colors.white,
-                    thickness: 15,
-                    indent: 20,
-                    endIndent: 20,
-                  ),
-                  const SizedBox(height: 25),
-                  _PortraitMenuButton(
-                    onPressed: () {
-                      Router.navigator.pushNamed(Router.tournaments);
-                    },
-                    text: 'View Results',
-                  ),
-                  const SizedBox(height: 30),
-                  _PortraitMenuButton(
-                    onPressed: () {
-                      Router.navigator.pushNamed(
-                        Router.tournaments,
-                        arguments: TournamentsScreenArguments(
-                          scoringMode: true,
-                        ),
-                      );
-                    },
-                    text: 'Score Games',
-                  ),
-                  const SizedBox(height: 30),
-                  _PortraitMenuButton(
-                    onPressed: () {
-                      Router.navigator.pushNamed(
-                        Router.tournaments,
-                        arguments: TournamentsScreenArguments(
-                          editMode: true,
-                        ),
-                      );
-                    },
-                    text: 'Manage Tournaments',
-                  ),
-                ],
-              );
-            } else {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const SizedBox(width: 25),
-                  Image.asset('assets/img/pondhockeybrand.png'),
-                  const SizedBox(width: 25),
-                  const VerticalDivider(
-                    color: Colors.white,
-                    thickness: 15,
-                    indent: 20,
-                    endIndent: 20,
-                  ),
-                  const SizedBox(width: 25),
-                  Column(
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: OrientationBuilder(
+              builder: (context, orientation) {
+                if (orientation == Orientation.portrait) {
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _LandscapeMenuButton(
+                      Image.asset('assets/img/pondhockeybrand.png'),
+                      const SizedBox(height: 25),
+                      const Divider(
+                        color: Colors.white,
+                        thickness: 15,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                      const SizedBox(height: 25),
+                      _PortraitMenuButton(
                         onPressed: () {
                           Router.navigator.pushNamed(Router.tournaments);
                         },
                         text: 'View Results',
                       ),
                       const SizedBox(height: 30),
-                      _LandscapeMenuButton(
+                      _PortraitMenuButton(
                         onPressed: () {
                           Router.navigator.pushNamed(
                             Router.tournaments,
@@ -128,12 +75,11 @@ class HomeScreen extends StatelessWidget {
                         text: 'Score Games',
                       ),
                       const SizedBox(height: 30),
-                      _LandscapeMenuButton(
+                      _PortraitMenuButton(
                         onPressed: () {
                           Router.navigator.pushNamed(
                             Router.tournaments,
                             arguments: TournamentsScreenArguments(
-                              scoringMode: false,
                               editMode: true,
                             ),
                           );
@@ -141,11 +87,63 @@ class HomeScreen extends StatelessWidget {
                         text: 'Manage Tournaments',
                       ),
                     ],
-                  ),
-                ],
-              );
-            }
-          },
+                  );
+                } else {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const SizedBox(width: 25),
+                      Image.asset('assets/img/pondhockeybrand.png'),
+                      const SizedBox(width: 25),
+                      const VerticalDivider(
+                        color: Colors.white,
+                        thickness: 15,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                      const SizedBox(width: 25),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _LandscapeMenuButton(
+                            onPressed: () {
+                              Router.navigator.pushNamed(Router.tournaments);
+                            },
+                            text: 'View Results',
+                          ),
+                          const SizedBox(height: 30),
+                          _LandscapeMenuButton(
+                            onPressed: () {
+                              Router.navigator.pushNamed(
+                                Router.tournaments,
+                                arguments: TournamentsScreenArguments(
+                                  scoringMode: true,
+                                ),
+                              );
+                            },
+                            text: 'Score Games',
+                          ),
+                          const SizedBox(height: 30),
+                          _LandscapeMenuButton(
+                            onPressed: () {
+                              Router.navigator.pushNamed(
+                                Router.tournaments,
+                                arguments: TournamentsScreenArguments(
+                                  scoringMode: false,
+                                  editMode: true,
+                                ),
+                              );
+                            },
+                            text: 'Manage Tournaments',
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ),
     );

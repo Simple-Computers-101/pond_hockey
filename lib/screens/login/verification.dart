@@ -31,28 +31,24 @@ class _EmailVerificationState extends State<EmailVerification> {
                       isVerifying = true;
                     });
                     try {
-                      final userInfo = UserUpdateInfo();
-                      userInfo.displayName = "test";
                       final currentUser =
                           await BlocProvider.of<LoginBloc>(context)
                               .currentUser();
-                      currentUser.updateProfile(userInfo).then((value) async {
-                        if (await currentUser.isEmailVerified) {
-                          await BlocProvider.of<LoginBloc>(context)
-                              .add(SignUpButtonPressed(user: currentUser));
-                        } else {
-                          Scaffold.of(context).removeCurrentSnackBar();
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Your email needs verification"),
-                            ),
-                          );
+                      if (await currentUser.isEmailVerified) {
+                        await BlocProvider.of<LoginBloc>(context)
+                            .add(SignUpButtonPressed(user: currentUser));
+                      } else {
+                        Scaffold.of(context).removeCurrentSnackBar();
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Your email needs verification"),
+                          ),
+                        );
 
-                          setState(() {
-                            isVerifying = false;
-                          });
-                        }
-                      });
+                        setState(() {
+                          isVerifying = false;
+                        });
+                      }
                     } on Exception catch (error) {
                       Scaffold.of(context).removeCurrentSnackBar();
                       Scaffold.of(context).showSnackBar(

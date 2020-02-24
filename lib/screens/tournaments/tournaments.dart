@@ -7,7 +7,7 @@ import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:provider/provider.dart';
 
-class TournamentsScreen extends StatefulWidget {
+class TournamentsScreen extends StatelessWidget {
   const TournamentsScreen(
       {Key key, this.scoringMode = false, this.editMode = false})
       : super(key: key);
@@ -15,34 +15,16 @@ class TournamentsScreen extends StatefulWidget {
   final bool scoringMode;
   final bool editMode;
 
-  @override
-  _TournamentsScreenState createState() => _TournamentsScreenState();
-}
-
-class _TournamentsScreenState extends State<TournamentsScreen> {
   bool canEditOrScore() {
-    return widget.scoringMode == true || widget.editMode == true;
+    return scoringMode == true || editMode == true;
   }
 
   bool canEdit() {
-    return widget.editMode == true;
+    return editMode == true;
   }
 
   bool canScore() {
-    return widget.scoringMode == true || widget.editMode == true;
-  }
-
-  String uid;
-
-  @override
-  void initState() {
-    super.initState();
-    _getUID();
-  }
-
-  void _getUID() async {
-    uid = (await FirebaseAuth.instance.currentUser()).uid;
-    if (mounted) setState(() {});
+    return scoringMode == true || editMode == true;
   }
 
   @override
@@ -104,7 +86,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
       );
     }
 
-    Widget buildScorerOrEditorView() {
+    Widget buildScorerOrEditorView(String uid) {
       if (canEdit()) {
         return ManageTournamentView(uid: uid, editor: true);
       } else if (canScore()) {
@@ -113,31 +95,42 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
       return SizedBox();
     }
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: canEdit()
-            ? 'Manage Tournaments'
-            : canScore() ? 'Score Tournaments' : 'Tournaments',
-      ),
-      floatingActionButton: canEdit()
-          ? FloatingActionButton(
-              onPressed: () {
-                Router.navigator.pushNamed(Router.addTournament);
-              },
-              child: Icon(Icons.add),
-            )
-          : null,
-      body: Container(
-        decoration: BoxDecoration(
-          color: Color(0xFFE9E9E9),
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(50),
+    return FutureBuilder(
+      future: FirebaseAuth.instance.currentUser(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        final uid = (snapshot.data as FirebaseUser).uid;
+        return Scaffold(
+          appBar: CustomAppBar(
+            title: canEdit()
+                ? 'Manage Tournaments'
+                : canScore() ? 'Score Tournaments' : 'Tournaments',
           ),
-        ),
-        child: !canEditOrScore()
-            ? buildAllTournaments()
-            : buildScorerOrEditorView(),
-      ),
+          floatingActionButton: canEdit()
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Router.navigator.pushNamed(Router.addTournament);
+                  },
+                  child: Icon(Icons.add),
+                )
+              : null,
+          body: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFE9E9E9),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(50),
+              ),
+            ),
+            child: !canEditOrScore()
+                ? buildAllTournaments()
+                : buildScorerOrEditorView(uid),
+          ),
+        );
+      },
     );
   }
 }

@@ -58,8 +58,8 @@ class UserRepository {
     return await _authProvider.getCurrentUser();
   }
 
-  Future<FirebaseAuth> getAuthInstance() async {
-    return await _authProvider.authInstance();
+  FirebaseAuth getAuthInstance(){
+    return _authProvider.authInstance();
   }
 
   Future<void> deleteToken() async {
