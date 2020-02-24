@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "30531933960-h1c6m588npf03qtuj101rtelfoa5pser.apps.googleusercontent.com",
+          "client_id": "30531933960-q7j414gk07dd4ue82js0bcuba6guod63.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplecomputers101.pond_hockey",
+            "certificate_hash": "4cb671c6d25e2ad72d6ee623513701b6a246d251"
+          }
+        },
+        {
+          "client_id": "30531933960-bbs6k0kn4i2k7tv0qgb73o9f0nc8ia75.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -28,8 +36,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "30531933960-h1c6m588npf03qtuj101rtelfoa5pser.apps.googleusercontent.com",
+              "client_id": "30531933960-bbs6k0kn4i2k7tv0qgb73o9f0nc8ia75.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "30531933960-cccb0u945h9flbiec7b7q4fnuckfm44t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.simplecomputers101.pondHockey"
+              }
             }
           ]
         }

@@ -72,7 +72,7 @@ class _LoginUI extends StatelessWidget {
           Scaffold.of(context).hideCurrentSnackBar();
           Scaffold.of(context).showSnackBar(
             SnackBar(
-              content: Text('Sign up with Google failed'),
+              content: Text('Sign in with Google failed'),
               duration: Duration(seconds: 5),
             ),
           );
@@ -156,7 +156,8 @@ class _LoginUI extends StatelessWidget {
                             Scaffold.of(context).hideCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Sign in with google failed'),
+                                content:
+                                    Text('Sign in with google failed$error'),
                                 duration: Duration(seconds: 5),
                               ),
                             );
