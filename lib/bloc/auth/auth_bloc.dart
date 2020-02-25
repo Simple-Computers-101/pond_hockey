@@ -40,5 +40,9 @@ class AuthenticationBloc
       await userRepository.deleteToken();
       yield AuthenticationState.unAuthenticated();
     }
+
+//    if (event is LogInLater) {
+//      yield AuthenticationState.unAuthenticated(signInLater: true);
+//    }
   }
 }

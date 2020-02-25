@@ -20,6 +20,14 @@ class LoginScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Login / Sign up',
         transparentBackground: true,
+//        actions: <Widget>[
+//          FlatButton(
+//              onPressed: () {
+//                BlocProvider.of<AuthenticationBloc>(context)
+//                    .add(LogInLater());
+//              },
+//              child: Text("Later"))
+//        ],
       ),
       extendBody: true,
       resizeToAvoidBottomInset: false,

@@ -22,7 +22,10 @@ class AuthenticationState extends Union4Impl<UnAuthenticated, Authenticated,
       AuthenticationState._(unions.fourth(AuthLoading()));
 }
 
-class UnAuthenticated {}
+class UnAuthenticated {
+//  bool signInLater;
+//  UnAuthenticated({bool signInLater}) : signInLater = signInLater ?? false;
+}
 
 class Authenticated {}
 

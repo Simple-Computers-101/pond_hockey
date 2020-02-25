@@ -15,7 +15,7 @@ class InitialScreen extends StatelessWidget {
         UnAuthenticated, Authenticated, AuthUninitialized, AuthLoading>(
       builder: (_, states) {
         return states(
-          (unAuthenticated) => LoginScreen(),
+          (unAuthenticated) => HomeScreen(),
           (authenticated) => HomeScreen(),
           (unInitialized) => LoadingScreen(),
           (loading) => LoadingScreen(),
