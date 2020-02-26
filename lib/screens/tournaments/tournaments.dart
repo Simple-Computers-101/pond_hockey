@@ -56,30 +56,24 @@ class TournamentsScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return buildError(snapshot.error);
           }
-          return Column(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Visibility(
-                  visible: snapshot.data.documents.isNotEmpty,
-                  child: TournamentsList(
-                    documents: snapshot.data.documents,
-                  ),
-                  replacement: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'There are no tournaments!',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        'Check back later.',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
-                  ),
+          return Visibility(
+            visible: snapshot.data.documents.isNotEmpty,
+            child: TournamentsList(
+              documents: snapshot.data.documents,
+            ),
+            replacement: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'There are no tournaments!',
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-              ),
-            ],
+                Text(
+                  'Check back later.',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ],
+            ),
           );
         },
       );
@@ -118,15 +112,18 @@ class TournamentsScreen extends StatelessWidget {
                 )
               : null,
           body: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFE9E9E9),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(50),
-              ),
+            // height: double.infinity,
+            // decoration: BoxDecoration(
+            //   color: Color(0xFFE9E9E9),
+            //   borderRadius: BorderRadius.vertical(
+            //     top: Radius.circular(50),
+            //   ),
+            // ),
+            child: SingleChildScrollView(
+              child: !canEditOrScore()
+                  ? buildAllTournaments()
+                  : buildScorerOrEditorView(uid),
             ),
-            child: !canEditOrScore()
-                ? buildAllTournaments()
-                : buildScorerOrEditorView(uid),
           ),
         );
       },
@@ -146,59 +143,40 @@ class ManageTournamentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repo = TournamentsRepository();
-    return Column(
-      children: <Widget>[
-        if (editor)
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0, top: 16),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Column(
-                children: <Widget>[
-                  Text('Coins'),
-                  Text('0'),
-                ],
-              ),
-            ),
-          ),
-        SingleChildScrollView(
-          child: FutureBuilder(
-            future: editor
-                ? repo.getOwnedTournaments(uid)
-                : repo.getScorerTournaments(uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.connectionState == ConnectionState.active ||
-                  snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  return TournamentsList(
-                    documents: snapshot.data,
-                  );
-                } else {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        'You don\'t have any tournaments!',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        'Create some or be invited.',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
-                  );
-                }
-              }
-              return null;
-            },
-          ),
-        ),
-      ],
+    return FutureBuilder(
+      future: editor
+          ? repo.getOwnedTournaments(uid)
+          : repo.getScorerTournaments(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return TournamentsList(
+              documents: snapshot.data,
+            );
+          } else {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'You don\'t have any tournaments!',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                Text(
+                  'Create some or be invited.',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ],
+            );
+          }
+        }
+        return null;
+      },
     );
   }
 }

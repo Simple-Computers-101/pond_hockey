@@ -2,22 +2,19 @@ import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
-import 'package:pond_hockey/screens/login/login.dart';
 
 class HomeScreen extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
+    FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     return FutureBuilder(
       future: FirebaseAuth.instance.currentUser(),
       builder: (context, snapshot) {
@@ -28,15 +25,6 @@ class HomeScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: '',
             transparentBackground: true,
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.white,
-                onPressed: () async {
-                  Router.navigator.pushNamed(Router.account);
-                },
-                child: Text("Account"),
-              )
-            ],
           ),
           body: Container(
             width: double.infinity,
@@ -70,7 +58,9 @@ class HomeScreen extends StatelessWidget {
                           _PortraitMenuButton(
                             onPressed: () {
                               _scoreGameButtonPress(
-                                  _scaffoldKey, context, snapshot.hasData);
+                                _scaffoldKey,
+                                snapshot.hasData,
+                              );
                             },
                             text: 'Score Games',
                           ),
@@ -78,10 +68,22 @@ class HomeScreen extends StatelessWidget {
                           _PortraitMenuButton(
                             onPressed: () {
                               _manageTournamentButtonPress(
-                                  _scaffoldKey, context, snapshot.hasData);
+                                _scaffoldKey,
+                                snapshot.hasData,
+                              );
                             },
                             text: 'Manage Tournaments',
                           ),
+                          if (snapshot.hasData) ...[
+                            const SizedBox(height: 30),
+                            _PortraitMenuButton(
+                              onPressed: () => Router.navigator.pushNamed(
+                                Router.account,
+                              ),
+                              text: 'Account',
+                            )
+                          ] else
+                            SizedBox(),
                         ],
                       );
                     } else {
@@ -107,7 +109,9 @@ class HomeScreen extends StatelessWidget {
                               _LandscapeMenuButton(
                                 onPressed: () {
                                   _scoreGameButtonPress(
-                                      _scaffoldKey, context, snapshot.data);
+                                    _scaffoldKey,
+                                    snapshot.data,
+                                  );
                                 },
                                 text: 'Score Games',
                               ),
@@ -115,10 +119,22 @@ class HomeScreen extends StatelessWidget {
                               _LandscapeMenuButton(
                                 onPressed: () {
                                   _manageTournamentButtonPress(
-                                      _scaffoldKey, context, snapshot.hasData);
+                                    _scaffoldKey,
+                                    snapshot.hasData,
+                                  );
                                 },
                                 text: 'Manage Tournaments',
                               ),
+                              if (snapshot.hasData) ...[
+                                const SizedBox(height: 30),
+                                _LandscapeMenuButton(
+                                  onPressed: () => Router.navigator.pushNamed(
+                                    Router.account,
+                                  ),
+                                  text: 'Account',
+                                )
+                              ] else
+                                SizedBox(),
                             ],
                           ),
                         ],
@@ -135,7 +151,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   _scoreGameButtonPress(
-      GlobalKey<ScaffoldState> scaffoldKey, BuildContext context, bool hasKey) {
+    GlobalKey<ScaffoldState> scaffoldKey,
+    bool hasKey,
+  ) {
     if (hasKey) {
       Router.navigator.pushNamed(
         Router.tournaments,
@@ -149,23 +167,20 @@ class HomeScreen extends StatelessWidget {
         SnackBar(
           content: Text("Please log in to score games"),
           action: SnackBarAction(
-              label: "log in",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => LoginScreen(),
-                    fullscreenDialog: true,
-                  ),
-                );
-              }),
+            label: "log in",
+            onPressed: () async {
+              Router.navigator.pushNamed(Router.login);
+            },
+          ),
         ),
       );
     }
   }
 
   _manageTournamentButtonPress(
-      GlobalKey<ScaffoldState> scaffoldKey, BuildContext context, bool hasKey) {
+    GlobalKey<ScaffoldState> scaffoldKey,
+    bool hasKey,
+  ) {
     if (hasKey) {
       Router.navigator.pushNamed(
         Router.tournaments,
@@ -180,16 +195,11 @@ class HomeScreen extends StatelessWidget {
         SnackBar(
           content: Text("Please log in to manage tournaments"),
           action: SnackBarAction(
-              label: "log in",
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => LoginScreen(),
-                    fullscreenDialog: true,
-                  ),
-                );
-              }),
+            label: "log in",
+            onPressed: () async {
+              Router.navigator.pushNamed(Router.login);
+            },
+          ),
         ),
       );
     }
