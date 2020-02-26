@@ -48,22 +48,18 @@ class HomeScreen extends StatelessWidget {
             ),
             child: ClipRRect(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                 child: OrientationBuilder(
                   builder: (context, orientation) {
                     if (orientation == Orientation.portrait) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset('assets/img/pondhockeybrand.png'),
-                          const SizedBox(height: 25),
-                          const Divider(
-                            color: Colors.white,
-                            thickness: 15,
-                            indent: 20,
-                            endIndent: 20,
+                          SvgPicture.asset(
+                            'assets/svg/pondhockey.svg',
+                            height: MediaQuery.of(context).size.height * 0.4,
                           ),
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 50),
                           _PortraitMenuButton(
                             onPressed: () {
                               Router.navigator.pushNamed(Router.tournaments);
@@ -92,16 +88,11 @@ class HomeScreen extends StatelessWidget {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const SizedBox(width: 25),
-                          Image.asset('assets/img/pondhockeybrand.png'),
-                          const SizedBox(width: 25),
-                          const VerticalDivider(
-                            color: Colors.white,
-                            thickness: 15,
-                            indent: 20,
-                            endIndent: 20,
+                          SvgPicture.asset(
+                            'assets/svg/pondhockey.svg',
+                            height: MediaQuery.of(context).size.height * 0.8,
                           ),
-                          const SizedBox(width: 25),
+                          const SizedBox(width: 50),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
