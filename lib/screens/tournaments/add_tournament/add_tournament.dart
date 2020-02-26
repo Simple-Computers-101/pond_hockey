@@ -10,7 +10,6 @@ import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:pond_hockey/utils/date_utils.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTournamentScreen extends StatelessWidget {
@@ -97,8 +96,7 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       owner: (await FirebaseAuth.instance.currentUser()).uid,
       scorers: null,
     );
-    Provider.of<TournamentsRepository>(context, listen: false)
-        .addTournament(tournament);
+    TournamentsRepository().addTournament(tournament);
     Router.navigator.pushNamed(Router.tournaments);
   }
 

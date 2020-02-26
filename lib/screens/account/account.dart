@@ -51,48 +51,58 @@ class _AccountScreenState extends State<AccountScreen> {
           )
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          FormBuilder(
-            // readOnly: true,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              primary: false,
-              shrinkWrap: true,
-              children: <Widget>[
-                FormBuilderTextField(
-                  attribute: 'account-email',
-                  readOnly: !_editingMode,
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
-                    helperText: _verifiedEmail
-                        ? 'Email is verified'
-                        : 'Verify your email',
-                    helperStyle: TextStyle(
-                      color: _verifiedEmail ? Colors.green : Colors.black,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              FormBuilder(
+                // readOnly: true,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  primary: false,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    FormBuilderTextField(
+                      attribute: 'account-email',
+                      readOnly: !_editingMode,
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(),
+                        helperText: _verifiedEmail
+                            ? 'Email is verified'
+                            : 'Verify your email',
+                        helperStyle: TextStyle(
+                          color: _verifiedEmail ? Colors.green : Colors.black,
+                        ),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validators: [
+                        FormBuilderValidators.email(),
+                        FormBuilderValidators.required(),
+                      ],
                     ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validators: [
-                    FormBuilderValidators.email(),
-                    FormBuilderValidators.required(),
                   ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
+                child: MaterialButton(
+                  color: Colors.red,
+                  onPressed: () async {
+                    await BlocProvider.of<AuthenticationBloc>(context).add(
+                      LoggedOut(),
+                    );
+                    Router.navigator.pop();
+                  },
+                  child: Text('Sign out'),
+                ),
+              ),
+            ],
           ),
-          FlatButton(
-            onPressed: () async {
-              await BlocProvider.of<AuthenticationBloc>(context).add(
-                LoggedOut(),
-              );
-              Router.navigator.pop();
-            },
-            child: Text('Sign out'),
-          ),
-        ],
+        ),
       ),
     );
   }

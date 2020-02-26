@@ -6,13 +6,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:auto_route/router_utils.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:pond_hockey/initial_screen.dart';
 import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
 import 'package:pond_hockey/screens/account/account.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
+import 'package:pond_hockey/screens/tournaments/details/tournament_details.dart';
+import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/screens/tournaments/details/team_details.dart';
+import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/screens/tournaments/add_tournament/add_tournament.dart';
+import 'package:pond_hockey/screens/tournaments/add_teams/add_teams.dart';
 
 class Router {
   static const init = '/';
@@ -20,19 +25,12 @@ class Router {
   static const login = '/login';
   static const account = '/account';
   static const tournaments = '/tournaments';
+  static const tournamentDetails = '/tournament-details';
+  static const teamDetails = '/team-details';
   static const addTournament = '/add-tournament';
-  static const routes = [
-    init,
-    home,
-    login,
-    account,
-    tournaments,
-    addTournament,
-  ];
-  static GlobalKey<NavigatorState> get navigatorKey =>
-      getNavigatorKey<Router>();
-  static NavigatorState get navigator => navigatorKey.currentState;
-
+  static const addTeams = '/add-teams';
+  static const _guardedRoutes = const {};
+  static final navigator = ExtendedNavigator();
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
@@ -41,18 +39,19 @@ class Router {
           return misTypedArgsRoute<Key>(args);
         }
         final typedArgs = args as Key;
-        return MaterialPageRoute(
-          builder: (_) => InitialScreen(key: typedArgs),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              InitialScreen(key: typedArgs),
           settings: settings,
         );
       case Router.home:
-        return MaterialPageRoute(
-          builder: (_) => HomeScreen(),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) => HomeScreen(),
           settings: settings,
         );
       case Router.login:
-        return MaterialPageRoute(
-          builder: (_) => LoginScreen(),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) => LoginScreen(),
           settings: settings,
         );
       case Router.account:
@@ -60,8 +59,9 @@ class Router {
           return misTypedArgsRoute<Key>(args);
         }
         final typedArgs = args as Key;
-        return MaterialPageRoute(
-          builder: (_) => AccountScreen(key: typedArgs),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              AccountScreen(key: typedArgs),
           settings: settings,
         );
       case Router.tournaments:
@@ -70,16 +70,51 @@ class Router {
         }
         final typedArgs =
             args as TournamentsScreenArguments ?? TournamentsScreenArguments();
-        return MaterialPageRoute(
-          builder: (_) => TournamentsScreen(
-              key: typedArgs.key,
-              scoringMode: typedArgs.scoringMode,
-              editMode: typedArgs.editMode),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              TournamentsScreen(
+                  key: typedArgs.key,
+                  scoringMode: typedArgs.scoringMode,
+                  editMode: typedArgs.editMode),
+          settings: settings,
+        );
+      case Router.tournamentDetails:
+        if (hasInvalidArgs<TournamentDetailsArguments>(args)) {
+          return misTypedArgsRoute<TournamentDetailsArguments>(args);
+        }
+        final typedArgs =
+            args as TournamentDetailsArguments ?? TournamentDetailsArguments();
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              TournamentDetails(
+                  key: typedArgs.key, tournament: typedArgs.tournament),
+          settings: settings,
+        );
+      case Router.teamDetails:
+        if (hasInvalidArgs<TeamDetailsScreenArguments>(args)) {
+          return misTypedArgsRoute<TeamDetailsScreenArguments>(args);
+        }
+        final typedArgs =
+            args as TeamDetailsScreenArguments ?? TeamDetailsScreenArguments();
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              TeamDetailsScreen(key: typedArgs.key, team: typedArgs.team),
           settings: settings,
         );
       case Router.addTournament:
-        return MaterialPageRoute(
-          builder: (_) => AddTournamentScreen(),
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              AddTournamentScreen(),
+          settings: settings,
+        );
+      case Router.addTeams:
+        if (hasInvalidArgs<Tournament>(args, isRequired: true)) {
+          return misTypedArgsRoute<Tournament>(args);
+        }
+        final typedArgs = args as Tournament;
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              AddTeamsScreen(tournament: typedArgs),
           settings: settings,
         );
       default:
@@ -99,4 +134,18 @@ class TournamentsScreenArguments {
   final bool editMode;
   TournamentsScreenArguments(
       {this.key, this.scoringMode = false, this.editMode = false});
+}
+
+//TournamentDetails arguments holder class
+class TournamentDetailsArguments {
+  final Key key;
+  final Tournament tournament;
+  TournamentDetailsArguments({this.key, this.tournament});
+}
+
+//TeamDetailsScreen arguments holder class
+class TeamDetailsScreenArguments {
+  final Key key;
+  final Team team;
+  TeamDetailsScreenArguments({this.key, this.team});
 }

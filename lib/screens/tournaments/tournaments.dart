@@ -5,7 +5,6 @@ import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
-import 'package:provider/provider.dart';
 
 class TournamentsScreen extends StatelessWidget {
   const TournamentsScreen(
@@ -29,7 +28,7 @@ class TournamentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repo = Provider.of<TournamentsRepository>(context);
+    final repo = TournamentsRepository();
 
     Widget buildLoading() {
       return Center(child: CircularProgressIndicator());
@@ -146,7 +145,7 @@ class ManageTournamentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repo = Provider.of<TournamentsRepository>(context);
+    final repo = TournamentsRepository();
     return Column(
       children: <Widget>[
         if (editor)

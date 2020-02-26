@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class TournamentDetails extends StatefulWidget {
   const TournamentDetails({Key key, this.tournament}) : super(key: key);
@@ -27,17 +30,25 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                   widget.tournament.name,
                   style: Theme.of(context).textTheme.headline5,
                 ),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.person_add),
+                    onPressed: () => Router.navigator.pushNamed(
+                      Router.addTeams,
+                      arguments: widget.tournament,
+                    ),
+                  ),
+                ],
                 bottom: TabBar(
                   tabs: [
                     Tab(text: 'Item One'),
                     Tab(text: 'Item Two'),
-                    Tab(text: 'Item Three'),
+                    Tab(text: 'Teams'),
                   ],
                   indicator: UnderlineTabIndicator(
                     insets: const EdgeInsets.symmetric(horizontal: 150),
                     borderSide: BorderSide(
                       width: 2,
-                      
                     ),
                   ),
                 ),
@@ -46,7 +57,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
           },
           body: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
               color: Color(0xFFE9E9E9),
             ),
             child: TabBarView(children: [
@@ -56,13 +67,61 @@ class _TournamentDetailsState extends State<TournamentDetails> {
               Container(
                 color: Colors.red,
               ),
-              Container(
-                color: Colors.yellow,
-              ),
+              _TeamsPage(tournamentId: widget.tournament.id),
             ]),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TeamsPage extends StatefulWidget {
+  const _TeamsPage({
+    Key key,
+    @required this.tournamentId,
+  }) : super(key: key);
+
+  final String tournamentId;
+
+  @override
+  __TeamsPageState createState() => __TeamsPageState();
+}
+
+class __TeamsPageState extends State<_TeamsPage> {
+  List<Team> _teams;
+
+  @override
+  void initState() {
+    super.initState();
+    _getTeams();
+  }
+
+  void _getTeams() async {
+    var teams =
+        await TeamsRepository().getTeamsFromTournamentId(widget.tournamentId);
+    setState(() {
+      _teams = teams ?? [];
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_teams == null) {
+      return CircularProgressIndicator();
+    }
+    return ListView.builder(
+      itemCount: _teams.length,
+      itemBuilder: (context, index) {
+        final team = _teams[index];
+        return ListTile(
+          title: Text(team.name),
+          onTap: () => Router.navigator.pushNamed(
+            Router.teamDetails,
+            arguments: TeamDetailsScreenArguments(team: team),
+          ),
+        );
+      },
     );
   }
 }

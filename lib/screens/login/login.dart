@@ -6,7 +6,6 @@ import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/screens/login/login_body.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -28,7 +27,7 @@ class LoginScreen extends StatelessWidget {
       body: BlocProvider<LoginBloc>(
         create: (blocContext) {
           return LoginBloc(
-            userRepository: Provider.of<UserRepository>(context),
+            userRepository: UserRepository(),
             authenticationBloc:
                 BlocProvider.of<AuthenticationBloc>(blocContext),
           );

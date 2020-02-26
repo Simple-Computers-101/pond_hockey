@@ -2,7 +2,6 @@ import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
-import 'package:pond_hockey/screens/tournaments/details/tournament_details.dart';
 
 class TournamentItem extends StatelessWidget {
   const TournamentItem(this.tournament, {Key key}) : super(key: key);
@@ -20,11 +19,10 @@ class TournamentItem extends StatelessWidget {
         type: MaterialType.transparency,
         child: InkWell(
           onTap: () {
-            Router.navigator.push(
-              MaterialPageRoute(
-                builder: (_) => TournamentDetails(
-                  tournament: tournament,
-                ),
+            Router.navigator.pushNamed(
+              Router.tournamentDetails,
+              arguments: TournamentDetailsArguments(
+                tournament: tournament,
               ),
             );
           },

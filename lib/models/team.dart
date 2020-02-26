@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Team {
   String id;
   String name;
-  DocumentReference currentTournament;
+  String currentTournament;
   String division;
   int gamesLost;
   int gamesPlayed;
@@ -27,7 +25,7 @@ class Team {
     return {
       'id': id,
       'name': name,
-      'currentTournament': currentTournament.path,
+      'currentTournament': currentTournament,
       'division': division,
       'gamesLost': gamesLost,
       'gamesPlayed': gamesPlayed,
@@ -38,11 +36,11 @@ class Team {
 
   static Team fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-  
+
     return Team(
       id: map['id'],
       name: map['name'],
-      currentTournament: Firestore.instance.document(map['currentTournament']),
+      currentTournament: map['currentTournament'],
       division: map['division'],
       gamesLost: map['gamesLost'],
       gamesPlayed: map['gamesPlayed'],

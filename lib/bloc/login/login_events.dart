@@ -69,7 +69,8 @@ class ToggleUiButtonPressed extends LoginEvent {
   final bool isSignUp;
   ToggleUiButtonPressed({this.isSignUp});
 
-
+  @override
+  List<Object> get props => [isSignUp];
 }
 
 class SignUpInitial extends LoginEvent {

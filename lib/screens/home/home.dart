@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -47,7 +48,10 @@ class HomeScreen extends StatelessWidget {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Image.asset('assets/img/pondhockeybrand.png'),
+                      SvgPicture.asset(
+                        'assets/svg/pondhockey.svg',
+                        height: MediaQuery.of(context).size.height * 0.33,
+                      ),
                       const SizedBox(height: 25),
                       const Divider(
                         color: Colors.white,

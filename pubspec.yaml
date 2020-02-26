@@ -10,20 +10,22 @@ dependencies:
   flutter:
     sdk: flutter
   
-  provider: ^4.0.4
   enum_to_string: ^1.0.8
   shared_preferences: ^0.5.6+1
   google_fonts: ^0.3.9
   flutter_statusbarcolor: ^0.2.3
-  auto_route: ^0.2.2
+  auto_route: ^0.3.0
   uuid: ^2.0.4
   assorted_layout_widgets: ^1.0.15
   intl: ^0.16.1
   flutter_form_builder: ^3.8.0+1
+  form_bloc: ^0.10.1
+  flutter_form_bloc: ^0.10.1
+  enough_mail: ^0.0.5
 
   bloc: ^3.0.0
   flutter_bloc: ^3.2.0
-  equatable: ^0.1.6
+  equatable: ^1.1.0
   flutter_secure_storage: ^3.3.1+1
   http: ^0.12.0+4
   sealed_flutter_bloc: ^3.0.0
@@ -36,6 +38,8 @@ dependencies:
   firebase_analytics: ^5.0.11
   google_sign_in: ^4.1.4
 
+  flutter_svg: ^0.17.1
+
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
@@ -43,7 +47,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   effective_dart: ^1.2.1
-  auto_route_generator: ^0.2.2
+  auto_route_generator: ^0.3.0
   build_runner: ^1.7.4
 
 flutter_icons:
@@ -56,6 +60,7 @@ flutter:
 
   assets:
     - assets/img/
+    - assets/svg/
     - google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
