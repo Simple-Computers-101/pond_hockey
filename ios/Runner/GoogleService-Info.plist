@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>30531933960-cccb0u945h9flbiec7b7q4fnuckfm44t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.30531933960-cccb0u945h9flbiec7b7q4fnuckfm44t</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>30531933960-lpgk4rpstmsp181se5torghq70it6l6b.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBc90F-TixEHGz5uh5-0qMKwuTF4D7DGMk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>30531933960</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.simplecomputers101.pondHockey</string>
+	<key>PROJECT_ID</key>
+	<string>pond-hockey-scoring</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pond-hockey-scoring.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:30531933960:ios:ad166eaf6f46ad7f9abebd</string>
+	<key>DATABASE_URL</key>
+	<string>https://pond-hockey-scoring.firebaseio.com</string>
+</dict>
+</plist>

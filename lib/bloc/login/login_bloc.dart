@@ -63,10 +63,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final user = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
-        if (await user.isEmailVerified){
+        if (await user.isEmailVerified) {
           authenticationBloc.add(LoggedIn(token: user.uid));
           yield LoginState.initial(isSignUp: false);
-        }else{
+        } else {
           await user.sendEmailVerification();
           yield LoginState.unverified(user);
         }
@@ -171,11 +171,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     return Firestore.instance
         .collection('users')
         .document(currentUser.uid)
-        .setData({
-      'email': currentUser.email,
-      'uid': currentUser.uid,
-      'coins': 0,
-    });
+        .setData(
+      {
+        'email': currentUser.email,
+        'uid': currentUser.uid,
+        'coins': 0,
+      },
+    );
   }
 
   String _errorMessage(error) {
