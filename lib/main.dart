@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
@@ -45,22 +43,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (_) => UserRepository(),
         ),
       ],
-      child: BlocProvider<AuthenticationBloc>(
-        create: (blocContext) {
-          return AuthenticationBloc(
-            userRepository: Provider.of<UserRepository>(
-              blocContext,
-              listen: false,
-            ),
-          );
-        },
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Pond Hockey',
-          theme: Style().lightTheme,
-          navigatorKey: Router.navigatorKey,
-          onGenerateRoute: Router.onGenerateRoute,
-        ),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Pond Hockey',
+        theme: Style().lightTheme,
+        navigatorKey: Router.navigatorKey,
+        onGenerateRoute: Router.onGenerateRoute,
       ),
     );
   }

@@ -1,9 +1,8 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/login.dart';
@@ -19,7 +18,7 @@ class HomeScreen extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return FutureBuilder(
-      future: FlutterSecureStorage().read(key: "token"),
+      future: FirebaseAuth.instance.currentUser(),
       builder: (context, snapshot) {
         return Scaffold(
           key: _scaffoldKey,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/screens/login/login_body.dart';
@@ -20,14 +19,6 @@ class LoginScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Login / Sign up',
         transparentBackground: true,
-//        actions: <Widget>[
-//          FlatButton(
-//              onPressed: () {
-//                BlocProvider.of<AuthenticationBloc>(context)
-//                    .add(LogInLater());
-//              },
-//              child: Text("Later"))
-//        ],
       ),
       extendBody: true,
       resizeToAvoidBottomInset: false,
@@ -37,8 +28,6 @@ class LoginScreen extends StatelessWidget {
         create: (blocContext) {
           return LoginBloc(
             userRepository: Provider.of<UserRepository>(context),
-            authenticationBloc:
-                BlocProvider.of<AuthenticationBloc>(blocContext),
           );
         },
         child: LoginBody(),

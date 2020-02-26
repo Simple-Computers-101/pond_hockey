@@ -6,6 +6,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:pond_hockey/screens/login/verification.dart';
@@ -17,29 +18,38 @@ class LoginBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    return SealedBlocBuilder4<LoginBloc, LoginState, LoginInitial, LoginLoading,
-        LoginFailure, LoginUnverified>(
+    return SealedBlocBuilder5<LoginBloc, LoginState, LoginInitial, LoginLoading,
+        LoginFailure, LoginUnverified, LoginSuccess>(
       builder: (blocContext, states) {
         var _loginUi = _LoginUI();
         var _signUp = CreateAccountBody();
         return states(
-          (initial) => initial.isSignUp ? _signUp : _loginUi,
-          (loading) => Center(child: CircularProgressIndicator()),
-          (failure) {
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              Scaffold.of(context).hideCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('An error occured: ${failure.error}'),
-                  duration: Duration(seconds: 2),
-                ),
+            (initial) => initial.isSignUp ? _signUp : _loginUi,
+            (loading) => Center(child: CircularProgressIndicator()),
+            (failure) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                Scaffold.of(context).hideCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('An error occured: ${failure.error}'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              });
+
+              return failure.isSignUp ? _signUp : _loginUi;
+            },
+            (unverified) => EmailVerification(unverified.user),
+            (success) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+                await Future.delayed(Duration(seconds: 1));
+                Router.navigator
+                    .pushNamedAndRemoveUntil(Router.home, (route) => false);
+              });
+              return Center(
+                child: Text("Login Success"),
               );
             });
-
-            return failure.isSignUp ? _signUp : _loginUi;
-          },
-          (unverified) => EmailVerification(unverified.user),
-        );
       },
     );
   }
