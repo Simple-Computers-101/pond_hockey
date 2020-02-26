@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/screens/login/login_body.dart';
@@ -28,8 +27,6 @@ class LoginScreen extends StatelessWidget {
         create: (blocContext) {
           return LoginBloc(
             userRepository: UserRepository(),
-            authenticationBloc:
-                BlocProvider.of<AuthenticationBloc>(blocContext),
           );
         },
         child: LoginBody(),

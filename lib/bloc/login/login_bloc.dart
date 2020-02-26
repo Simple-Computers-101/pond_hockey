@@ -4,21 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_events.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository userRepository;
-  final AuthenticationBloc authenticationBloc;
+//  final AuthenticationBloc authenticationBloc;
 
   LoginBloc({
     @required this.userRepository,
-    @required this.authenticationBloc,
-  })  : assert(userRepository != null),
-        assert(authenticationBloc != null);
+  })  : assert(userRepository != null);
 
   @override
   LoginState get initialState => LoginState.initial(isSignUp: false);
@@ -33,8 +29,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user =
             await userRepository.signInWithCredentials(event.authCredential);
         await addUserInfoToFireStore(user);
-        authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial(isSignUp: false);
+     //   yield LoginState.initial(isSignUp: false);
+        yield LoginState.success();
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
@@ -49,8 +45,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user = await userRepository
             .signInWithCredentials(event.authCredential, email: event.email);
         await addUserInfoToFireStore(user);
-        authenticationBloc.add(LoggedIn(token: user.uid));
-        yield LoginState.initial(isSignUp: false);
+     //   yield LoginState.initial(isSignUp: false);
+        yield LoginState.success();
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
         if (errorMessage != null) {
@@ -63,10 +59,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final user = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
-        if (await user.isEmailVerified){
-          authenticationBloc.add(LoggedIn(token: user.uid));
-          yield LoginState.initial(isSignUp: false);
-        }else{
+        if (await user.isEmailVerified) {
+//          yield LoginState.initial(isSignUp: false);
+          yield LoginState.success();
+        } else {
           await user.sendEmailVerification();
           yield LoginState.unverified(user);
         }
@@ -83,8 +79,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (event is SignUpButtonPressed) {
       try {
         await addUserInfoToFireStore(event.user);
-        authenticationBloc.add(LoggedIn(token: event.user.uid));
-        yield LoginState.initial(isSignUp: true);
+//        yield LoginState.initial(isSignUp: true);
+        yield LoginState.success();
 
         // ignore: avoid_catches_without_on_clauses
       } catch (error) {
@@ -171,11 +167,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     return Firestore.instance
         .collection('users')
         .document(currentUser.uid)
-        .setData({
-      'email': currentUser.email,
-      'uid': currentUser.uid,
-      'coins': 0,
-    });
+        .setData(
+      {
+        'email': currentUser.email,
+        'uid': currentUser.uid,
+        'coins': 0,
+      },
+    );
   }
 
   String _errorMessage(error) {

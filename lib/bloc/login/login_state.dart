@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 
-class LoginState extends Union4Impl<LoginInitial, LoginLoading, LoginFailure,
-    LoginUnverified> {
-  static final unions = const Quartet<LoginInitial, LoginLoading, LoginFailure,
-      LoginUnverified>();
+class LoginState extends Union5Impl<LoginInitial, LoginLoading, LoginFailure,
+    LoginUnverified, LoginSuccess> {
+  static final unions = const Quintet<LoginInitial, LoginLoading, LoginFailure,
+      LoginUnverified, LoginSuccess>();
 
   LoginState._(
-      Union4<LoginInitial, LoginLoading, LoginFailure, LoginUnverified> union)
+      Union5<LoginInitial, LoginLoading, LoginFailure, LoginUnverified,
+              LoginSuccess>
+          union)
       : super(union);
 
   factory LoginState.initial({bool isSignUp}) => LoginState._(
@@ -29,6 +31,11 @@ class LoginState extends Union4Impl<LoginInitial, LoginLoading, LoginFailure,
           LoginUnverified(user),
         ),
       );
+  factory LoginState.success() => LoginState._(
+        unions.fifth(
+          LoginSuccess(),
+        ),
+      );
 }
 
 class LoginInitial {
@@ -42,7 +49,6 @@ class LoginLoading {}
 class LoginUnverified {
   final FirebaseUser user;
   LoginUnverified(this.user);
-
 }
 
 class LoginFailure {
@@ -54,3 +60,5 @@ class LoginFailure {
   @override
   String toString() => 'LoginFailure { error: $error }';
 }
+
+class LoginSuccess {}

@@ -1,9 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:pond_hockey/bloc/auth/auth_bloc.dart';
-import 'package:pond_hockey/bloc/auth/auth_events.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -87,18 +84,14 @@ class _AccountScreenState extends State<AccountScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 3,
-                child: MaterialButton(
-                  color: Colors.red,
-                  onPressed: () async {
-                    await BlocProvider.of<AuthenticationBloc>(context).add(
-                      LoggedOut(),
-                    );
-                    Router.navigator.pop();
-                  },
-                  child: Text('Sign out'),
-                ),
+              FlatButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut().then((value) {
+                    Router.navigator
+                        .pushNamedAndRemoveUntil(Router.home, (route) => false);
+                  });
+                },
+                child: Text('Sign out'),
               ),
             ],
           ),
