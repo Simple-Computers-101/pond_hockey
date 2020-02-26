@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "30531933960-rfgnib7mnsoojk2p27u6684ftemngcdp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplecomputers101.pond_hockey",
+            "certificate_hash": "ebfdca2361cb128aee4590c4eeabdb723b59c2e2"
+          }
+        },
+        {
+          "client_id": "30531933960-lpgk4rpstmsp181se5torghq70it6l6b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplecomputers101.pond_hockey",
+            "certificate_hash": "de6bbf41cf1a7b9c957ce800deb4263edaac82ca"
+          }
+        },
+        {
+          "client_id": "30531933960-9b3f2j4kieu4en8mdme97a4c5mc0nq19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplecomputers101.pond_hockey",
+            "certificate_hash": "bcd91e26dfa1c04e7b79fd6e4a1edc7ee656d492"
+          }
+        },
+        {
           "client_id": "30531933960-q7j414gk07dd4ue82js0bcuba6guod63.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
