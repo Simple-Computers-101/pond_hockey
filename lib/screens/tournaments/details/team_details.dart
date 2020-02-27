@@ -12,7 +12,49 @@ class TeamDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(title: '"${team.name}"'),
       body: Center(
-        child: Text(team.name),
+        child: Column (
+          children: <Widget>[
+            Text("Team Information"),
+            ListTile(
+              leading: Container(
+                width: 40, // can be whatever value you want
+                alignment: Alignment.center,
+
+              ),
+              title: Text('Division'),
+              subtitle: Text(team.division),
+            ),
+            ListTile(
+              leading: Container(
+                width: 40, // can be whatever value you want
+                alignment: Alignment.center,
+
+              ),
+              title: Text('Games Played'),
+              subtitle: Text(team.gamesPlayed.toString()),
+            ),
+            ListTile(
+              leading: Container(
+                width: 40, // can be whatever value you want
+                alignment: Alignment.center,
+
+              ),
+              title: Text('Games Won'),
+              subtitle: Text(team.gamesWon.toString()),
+            ),
+            ListTile(
+              leading: Container(
+                width: 40, // can be whatever value you want
+                alignment: Alignment.center,
+
+              ),
+              title: Text('Games Lost'),
+              subtitle: Text(team.gamesLost.toString()),
+            )
+
+          ],
+
+        )
       ),
     );
   }
