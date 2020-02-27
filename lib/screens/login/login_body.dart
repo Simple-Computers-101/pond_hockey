@@ -8,6 +8,7 @@ import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
+import 'package:pond_hockey/screens/login/forget.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:pond_hockey/screens/login/verification.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
@@ -114,9 +115,19 @@ class _LoginUI extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Text(
-                          'Forgot password?',
-                          style: Theme.of(context).textTheme.subtitle1,
+                        FlatButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ForgetPassword(context),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Forgot password?',
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
                         ),
                         FlatButton(
                           onPressed: () {
@@ -202,9 +213,19 @@ class _LoginUI extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            Text(
-                              'Forgot password?',
-                              style: Theme.of(context).textTheme.subtitle1,
+                            FlatButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ForgetPassword(context),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Forgot password?',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
                             ),
                             FlatButton(
                               onPressed: () {
