@@ -11,7 +11,7 @@ class Game {
   GameStatus status;
   Map<String, dynamic> teamOne;
   Map<String, dynamic> teamTwo;
-  DocumentReference tournament;
+  String tournament;
   GameType type;
 
   Game({
@@ -29,7 +29,7 @@ class Game {
       'status': EnumToString.parseCamelCase(status),
       'teamOne': teamOne,
       'teamTwo': teamTwo,
-      'tournament': tournament.path,
+      'tournament': tournament,
       'type': EnumToString.parseCamelCase(type),
     };
   }
@@ -42,8 +42,21 @@ class Game {
       status: EnumToString.fromString(GameStatus.values, map['status']),
       teamOne: map['teamOne'],
       teamTwo: map['teamTwo'],
-      tournament: Firestore.instance.document(map['tournament']),
+      tournament: map['tournament'],
       type: EnumToString.fromString(GameType.values, map['type']),
+    );
+  }
+
+  static Game fromDocument(DocumentSnapshot doc) {
+    var data = doc.data;
+
+    return Game(
+      id: data['id'],
+      status: EnumToString.fromString(GameStatus.values, data['status']),
+      teamOne: data['team_one'],
+      teamTwo: data['team_two'],
+      tournament: data['tournament'],
+      type: EnumToString.fromString(GameType.values, data['type']),
     );
   }
 

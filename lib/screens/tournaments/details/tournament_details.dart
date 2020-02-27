@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/details/game_item.dart';
+import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class TournamentDetails extends StatefulWidget {
@@ -63,14 +66,59 @@ class _TournamentDetailsState extends State<TournamentDetails> {
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
-                Container(
-                  color: Colors.green,
-                ),
+                _GamesPage(tournamentId: widget.tournament.id),
                 _TeamsPage(tournamentId: widget.tournament.id),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _GamesPage extends StatefulWidget {
+  _GamesPage({Key key, this.tournamentId}) : super(key: key);
+
+  final String tournamentId;
+
+  @override
+  _GamesPageState createState() => _GamesPageState();
+}
+
+class _GamesPageState extends State<_GamesPage> {
+  List<Game> _games;
+
+  @override
+  void initState() {
+    super.initState();
+    _getGames();
+  }
+
+  void _getGames() async {
+    var games =
+        await GamesRepository().getGamesFromTournamentId(widget.tournamentId);
+    setState(() {
+      _games = games;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_games == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+      ),
+      body: ListView.builder(
+        itemCount: _games.length,
+        itemBuilder: (context, index) {
+          final game = _games[index];
+          return GameItem(game: game);
+        },
       ),
     );
   }
@@ -110,18 +158,23 @@ class __TeamsPageState extends State<_TeamsPage> {
     if (_teams == null) {
       return CircularProgressIndicator();
     }
-    return ListView.builder(
-      itemCount: _teams.length,
-      itemBuilder: (context, index) {
-        final team = _teams[index];
-        return ListTile(
-          title: Text(team.name),
-          onTap: () => Router.navigator.pushNamed(
-            Router.teamDetails,
-            arguments: TeamDetailsScreenArguments(team: team),
-          ),
-        );
-      },
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+      ),
+      body: ListView.builder(
+        itemCount: _teams.length,
+        itemBuilder: (context, index) {
+          final team = _teams[index];
+          return ListTile(
+            title: Text(team.name),
+            onTap: () => Router.navigator.pushNamed(
+              Router.teamDetails,
+              arguments: TeamDetailsScreenArguments(team: team),
+            ),
+          );
+        },
+      ),
     );
   }
 }

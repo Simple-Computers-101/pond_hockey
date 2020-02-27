@@ -91,7 +91,7 @@ class TournamentsScreen extends StatelessWidget {
     return FutureBuilder(
       future: FirebaseAuth.instance.currentUser(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData || !canEditOrScore()) {
           return Scaffold(
             appBar: CustomAppBar(
               title: 'Tournaments',
