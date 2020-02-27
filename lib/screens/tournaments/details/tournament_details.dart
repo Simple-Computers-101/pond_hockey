@@ -44,7 +44,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                 ],
                 bottom: TabBar(
                   tabs: [
-                    Tab(text: 'Divisions'),
+                    Tab(text: 'Results'),
                     Tab(text: 'Teams'),
                   ],
                   isScrollable: false,
