@@ -97,10 +97,15 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       scorers: null,
     );
     TournamentsRepository().addTournament(tournament);
-    Router.navigator.pushNamed(Router.tournaments);
+    Router.navigator.pushReplacementNamed(
+      Router.tournaments,
+      arguments: TournamentsScreenArguments(
+        editMode: true,
+      ),
+    );
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     const defaultDecoration = InputDecoration(
       border: InputBorder.none,

@@ -92,8 +92,13 @@ class TournamentsScreen extends StatelessWidget {
       future: FirebaseAuth.instance.currentUser(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
+          return Scaffold(
+            appBar: CustomAppBar(
+              title: 'Tournaments',
+            ),
+            body: SingleChildScrollView(
+              child: buildAllTournaments(),
+            ),
           );
         }
         final uid = (snapshot.data as FirebaseUser).uid;
@@ -101,7 +106,7 @@ class TournamentsScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: canEdit()
                 ? 'Manage Tournaments'
-                : canScore() ? 'Score Tournaments' : 'Tournaments',
+                : canScore() ? 'Score Tournaments' : 'Error',
           ),
           floatingActionButton: canEdit()
               ? FloatingActionButton(
@@ -120,9 +125,7 @@ class TournamentsScreen extends StatelessWidget {
             //   ),
             // ),
             child: SingleChildScrollView(
-              child: !canEditOrScore()
-                  ? buildAllTournaments()
-                  : buildScorerOrEditorView(uid),
+              child: buildScorerOrEditorView(uid),
             ),
           ),
         );

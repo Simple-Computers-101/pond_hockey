@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -25,6 +24,51 @@ class HomeScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: '',
             transparentBackground: true,
+            actions: <Widget>[
+              snapshot.hasData
+                  ? Container(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      margin: const EdgeInsets.only(
+                        right: 16,
+                        top: 8,
+                        bottom: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 2),
+                            blurRadius: 1,
+                            color: Colors.grey,
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(50),
+                          onTap: () => Router.navigator.pushNamed(
+                            Router.account,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                'Account',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
+            ],
           ),
           body: Container(
             width: double.infinity,
@@ -43,9 +87,10 @@ class HomeScreen extends StatelessWidget {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          SvgPicture.asset(
-                            'assets/svg/pondhockey.svg',
-                            height: MediaQuery.of(context).size.height * 0.4,
+                          const SizedBox(height: 50),
+                          Image.asset(
+                            'assets/img/pondhockeybrand.png',
+                            height: MediaQuery.of(context).size.height * 0.5,
                           ),
                           const SizedBox(height: 50),
                           _PortraitMenuButton(
@@ -74,24 +119,14 @@ class HomeScreen extends StatelessWidget {
                             },
                             text: 'Manage Tournaments',
                           ),
-                          if (snapshot.hasData) ...[
-                            const SizedBox(height: 30),
-                            _PortraitMenuButton(
-                              onPressed: () => Router.navigator.pushNamed(
-                                Router.account,
-                              ),
-                              text: 'Account',
-                            )
-                          ] else
-                            SizedBox(),
                         ],
                       );
                     } else {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          SvgPicture.asset(
-                            'assets/svg/pondhockey.svg',
+                          Image.asset(
+                            'assets/img/pondhockeybrand.png',
                             height: MediaQuery.of(context).size.height * 0.8,
                           ),
                           const SizedBox(width: 50),
@@ -125,16 +160,6 @@ class HomeScreen extends StatelessWidget {
                                 },
                                 text: 'Manage Tournaments',
                               ),
-                              if (snapshot.hasData) ...[
-                                const SizedBox(height: 30),
-                                _LandscapeMenuButton(
-                                  onPressed: () => Router.navigator.pushNamed(
-                                    Router.account,
-                                  ),
-                                  text: 'Account',
-                                )
-                              ] else
-                                SizedBox(),
                             ],
                           ),
                         ],

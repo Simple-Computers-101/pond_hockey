@@ -17,7 +17,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Color(0xFF0094FF),
@@ -41,10 +41,10 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                 ],
                 bottom: TabBar(
                   tabs: [
-                    Tab(text: 'Item One'),
-                    Tab(text: 'Item Two'),
+                    Tab(text: 'Divisions'),
                     Tab(text: 'Teams'),
                   ],
+                  isScrollable: false,
                   indicator: UnderlineTabIndicator(
                     insets: const EdgeInsets.symmetric(horizontal: 150),
                     borderSide: BorderSide(
@@ -60,15 +60,15 @@ class _TournamentDetailsState extends State<TournamentDetails> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
               color: Color(0xFFE9E9E9),
             ),
-            child: TabBarView(children: [
-              Container(
-                color: Colors.green,
-              ),
-              Container(
-                color: Colors.red,
-              ),
-              _TeamsPage(tournamentId: widget.tournament.id),
-            ]),
+            child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                Container(
+                  color: Colors.green,
+                ),
+                _TeamsPage(tournamentId: widget.tournament.id),
+              ],
+            ),
           ),
         ),
       ),
