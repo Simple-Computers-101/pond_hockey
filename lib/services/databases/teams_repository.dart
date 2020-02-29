@@ -12,4 +12,14 @@ class TeamsRepository {
         .map((snapshot) => Team.fromMap(snapshot.data))
         .toList(growable: false);
   }
+
+  Future<void> addTeamsToTournament(List<Team> teams) async {
+    for (var team in teams) {
+      await ref.document(team.id).setData(team.toMap());
+    }
+  }
+
+  Stream<QuerySnapshot> getTeamsStreamFromTournament(String id) {
+    return ref.where('currentTournament', isEqualTo: id).snapshots();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/models/team.dart';
@@ -12,50 +13,29 @@ class TeamDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(title: '"${team.name}"'),
       body: Center(
-        child: Column (
-          children: <Widget>[
-            Text("Team Information"),
-            ListTile(
-              leading: Container(
-                width: 40, // can be whatever value you want
-                alignment: Alignment.center,
-
-              ),
-              title: Text('Division'),
-              subtitle: Text(team.division),
+          child: Column(
+        children: <Widget>[
+          Text("Team Information"),
+          ListTile(
+            title: Text('Division'),
+            subtitle: Text(
+              EnumToString.parse(team.division) ?? 'No division',
             ),
-            ListTile(
-              leading: Container(
-                width: 40, // can be whatever value you want
-                alignment: Alignment.center,
-
-              ),
-              title: Text('Games Played'),
-              subtitle: Text(team.gamesPlayed.toString()),
-            ),
-            ListTile(
-              leading: Container(
-                width: 40, // can be whatever value you want
-                alignment: Alignment.center,
-
-              ),
-              title: Text('Games Won'),
-              subtitle: Text(team.gamesWon.toString()),
-            ),
-            ListTile(
-              leading: Container(
-                width: 40, // can be whatever value you want
-                alignment: Alignment.center,
-
-              ),
-              title: Text('Games Lost'),
-              subtitle: Text(team.gamesLost.toString()),
-            )
-
-          ],
-
-        )
-      ),
+          ),
+          ListTile(
+            title: Text('Games Played'),
+            subtitle: Text(team.gamesPlayed.toString()),
+          ),
+          ListTile(
+            title: Text('Games Won'),
+            subtitle: Text(team.gamesWon.toString()),
+          ),
+          ListTile(
+            title: Text('Games Lost'),
+            subtitle: Text(team.gamesLost.toString()),
+          )
+        ],
+      )),
     );
   }
 }

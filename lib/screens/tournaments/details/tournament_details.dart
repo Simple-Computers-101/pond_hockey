@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/game_item.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
-import 'package:share/share.dart';
 
 class TournamentDetails extends StatefulWidget {
   const TournamentDetails({Key key, this.tournament}) : super(key: key);
@@ -20,11 +22,12 @@ class TournamentDetails extends StatefulWidget {
 class _TournamentDetailsState extends State<TournamentDetails> {
   @override
   Widget build(BuildContext context) {
+    var mode = TournamentViewing.of(context).mode;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: Color(0xFF0094FF),
+        backgroundColor: Colors.white,
         body: NestedScrollView(
           headerSliverBuilder: (context, _) {
             return [
@@ -35,26 +38,24 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                   style: Theme.of(context).textTheme.headline5,
                 ),
                 actions: <Widget>[
-                  // IconButton(
-                  //   icon: Icon(Icons.share),
-                  //   onPressed: () => Share.share('Check out this tournament!'),
-                  // ),
-                  IconButton(
-                    icon: Icon(Icons.person_add),
-                    onPressed: () => Router.navigator.pushNamed(
-                      Router.addTeams,
-                      arguments: widget.tournament,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () => Router.navigator.pushNamed(
-                      Router.tournamentSettings,
-                      arguments: TournamentSettingsScreenArguments(
-                        tournament: widget.tournament,
+                  if (mode != ViewingMode.viewing) ...[
+                    if (mode == ViewingMode.scoring ||
+                        mode == ViewingMode.editing)
+                      IconButton(
+                        icon: Icon(Icons.score),
+                        onPressed: () {},
                       ),
-                    ),
-                  ),
+                    if (mode == ViewingMode.editing)
+                      IconButton(
+                        icon: Icon(Icons.settings),
+                        onPressed: () => Router.navigator.pushNamed(
+                          Router.tournamentSettings,
+                          arguments: TournamentSettingsScreenArguments(
+                            tournament: widget.tournament,
+                          ),
+                        ),
+                      ),
+                  ],
                 ],
                 bottom: TabBar(
                   tabs: [
@@ -81,7 +82,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
               physics: NeverScrollableScrollPhysics(),
               children: [
                 _GamesPage(tournamentId: widget.tournament.id),
-                _TeamsPage(tournamentId: widget.tournament.id),
+                _TeamsPage(tournament: widget.tournament),
               ],
             ),
           ),
@@ -124,9 +125,6 @@ class _GamesPageState extends State<_GamesPage> {
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-      ),
       body: ListView.builder(
         itemCount: _games.length,
         itemBuilder: (context, index) {
@@ -138,55 +136,50 @@ class _GamesPageState extends State<_GamesPage> {
   }
 }
 
-class _TeamsPage extends StatefulWidget {
+class _TeamsPage extends StatelessWidget {
   const _TeamsPage({
     Key key,
-    @required this.tournamentId,
+    @required this.tournament,
   }) : super(key: key);
 
-  final String tournamentId;
-
-  @override
-  __TeamsPageState createState() => __TeamsPageState();
-}
-
-class __TeamsPageState extends State<_TeamsPage> {
-  List<Team> _teams;
-
-  @override
-  void initState() {
-    super.initState();
-    _getTeams();
-  }
-
-  void _getTeams() async {
-    var teams =
-        await TeamsRepository().getTeamsFromTournamentId(widget.tournamentId);
-    setState(() {
-      _teams = teams ?? [];
-    });
-  }
+  final Tournament tournament;
 
   @override
   Widget build(BuildContext context) {
-    if (_teams == null) {
-      return CircularProgressIndicator();
-    }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-      ),
-      body: ListView.builder(
-        itemCount: _teams.length,
-        itemBuilder: (context, index) {
-          final team = _teams[index];
-          return ListTile(
-            title: Text(team.name),
-            onTap: () => Router.navigator.pushNamed(
-              Router.teamDetails,
-              arguments: TeamDetailsScreenArguments(team: team),
-            ),
+        onPressed: () {
+          Router.navigator.pushNamed(
+            Router.addTeams,
+            arguments: tournament,
           );
+        },
+        child: Icon(Icons.add),
+      ),
+      body: StreamBuilder(
+        stream: TeamsRepository().getTeamsStreamFromTournament(tournament.id),
+        builder: (context, stream) {
+          if ((stream.connectionState == ConnectionState.active ||
+                  stream.connectionState == ConnectionState.done) &&
+              stream.hasData) {
+            var data = (stream.data as QuerySnapshot).documents;
+            return ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final team = Team.fromMap(data[index].data);
+                return ListTile(
+                  title: Text(team.name),
+                  onTap: () => Router.navigator.pushNamed(
+                    Router.teamDetails,
+                    arguments: TeamDetailsScreenArguments(team: team),
+                  ),
+                );
+              },
+            );
+          } else if (stream.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return SizedBox();
         },
       ),
     );

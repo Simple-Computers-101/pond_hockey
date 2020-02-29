@@ -1,0 +1,1 @@
+enum Division { open, rec }

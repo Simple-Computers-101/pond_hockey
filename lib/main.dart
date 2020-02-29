@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 import 'package:pond_hockey/services/email/email_helper.dart';
 import 'package:pond_hockey/theme/style.dart';
 
@@ -33,13 +34,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Pond Hockey',
-      theme: Style().lightTheme,
-      navigatorKey: Router.navigator.key,
-      onGenerateRoute: Router.onGenerateRoute,
-      initialRoute: Router.home,
+    return TournamentViewing(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Pond Hockey',
+        theme: Style().lightTheme,
+        navigatorKey: Router.navigator.key,
+        onGenerateRoute: Router.onGenerateRoute,
+        initialRoute: Router.home,
+      ),
     );
   }
 }

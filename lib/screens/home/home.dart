@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
+import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 
 class HomeScreen extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -14,6 +16,62 @@ class HomeScreen extends StatelessWidget {
     FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
     FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+
+    void _scoreGameButtonPress(
+        GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {
+      if (hasKey) {
+        TournamentViewing.of(context).changeMode(ViewingMode.scoring);
+        Router.navigator.pushNamed(
+          Router.tournaments,
+          arguments: TournamentsScreenArguments(
+            scoringMode: true,
+          ),
+        );
+      } else {
+        _scaffoldKey.currentState.removeCurrentSnackBar();
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text("Please log in to score games"),
+            action: SnackBarAction(
+              label: "log in",
+              onPressed: () async {
+                Router.navigator.pushNamed(Router.login);
+              },
+            ),
+          ),
+        );
+      }
+    }
+
+    _manageTournamentButtonPress(
+      GlobalKey<ScaffoldState> scaffoldKey,
+      bool hasKey,
+    ) {
+      if (hasKey) {
+        TournamentViewing.of(context).changeMode(ViewingMode.editing);
+        Router.navigator.pushNamed(
+          Router.tournaments,
+          arguments: TournamentsScreenArguments(
+            scoringMode: false,
+            editMode: true,
+          ),
+        );
+      } else {
+        _scaffoldKey.currentState.removeCurrentSnackBar();
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text("Please log in to manage tournaments"),
+            action: SnackBarAction(
+              label: "log in",
+              onPressed: () async {
+                Router.navigator.pushNamed(Router.login);
+              },
+            ),
+          ),
+        );
+      }
+    }
+
     return FutureBuilder(
       future: FirebaseAuth.instance.currentUser(),
       builder: (context, snapshot) {
@@ -95,6 +153,8 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: 50),
                           _PortraitMenuButton(
                             onPressed: () {
+                              TournamentViewing.of(context)
+                                  .changeMode(ViewingMode.viewing);
                               Router.navigator.pushNamed(Router.tournaments);
                             },
                             text: 'View Results',
@@ -135,6 +195,8 @@ class HomeScreen extends StatelessWidget {
                             children: <Widget>[
                               _LandscapeMenuButton(
                                 onPressed: () {
+                                  TournamentViewing.of(context)
+                                      .changeMode(ViewingMode.viewing);
                                   Router.navigator
                                       .pushNamed(Router.tournaments);
                                 },
@@ -173,61 +235,6 @@ class HomeScreen extends StatelessWidget {
         );
       },
     );
-  }
-
-  _scoreGameButtonPress(
-    GlobalKey<ScaffoldState> scaffoldKey,
-    bool hasKey,
-  ) {
-    if (hasKey) {
-      Router.navigator.pushNamed(
-        Router.tournaments,
-        arguments: TournamentsScreenArguments(
-          scoringMode: true,
-        ),
-      );
-    } else {
-      _scaffoldKey.currentState.removeCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text("Please log in to score games"),
-          action: SnackBarAction(
-            label: "log in",
-            onPressed: () async {
-              Router.navigator.pushNamed(Router.login);
-            },
-          ),
-        ),
-      );
-    }
-  }
-
-  _manageTournamentButtonPress(
-    GlobalKey<ScaffoldState> scaffoldKey,
-    bool hasKey,
-  ) {
-    if (hasKey) {
-      Router.navigator.pushNamed(
-        Router.tournaments,
-        arguments: TournamentsScreenArguments(
-          scoringMode: false,
-          editMode: true,
-        ),
-      );
-    } else {
-      _scaffoldKey.currentState.removeCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text("Please log in to manage tournaments"),
-          action: SnackBarAction(
-            label: "log in",
-            onPressed: () async {
-              Router.navigator.pushNamed(Router.login);
-            },
-          ),
-        ),
-      );
-    }
   }
 }
 

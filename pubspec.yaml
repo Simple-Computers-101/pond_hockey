@@ -38,7 +38,6 @@ dependencies:
   firebase_analytics: ^5.0.11
   google_sign_in: ^4.1.4
 
-  share: ^0.6.3+6
   outline_material_icons: ^0.1.1
 
   cupertino_icons: ^0.1.2

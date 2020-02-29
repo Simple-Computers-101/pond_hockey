@@ -24,14 +24,14 @@ class GameItem extends StatelessWidget {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text('${gameData.teamOne['name']}'),
-                  Text('${gameData.teamOne['score']}'),
+                  Text('${gameData.teamOne.name}'),
+                  Text('${gameData.teamOne.score}'),
                 ],
               ),
               Column(
                 children: <Widget>[
-                  Text('${gameData.teamTwo['name']}'),
-                  Text('${gameData.teamTwo['score']}'),
+                  Text('${gameData.teamTwo.name}'),
+                  Text('${gameData.teamTwo.score}'),
                 ],
               ),
             ],

@@ -5,7 +5,10 @@ import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_item.dart';
 
 class TournamentsList extends StatelessWidget {
-  const TournamentsList({Key key, this.documents}) : super(key: key);
+  const TournamentsList({
+    Key key,
+    this.documents,
+  }) : super(key: key);
 
   final List<dynamic> documents;
 
