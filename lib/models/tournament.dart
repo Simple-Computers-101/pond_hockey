@@ -38,7 +38,7 @@ class Tournament {
       'year': year,
       'location': location,
       'startDate': startDate,
-      'endDate': startDate,
+      'endDate': endDate,
       'owner': owner,
       'scorers': scorers,
     };

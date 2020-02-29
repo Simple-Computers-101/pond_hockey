@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: Style().lightTheme,
       navigatorKey: Router.navigator.key,
       onGenerateRoute: Router.onGenerateRoute,
-      initialRoute: Router.init,
+      initialRoute: Router.home,
     );
   }
 }

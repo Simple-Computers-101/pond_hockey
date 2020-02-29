@@ -116,17 +116,8 @@ class TournamentsScreen extends StatelessWidget {
                   child: Icon(Icons.add),
                 )
               : null,
-          body: Container(
-            // height: double.infinity,
-            // decoration: BoxDecoration(
-            //   color: Color(0xFFE9E9E9),
-            //   borderRadius: BorderRadius.vertical(
-            //     top: Radius.circular(50),
-            //   ),
-            // ),
-            child: SingleChildScrollView(
-              child: buildScorerOrEditorView(uid),
-            ),
+          body: SingleChildScrollView(
+            child: buildScorerOrEditorView(uid),
           ),
         );
       },
@@ -157,14 +148,13 @@ class ManageTournamentView extends StatelessWidget {
           );
         } else if (snapshot.connectionState == ConnectionState.active ||
             snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
+          if (snapshot.data.isNotEmpty) {
             return TournamentsList(
               documents: snapshot.data,
             );
           } else {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
                   'You don\'t have any tournaments!',

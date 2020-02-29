@@ -6,6 +6,7 @@ import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/game_item.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
+import 'package:share/share.dart';
 
 class TournamentDetails extends StatefulWidget {
   const TournamentDetails({Key key, this.tournament}) : super(key: key);
@@ -34,11 +35,24 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                   style: Theme.of(context).textTheme.headline5,
                 ),
                 actions: <Widget>[
+                  // IconButton(
+                  //   icon: Icon(Icons.share),
+                  //   onPressed: () => Share.share('Check out this tournament!'),
+                  // ),
                   IconButton(
                     icon: Icon(Icons.person_add),
                     onPressed: () => Router.navigator.pushNamed(
                       Router.addTeams,
                       arguments: widget.tournament,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () => Router.navigator.pushNamed(
+                      Router.tournamentSettings,
+                      arguments: TournamentSettingsScreenArguments(
+                        tournament: widget.tournament,
+                      ),
                     ),
                   ),
                 ],
@@ -51,7 +65,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                   indicator: UnderlineTabIndicator(
                     insets: const EdgeInsets.symmetric(horizontal: 150),
                     borderSide: BorderSide(
-                      width: 2,
+                      width: 0.75,
                     ),
                   ),
                 ),
@@ -59,10 +73,10 @@ class _TournamentDetailsState extends State<TournamentDetails> {
             ];
           },
           body: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
-              color: Color(0xFFE9E9E9),
-            ),
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
+            //   color: Color(0xFFE9E9E9),
+            // ),
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
