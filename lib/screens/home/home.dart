@@ -21,12 +21,7 @@ class HomeScreen extends StatelessWidget {
         GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {
       if (hasKey) {
         TournamentViewing.of(context).changeMode(ViewingMode.scoring);
-        Router.navigator.pushNamed(
-          Router.tournaments,
-          arguments: TournamentsScreenArguments(
-            scoringMode: true,
-          ),
-        );
+        Router.navigator.pushNamed(Router.tournaments);
       } else {
         _scaffoldKey.currentState.removeCurrentSnackBar();
         _scaffoldKey.currentState.showSnackBar(
@@ -49,13 +44,7 @@ class HomeScreen extends StatelessWidget {
     ) {
       if (hasKey) {
         TournamentViewing.of(context).changeMode(ViewingMode.editing);
-        Router.navigator.pushNamed(
-          Router.tournaments,
-          arguments: TournamentsScreenArguments(
-            scoringMode: false,
-            editMode: true,
-          ),
-        );
+        Router.navigator.pushNamed(Router.tournaments);
       } else {
         _scaffoldKey.currentState.removeCurrentSnackBar();
         _scaffoldKey.currentState.showSnackBar(
@@ -240,21 +229,22 @@ class HomeScreen extends StatelessWidget {
 
 class _LandscapeMenuButton extends StatelessWidget {
   const _LandscapeMenuButton({
-    Key key,
     this.onPressed,
     this.text,
-  }) : super(key: key);
+  });
 
   final VoidCallback onPressed;
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    var btnSize = MediaQuery.of(context).size.width * 0.35;
+    var btnWidth = MediaQuery.of(context).size.width * 0.35;
     var fontSize = MediaQuery.of(context).size.width * 0.03;
+    var btnHeight = MediaQuery.of(context).size.height * 0.13;
 
     return Container(
-      width: btnSize,
+      width: btnWidth,
+      height: btnHeight,
       child: RaisedButton(
         onPressed: onPressed,
         color: Colors.white,
@@ -268,6 +258,7 @@ class _LandscapeMenuButton extends StatelessWidget {
           maxLines: 1,
           style: TextStyle(
             fontSize: fontSize,
+            fontFamily: 'CircularStd',
           ),
         ),
       ),
@@ -277,21 +268,22 @@ class _LandscapeMenuButton extends StatelessWidget {
 
 class _PortraitMenuButton extends StatelessWidget {
   const _PortraitMenuButton({
-    Key key,
     this.onPressed,
     this.text,
-  }) : super(key: key);
+  });
 
   final VoidCallback onPressed;
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    var btnSize = MediaQuery.of(context).size.width * 0.75;
+    var btnWidth = MediaQuery.of(context).size.width * 0.75;
     var fontSize = MediaQuery.of(context).size.width * 0.06;
+    var btnHeight = MediaQuery.of(context).size.height * 0.07;
 
     return Container(
-      width: btnSize,
+      width: btnWidth,
+      height: btnHeight,
       child: RaisedButton(
         onPressed: onPressed,
         color: Colors.white,
@@ -304,6 +296,7 @@ class _PortraitMenuButton extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: fontSize,
+            fontFamily: 'CircularStd',
           ),
         ),
       ),

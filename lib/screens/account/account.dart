@@ -5,8 +5,6 @@ import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({Key key}) : super(key: key);
-
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }

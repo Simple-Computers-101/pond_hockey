@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 
-class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
-  CustomAppBar({
+class CustomAppBarWithTabBar extends StatelessWidget with PreferredSizeWidget {
+  CustomAppBarWithTabBar({
     @required this.title,
+    @required this.tabs,
     this.actions = const <Widget>[],
     this.transparentBackground = false,
   });
 
   final String title;
+  final List<Widget> tabs;
   final List<Widget> actions;
   final bool transparentBackground;
 
@@ -28,9 +31,24 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: transparentBackground
           ? Colors.transparent
           : Theme.of(context).scaffoldBackgroundColor,
+      bottom: TabBar(
+        tabs: tabs,
+        isScrollable: false,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w700,
+        ),
+        indicatorSize: TabBarIndicatorSize.label,
+        labelColor: Color(0xFF1a73e8),
+        unselectedLabelColor: Color(0xFF5f6368),
+        indicator: MD2Indicator(
+          indicatorHeight: 3,
+          indicatorColor: Color(0xFF1a73e8),
+          indicatorSize: MD2IndicatorSize.normal,
+        ),
+      ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(56);
+  Size get preferredSize => Size.fromHeight(104);
 }

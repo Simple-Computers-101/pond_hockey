@@ -24,6 +24,10 @@ class TournamentsRepository {
     return query.documents.map(Tournament.fromDocument).toList();
   }
 
+  Future<void> deleteTournament(String tournamentId) {
+    return ref.document(tournamentId).delete();
+  }
+
   Future<List<Tournament>> getScorerTournaments(String uid) async {
     final query = await ref.where('scorers', arrayContains: uid).getDocuments();
     final ownedTournaments = await getOwnedTournaments(uid);

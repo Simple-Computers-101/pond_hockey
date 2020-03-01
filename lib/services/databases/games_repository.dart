@@ -11,7 +11,9 @@ class GamesRepository {
     return query.documents.map(Game.fromDocument).toList();
   }
 
-  Stream<DocumentSnapshot> getStreamFromGameId(String game) {
-    return ref.document('$game').snapshots();
+  Future<Stream<Game>> getStreamFromGameId(String gameId) async {
+    var doc = ref.document(gameId);
+    if ((await doc.get()).exists == false) return null;
+    return doc.snapshots().map(Game.fromDocument);
   }
 }

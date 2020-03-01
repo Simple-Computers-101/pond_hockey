@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 
 class TournamentViewing extends StatefulWidget {
-  TournamentViewing({Key key, @required this.child}) : super(key: key);
+  TournamentViewing({@required this.child});
 
   final Widget child;
 

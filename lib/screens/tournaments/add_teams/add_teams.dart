@@ -33,9 +33,8 @@ class AddTeamsScreen extends StatelessWidget {
 
 class _AddTeamsForm extends StatelessWidget {
   const _AddTeamsForm({
-    Key key,
     @required this.formBloc,
-  }) : super(key: key);
+  });
 
   final AddTeamsFormBloc formBloc;
 
@@ -162,11 +161,10 @@ class _AddTeamsForm extends StatelessWidget {
 
 class TeamField extends StatelessWidget {
   const TeamField({
-    Key key,
     this.index,
     this.fieldBloc,
     this.formBloc,
-  }) : super(key: key);
+  });
 
   final int index;
   final TextFieldBloc fieldBloc;

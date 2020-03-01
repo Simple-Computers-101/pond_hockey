@@ -6,7 +6,7 @@ import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/components/form/background.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({Key key, this.orientation}) : super(key: key);
+  const LoginForm({this.orientation});
 
   final Orientation orientation;
 

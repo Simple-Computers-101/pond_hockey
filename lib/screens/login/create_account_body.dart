@@ -9,8 +9,6 @@ import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
 import 'package:pond_hockey/services/apple/apple_available.dart';
 
 class CreateAccountBody extends StatelessWidget {
-  const CreateAccountBody({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     void appleSignIn() async {

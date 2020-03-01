@@ -38,11 +38,10 @@ class FormBackground extends StatelessWidget {
 
 class FormFieldBackground extends StatelessWidget {
   const FormFieldBackground({
-    Key key,
     @required this.field,
     this.height,
     this.bottom = false,
-  }) : super(key: key);
+  });
 
   final double height;
   final Widget field;

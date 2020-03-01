@@ -2,33 +2,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
+import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 
 class TournamentsScreen extends StatelessWidget {
-  const TournamentsScreen(
-      {Key key, this.scoringMode = false, this.editMode = false})
-      : super(key: key);
+  // const TournamentsScreen({this.scoringMode = false, this.editMode = false});
 
-  final bool scoringMode;
-  final bool editMode;
-
-  bool canEditOrScore() {
-    return scoringMode == true || editMode == true;
-  }
-
-  bool canEdit() {
-    return editMode == true;
-  }
-
-  bool canScore() {
-    return scoringMode == true || editMode == true;
-  }
+  // final bool scoringMode;
+  // final bool editMode;
 
   @override
   Widget build(BuildContext context) {
     final repo = TournamentsRepository();
+    var mode = TournamentViewing.of(context).mode;
+
+    bool canEditOrScore() {
+      return mode == ViewingMode.editing || mode == ViewingMode.scoring;
+    }
+
+    bool canEdit() {
+      return mode == ViewingMode.editing;
+    }
+
+    bool isScoring() {
+      return mode == ViewingMode.scoring;
+    }
 
     Widget buildLoading() {
       return Center(child: CircularProgressIndicator());
@@ -82,7 +83,7 @@ class TournamentsScreen extends StatelessWidget {
     Widget buildScorerOrEditorView(String uid) {
       if (canEdit()) {
         return ManageTournamentView(uid: uid, editor: true);
-      } else if (canScore()) {
+      } else if (isScoring()) {
         return ManageTournamentView(uid: uid);
       }
       return SizedBox();
@@ -106,7 +107,7 @@ class TournamentsScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: canEdit()
                 ? 'Manage Tournaments'
-                : canScore() ? 'Score Tournaments' : 'Error',
+                : isScoring() ? 'Score Tournaments' : 'Error',
           ),
           floatingActionButton: canEdit()
               ? FloatingActionButton(

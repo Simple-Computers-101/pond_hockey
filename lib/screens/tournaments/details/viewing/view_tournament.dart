@@ -1,28 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pond_hockey/enums/viewing_mode.dart';
+import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
-import 'package:pond_hockey/screens/tournaments/details/game_item.dart';
-import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
+import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
-class TournamentDetails extends StatefulWidget {
-  const TournamentDetails({Key key, this.tournament}) : super(key: key);
+class ViewTournament extends StatefulWidget {
+  const ViewTournament({@required this.tournament});
 
   final Tournament tournament;
 
   @override
-  _TournamentDetailsState createState() => _TournamentDetailsState();
+  _ViewTournamentState createState() => _ViewTournamentState();
 }
 
-class _TournamentDetailsState extends State<TournamentDetails> {
+class _ViewTournamentState extends State<ViewTournament> {
   @override
   Widget build(BuildContext context) {
-    var mode = TournamentViewing.of(context).mode;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -35,39 +33,28 @@ class _TournamentDetailsState extends State<TournamentDetails> {
                 centerTitle: true,
                 title: Text(
                   widget.tournament.name,
-                  style: Theme.of(context).textTheme.headline5,
+                  // style: Theme.of(context).textTheme.headline5,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'CircularStd',
+                    fontSize: 24,
+                  ),
                 ),
-                actions: <Widget>[
-                  if (mode != ViewingMode.viewing) ...[
-                    if (mode == ViewingMode.scoring ||
-                        mode == ViewingMode.editing)
-                      IconButton(
-                        icon: Icon(Icons.score),
-                        onPressed: () {},
-                      ),
-                    if (mode == ViewingMode.editing)
-                      IconButton(
-                        icon: Icon(Icons.settings),
-                        onPressed: () => Router.navigator.pushNamed(
-                          Router.tournamentSettings,
-                          arguments: TournamentSettingsScreenArguments(
-                            tournament: widget.tournament,
-                          ),
-                        ),
-                      ),
-                  ],
-                ],
                 bottom: TabBar(
                   tabs: [
                     Tab(text: 'Results'),
                     Tab(text: 'Teams'),
                   ],
-                  isScrollable: false,
-                  indicator: UnderlineTabIndicator(
-                    insets: const EdgeInsets.symmetric(horizontal: 150),
-                    borderSide: BorderSide(
-                      width: 0.75,
-                    ),
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  labelColor: Color(0xFF1a73e8),
+                  unselectedLabelColor: Color(0xFF5f6368),
+                  indicator: MD2Indicator(
+                    indicatorHeight: 3,
+                    indicatorColor: Color(0xFF1a73e8),
+                    indicatorSize: MD2IndicatorSize.normal,
                   ),
                 ),
               ),
@@ -93,7 +80,7 @@ class _TournamentDetailsState extends State<TournamentDetails> {
 }
 
 class _GamesPage extends StatefulWidget {
-  _GamesPage({Key key, this.tournamentId}) : super(key: key);
+  _GamesPage({this.tournamentId});
 
   final String tournamentId;
 
@@ -102,7 +89,7 @@ class _GamesPage extends StatefulWidget {
 }
 
 class _GamesPageState extends State<_GamesPage> {
-  List<Game> _games;
+  List<Game> _games = [];
 
   @override
   void initState() {
@@ -129,7 +116,7 @@ class _GamesPageState extends State<_GamesPage> {
         itemCount: _games.length,
         itemBuilder: (context, index) {
           final game = _games[index];
-          return GameItem(game: game);
+          return GameItem(gameId: game.id);
         },
       ),
     );
@@ -138,9 +125,8 @@ class _GamesPageState extends State<_GamesPage> {
 
 class _TeamsPage extends StatelessWidget {
   const _TeamsPage({
-    Key key,
     @required this.tournament,
-  }) : super(key: key);
+  });
 
   final Tournament tournament;
 
@@ -171,7 +157,7 @@ class _TeamsPage extends StatelessWidget {
                   title: Text(team.name),
                   onTap: () => Router.navigator.pushNamed(
                     Router.teamDetails,
-                    arguments: TeamDetailsScreenArguments(team: team),
+                    arguments: team,
                   ),
                 );
               },

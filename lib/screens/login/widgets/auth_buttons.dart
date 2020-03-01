@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({
-    Key key,
     this.onPressed,
     this.width = 150,
     this.height = 50,
-  }) : super(key: key);
+  });
 
   final VoidCallback onPressed;
   final double width;
@@ -53,7 +52,7 @@ class GoogleSignInButton extends StatelessWidget {
 }
 
 class AppleSignInButton extends StatelessWidget {
-  const AppleSignInButton({Key key, this.onPressed}) : super(key: key);
+  const AppleSignInButton({this.onPressed});
 
   final VoidCallback onPressed;
 

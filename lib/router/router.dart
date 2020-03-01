@@ -5,9 +5,10 @@ import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
 import 'package:pond_hockey/screens/tournaments/add_teams/add_teams.dart';
 import 'package:pond_hockey/screens/tournaments/add_tournament/add_tournament.dart';
-import 'package:pond_hockey/screens/tournaments/details/settings.dart';
-import 'package:pond_hockey/screens/tournaments/details/team_details.dart';
-import 'package:pond_hockey/screens/tournaments/details/tournament_details.dart';
+import 'package:pond_hockey/screens/tournaments/details/managing/manage_tournament.dart';
+import 'package:pond_hockey/screens/tournaments/details/scoring/score_tournament.dart';
+import 'package:pond_hockey/screens/tournaments/details/viewing/view_team.dart';
+import 'package:pond_hockey/screens/tournaments/details/viewing/view_tournament.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
 
 @CustomAutoRouter()
@@ -21,9 +22,11 @@ class $Router {
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideLeftWithFade)
   TournamentsScreen tournaments;
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
-  TournamentDetails tournamentDetails;
+  ViewTournament tournamentDetails;
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
-  TournamentSettingsScreen tournamentSettings;
+  ScoreTournament scoreTournament;
+  @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
+  ManageTournament manageTournament;
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
   TeamDetailsScreen teamDetails;
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRight)

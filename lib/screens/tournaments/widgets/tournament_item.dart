@@ -1,15 +1,18 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 
 class TournamentItem extends StatelessWidget {
-  const TournamentItem(this.tournament, {Key key}) : super(key: key);
+  const TournamentItem(this.tournament);
 
   final Tournament tournament;
 
   @override
   Widget build(BuildContext context) {
+    var mode = TournamentViewing.of(context).mode;
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -19,12 +22,26 @@ class TournamentItem extends StatelessWidget {
         type: MaterialType.transparency,
         child: InkWell(
           onTap: () {
-            Router.navigator.pushNamed(
-              Router.tournamentDetails,
-              arguments: TournamentDetailsArguments(
-                tournament: tournament,
-              ),
-            );
+            switch (mode) {
+              case ViewingMode.viewing:
+                Router.navigator.pushNamed(
+                  Router.tournamentDetails,
+                  arguments: tournament,
+                );
+                break;
+              case ViewingMode.scoring:
+                Router.navigator.pushNamed(
+                  Router.scoreTournament,
+                  arguments: tournament,
+                );
+                break;
+              case ViewingMode.editing:
+                Router.navigator.pushNamed(
+                  Router.manageTournament,
+                  arguments: tournament,
+                );
+                break;
+            }
           },
           borderRadius: BorderRadius.circular(16),
           splashColor: Colors.lightBlue.withOpacity(0.25),

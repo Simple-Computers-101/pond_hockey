@@ -3,7 +3,7 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:pond_hockey/models/tournament.dart';
 
 class TournamentSettingsScreen extends StatelessWidget {
-  const TournamentSettingsScreen({Key key, this.tournament}) : super(key: key);
+  const TournamentSettingsScreen({this.tournament});
 
   final Tournament tournament;
 
@@ -94,11 +94,10 @@ class TournamentSettingsScreen extends StatelessWidget {
 
 class SettingsTile extends StatelessWidget {
   const SettingsTile({
-    Key key,
     this.icon,
     this.text,
     this.onTap,
-  }) : super(key: key);
+  });
 
   final IconData icon;
   final String text;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
+import 'package:pond_hockey/components/buttons/gradient_btn.dart';
 import 'package:pond_hockey/components/form/background.dart';
-import 'package:pond_hockey/components/form/button.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
@@ -99,9 +99,6 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
     TournamentsRepository().addTournament(tournament);
     Router.navigator.pushReplacementNamed(
       Router.tournaments,
-      arguments: TournamentsScreenArguments(
-        editMode: true,
-      ),
     );
   }
 

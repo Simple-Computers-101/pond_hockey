@@ -4,7 +4,7 @@ import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/models/team.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
-  const TeamDetailsScreen({Key key, this.team}) : super(key: key);
+  const TeamDetailsScreen({this.team});
 
   final Team team;
 
