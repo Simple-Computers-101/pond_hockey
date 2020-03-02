@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/add_users/add_user_dashboard.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
@@ -108,6 +109,16 @@ class TournamentsScreen extends StatelessWidget {
             title: canEdit()
                 ? 'Manage Tournaments'
                 : isScoring() ? 'Score Tournaments' : 'Error',
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => UserDashboard()),
+                    );
+                  },
+                  child: Text("Manage"))
+            ],
           ),
           floatingActionButton: canEdit()
               ? FloatingActionButton(
