@@ -21,6 +21,14 @@
       "program": "lib/main.dart",
       "flutterMode": "debug",
       "type": "dart"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

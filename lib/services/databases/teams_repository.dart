@@ -19,7 +19,7 @@ class TeamsRepository {
     }
   }
 
-  Stream<QuerySnapshot> getTeamsStreamFromTournament(String id) {
+  Stream<QuerySnapshot> getTeamsStreamFromTournamentId(String id) {
     return ref.where('currentTournament', isEqualTo: id).snapshots();
   }
 }

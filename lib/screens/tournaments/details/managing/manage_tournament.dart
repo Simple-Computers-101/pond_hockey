@@ -2,8 +2,12 @@ import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/tabbar.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
+import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
+import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class ManageTournament extends StatelessWidget {
@@ -38,9 +42,30 @@ class ManageTournament extends StatelessWidget {
 }
 
 class _ManageGamesView extends StatelessWidget {
+  const _ManageGamesView({this.tournamentId});
+
+  final String tournamentId;
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.grey[200])),
+        color: Color(0xFFE9E9E9),
+      ),
+      child: FirestoreAnimatedList(
+        query: GamesRepository().getGamesFromTournamentId(tournamentId),
+        itemBuilder: (cntx, doc, anim, indx) {
+          var game = Game.fromDocument(doc);
+          return GameItem(
+            gameId: game.id,
+            onTap: () {
+              Router.navigator.pushNamed(Router.manageGame, arguments: game);
+            },
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -58,11 +83,14 @@ class _ManageTeamsView extends StatelessWidget {
       ),
       body: Container(
         decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey[200]))),
+          border: Border(top: BorderSide(color: Colors.grey[200])),
+          color: Color(0xFFE9E9E9),
+        ),
         child: FirestoreAnimatedList(
           primary: false,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          query: TeamsRepository().getTeamsStreamFromTournament(tournamentId),
+          padding: const EdgeInsets.all(24),
+          duration: Duration(milliseconds: 500),
+          query: TeamsRepository().getTeamsStreamFromTournamentId(tournamentId),
           itemBuilder: (cntx, doc, anim, indx) {
             var team = Team.fromMap(doc.data);
             return FadeTransition(
@@ -103,8 +131,8 @@ class ManageTeamItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Color(0xFFE9E9E9),
         borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
       ),
       child: Material(
         type: MaterialType.transparency,

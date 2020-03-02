@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/models/game.dart';
@@ -79,44 +80,25 @@ class _ViewTournamentState extends State<ViewTournament> {
   }
 }
 
-class _GamesPage extends StatefulWidget {
-  _GamesPage({this.tournamentId});
+class _GamesPage extends StatelessWidget {
+  const _GamesPage({this.tournamentId});
 
   final String tournamentId;
 
   @override
-  _GamesPageState createState() => _GamesPageState();
-}
-
-class _GamesPageState extends State<_GamesPage> {
-  List<Game> _games = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _getGames();
-  }
-
-  void _getGames() async {
-    var games =
-        await GamesRepository().getGamesFromTournamentId(widget.tournamentId);
-    setState(() {
-      _games = games;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_games == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     return Scaffold(
-      body: ListView.builder(
-        itemCount: _games.length,
-        itemBuilder: (context, index) {
-          final game = _games[index];
-          return GameItem(gameId: game.id);
+      backgroundColor: Color(0xFFE9E9E9),
+      body: FirestoreAnimatedList(
+        query: GamesRepository().getGamesFromTournamentId(tournamentId),
+        duration: Duration(milliseconds: 600),
+        padding: const EdgeInsets.all(24),
+        itemBuilder: (cntx, doc, anim, indx) {
+          var game = Game.fromDocument(doc);
+          return FadeTransition(
+            opacity: anim,
+            child: GameItem(gameId: game.id),
+          );
         },
       ),
     );
@@ -124,15 +106,14 @@ class _GamesPageState extends State<_GamesPage> {
 }
 
 class _TeamsPage extends StatelessWidget {
-  const _TeamsPage({
-    @required this.tournament,
-  });
+  const _TeamsPage({@required this.tournament});
 
   final Tournament tournament;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE9E9E9),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Router.navigator.pushNamed(
@@ -142,30 +123,27 @@ class _TeamsPage extends StatelessWidget {
         },
         child: Icon(Icons.add),
       ),
-      body: StreamBuilder(
-        stream: TeamsRepository().getTeamsStreamFromTournament(tournament.id),
-        builder: (context, stream) {
-          if ((stream.connectionState == ConnectionState.active ||
-                  stream.connectionState == ConnectionState.done) &&
-              stream.hasData) {
-            var data = (stream.data as QuerySnapshot).documents;
-            return ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final team = Team.fromMap(data[index].data);
-                return ListTile(
-                  title: Text(team.name),
-                  onTap: () => Router.navigator.pushNamed(
-                    Router.teamDetails,
-                    arguments: team,
-                  ),
-                );
-              },
-            );
-          } else if (stream.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return SizedBox();
+      body: FirestoreAnimatedList(
+        query: TeamsRepository().getTeamsStreamFromTournamentId(tournament.id),
+        padding: const EdgeInsets.all(24),
+        shrinkWrap: true,
+        itemBuilder: (cntx, doc, anim, indx) {
+          final team = Team.fromMap(doc.data);
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            margin: const EdgeInsets.only(bottom: 10),
+            child: ListTile(
+              title: Text(team.name),
+              trailing: Icon(Icons.chevron_right),
+              onTap: () => Router.navigator.pushNamed(
+                Router.teamDetails,
+                arguments: team,
+              ),
+            ),
+          );
         },
       ),
     );

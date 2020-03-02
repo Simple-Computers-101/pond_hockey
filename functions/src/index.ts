@@ -11,10 +11,13 @@ export const calculateFinalScore = functions.firestore.document('games/{gameId}'
     const newData = <Game>change.after.data();
 
     if (newData.status !== GameStatus.FINISHED) return null;
-    if (newData.teamOne.get('differential') !== undefined && newData.teamOne.get('differential') !== null) return null;
+    const oneDifferential:number = newData.team_one.get('differential')
+    const twoDifferential:number = newData.team_two.get('differential')
+    // if ((oneDifferential !== undefined && oneDifferential !== null) || (twoDifferential !== undefined && twoDifferential !== null)) return null;
+    if (oneDifferential !== 0 && twoDifferential !== 0) return null;
 
-    const teamOneScore = newData.teamOne.get('score')
-    const teamTwoScore = newData.teamTwo.get('score')
+    const teamOneScore: number = newData.team_one.get('score')
+    const teamTwoScore: number = newData.team_two.get('score')
 
     return change.after.ref.update({
         teamOne: {
@@ -44,9 +47,9 @@ export const addScore = functions.https.onCall(async (data, context) => {
     if (scorers.includes(uid)) {
         const gameDoc = admin.firestore().doc(`games/${gameID}`)
         const gameDocData = <Game>(await gameDoc.get()).data()
-        let currentTeamOneScore = gameDocData.teamOne.get('score') as number
-        let currentTeamTwoScore = gameDocData.teamTwo.get('score') as number
-        if (gameDocData.teamOne.get('id') === teamID) {
+        let currentTeamOneScore = gameDocData.team_one.get('score') as number
+        let currentTeamTwoScore = gameDocData.team_two.get('score') as number
+        if (gameDocData.team_one.get('id') === teamID) {
             gameDoc.update({
                 team_one: {
                     score: currentTeamOneScore++
@@ -54,7 +57,7 @@ export const addScore = functions.https.onCall(async (data, context) => {
             }).catch((reason) => {
                 throw new functions.https.HttpsError('permission-denied', `Permission denied: ${reason}`)
             })
-        } else if (gameDocData.teamTwo.get('id') === teamID) {
+        } else if (gameDocData.team_two.get('id') === teamID) {
             gameDoc.update({
                 team_two: {
                     score: currentTeamTwoScore++
