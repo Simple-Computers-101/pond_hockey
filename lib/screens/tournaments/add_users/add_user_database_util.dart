@@ -5,24 +5,19 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:pond_hockey/screens/tournaments/add_users/user.dart';
 
 class FirebaseDatabaseUtil {
-  CollectionReference _tournamentRef;
+  CollectionReference _tournamentRef =
+      Firestore.instance.collection('tournaments');
   var database = Firestore.instance;
   int _counter;
   DatabaseError error;
 
-  static final FirebaseDatabaseUtil _instance = FirebaseDatabaseUtil.internal();
+  static final FirebaseDatabaseUtil _instance =
+      FirebaseDatabaseUtil._internal();
 
-  FirebaseDatabaseUtil.internal();
+  FirebaseDatabaseUtil._internal();
 
   factory FirebaseDatabaseUtil() {
     return _instance;
-  }
-
-  void initState() {
-    _tournamentRef = database
-        .collection("tournaments")
-        .document("LORQyVSHgMkChOecIj3A")
-        .collection("mainteners");
   }
 
   DatabaseError getError() {
@@ -38,8 +33,10 @@ class FirebaseDatabaseUtil {
   }
 
   addUser(User user) async {
-    await _tournamentRef.document(user.id).setData({
-      "email": "" + user.email,
+    await _tournamentRef.document(user.id).updateData({
+      'editors': [
+        user.id,
+      ],
     }).then((_) {
       print('Transaction  committed.');
     });
@@ -53,11 +50,9 @@ class FirebaseDatabaseUtil {
 
   void updateUser(User user) async {
     await _tournamentRef.document(user.id).updateData({
-      "email": "" + user.email,
+      "email": user.email,
     }).then((_) {
       print('Transaction  committed.');
     });
   }
-
-  void dispose() {}
 }

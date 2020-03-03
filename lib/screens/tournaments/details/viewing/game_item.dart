@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
@@ -33,35 +34,59 @@ class GameItem extends StatelessWidget {
             return InkWell(
               onTap: onTap,
               child: Container(
+                height: MediaQuery.of(context).size.height * 0.15,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 margin: const EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
                   children: <Widget>[
-                    Column(
+                    Row(
                       children: <Widget>[
-                        Text('${gameData.teamOne.name}'),
-                        Text(
-                          '${gameData.teamOne.score}',
-                          style: TextStyle(
-                            fontSize: 32,
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '${gameData.teamOne.name}',
+                                maxLines: 1,
+                              ),
+                              Text(
+                                '${gameData.teamOne.score}',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 32,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                '${gameData.teamTwo.name}',
+                                maxLines: 1,
+                              ),
+                              Text(
+                                '${gameData.teamTwo.score}',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontSize: 32,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    Column(
-                      children: <Widget>[
-                        Text('${gameData.teamTwo.name}'),
-                        Text(
-                          '${gameData.teamTwo.score}',
-                          style: TextStyle(
-                            fontSize: 32,
-                          ),
-                        ),
-                      ],
+                    Container(
+                      child: Text(
+                        EnumToString.parseCamelCase(gameData.status),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
                   ],
                 ),

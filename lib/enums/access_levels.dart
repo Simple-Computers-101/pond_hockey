@@ -1,0 +1,1 @@
+enum AccessLevels { editor, scorer }

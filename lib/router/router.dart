@@ -25,11 +25,11 @@ class $Router {
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideLeftWithFade)
   AccountScreen account;
 
-  @GuardedBy([AuthGuard])
+  // @GuardedBy([AuthGuard])
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideLeftWithFade)
   TournamentsScreen tournaments;
 
-  @GuardedBy([AuthGuard])
+  // @GuardedBy([AuthGuard])
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
   ViewTournament tournamentDetails;
 
@@ -45,7 +45,7 @@ class $Router {
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
   ManageGame manageGame;
 
-  @GuardedBy([AuthGuard])
+  // @GuardedBy([AuthGuard])
   @CustomRoute(transitionsBuilder: TransitionsBuilders.slideRightWithFade)
   TeamDetailsScreen teamDetails;
 

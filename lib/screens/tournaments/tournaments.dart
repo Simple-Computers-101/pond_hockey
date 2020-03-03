@@ -10,11 +10,6 @@ import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 
 class TournamentsScreen extends StatelessWidget {
-  // const TournamentsScreen({this.scoringMode = false, this.editMode = false});
-
-  // final bool scoringMode;
-  // final bool editMode;
-
   @override
   Widget build(BuildContext context) {
     final repo = TournamentsRepository();
@@ -83,9 +78,9 @@ class TournamentsScreen extends StatelessWidget {
 
     Widget buildScorerOrEditorView(String uid) {
       if (canEdit()) {
-        return ManageTournamentView(uid: uid, editor: true);
+        return ManageableTournamentsList(uid: uid, editor: true);
       } else if (isScoring()) {
-        return ManageTournamentView(uid: uid);
+        return ManageableTournamentsList(uid: uid);
       }
       return SizedBox();
     }
@@ -111,13 +106,14 @@ class TournamentsScreen extends StatelessWidget {
                 : isScoring() ? 'Score Tournaments' : 'Error',
             actions: <Widget>[
               FlatButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => UserDashboard()),
-                    );
-                  },
-                  child: Text("Manage"))
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => UserDashboard()),
+                  );
+                },
+                child: Text("Manage"),
+              )
             ],
           ),
           floatingActionButton: canEdit()
@@ -137,8 +133,8 @@ class TournamentsScreen extends StatelessWidget {
   }
 }
 
-class ManageTournamentView extends StatelessWidget {
-  const ManageTournamentView({
+class ManageableTournamentsList extends StatelessWidget {
+  const ManageableTournamentsList({
     @required this.uid,
     this.editor = false,
   });
@@ -151,7 +147,7 @@ class ManageTournamentView extends StatelessWidget {
     final repo = TournamentsRepository();
     return FutureBuilder(
       future: editor
-          ? repo.getOwnedTournaments(uid)
+          ? repo.getEditableTournaments(uid)
           : repo.getScorerTournaments(uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

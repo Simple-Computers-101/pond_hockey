@@ -10,6 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
 import 'package:pond_hockey/screens/account/account.dart';
+import 'package:pond_hockey/router/guard.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/view_tournament.dart';
 import 'package:pond_hockey/models/tournament.dart';
@@ -34,7 +35,15 @@ class Router {
   static const teamDetails = '/team-details';
   static const addTournament = '/add-tournament';
   static const addTeams = '/add-teams';
-  static final navigator = ExtendedNavigator();
+  static const _guardedRoutes = {
+    account: [AuthGuard],
+    scoreTournament: [AuthGuard],
+    manageTournament: [AuthGuard],
+    manageGame: [AuthGuard],
+    addTournament: [AuthGuard],
+    addTeams: [AuthGuard],
+  };
+  static final navigator = ExtendedNavigator(_guardedRoutes);
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {

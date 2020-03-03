@@ -26,8 +26,8 @@ class Game {
     return {
       'id': id,
       'tournament': tournament,
-      'teamOne': teamOne.toJson(),
-      'teamTwo': teamTwo.toJson(),
+      'teamOne': teamOne.toMap(),
+      'teamTwo': teamTwo.toMap(),
       'status': EnumToString.parseCamelCase(status),
       'type': EnumToString.parseCamelCase(type),
     };
@@ -35,12 +35,12 @@ class Game {
 
   static Game fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-  
+
     return Game(
       id: map['id'],
       tournament: map['tournament'],
-      teamOne: GameTeam.fromJson(map['teamOne']),
-      teamTwo: GameTeam.fromJson(map['teamTwo']),
+      teamOne: GameTeam.fromMap(map['teamOne']),
+      teamTwo: GameTeam.fromMap(map['teamTwo']),
       status: EnumToString.fromString(GameStatus.values, map['status']),
       type: EnumToString.fromString(GameType.values, map['type']),
     );
@@ -49,13 +49,30 @@ class Game {
   static Game fromDocument(DocumentSnapshot doc) {
     var data = doc.data;
 
+    var teamOne;
+    var teamTwo;
+
+    if (data.containsKey('team_one')) {
+      teamOne = GameTeam.fromMap(data['team_one']);
+      teamTwo = GameTeam.fromMap(data['team_one']);
+    } else {
+      teamOne = GameTeam.fromMap(data['teamOne']);
+      teamTwo = GameTeam.fromMap(data['teamTwo']);
+    }
+
+    var status = gameStatus.keys
+        .firstWhere((element) => gameStatus[element] == data['status']);
+
+    var type = gameType.keys
+        .firstWhere((element) => gameType[element] == data['type']);
+
     return Game(
       id: data['id'],
       tournament: data['tournament'],
-      teamOne: GameTeam.fromMap(data['team_one']),
-      teamTwo: GameTeam.fromMap(data['team_two']),
-      status: EnumToString.fromString(GameStatus.values, data['status']),
-      type: EnumToString.fromString(GameType.values, data['type']),
+      teamOne: teamOne,
+      teamTwo: teamTwo,
+      status: status,
+      type: type,
     );
   }
 
@@ -88,7 +105,7 @@ class GameTeam {
 
   static GameTeam fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-  
+
     return GameTeam(
       id: map['id'],
       name: map['name'],

@@ -3,27 +3,25 @@
 /// Shouldn't play the same team
 
 class ThreeGGAlgorithm {
-  static List<String> teams;
-  static List<List<String>> bracket = [];
-  // int maxRounds;
-
-  static void start(List<String> origTeams) {
+  static List<List<String>> start(List<String> origTeams) {
     if (origTeams.length < 4) {
-      return;
+      return null;
     }
-    teams = List<String>.from(origTeams);
+    var teams = List<String>.from(origTeams);
     if (teams.length.isOdd) {
       teams.add('0');
     }
     // maxRounds = (teams.length - 1);
     var splitTeams = _splitList(teams);
     var rotatedTeams = splitTeams;
+    var bracket = <List<String>>[];
     for (var i = 1; i <= 3; i++) {
       for (var b = 0; b < rotatedTeams[0].length; b++) {
         bracket.add([rotatedTeams[0][b], rotatedTeams[1][b]]);
       }
       rotatedTeams = _rotateTeams(splitTeams);
     }
+    return bracket;
   }
 
   static List<List<String>> _splitList(List<String> split) {

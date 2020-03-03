@@ -15,6 +15,7 @@ class Tournament {
   DateTime endDate;
   String owner;
   List<String> scorers;
+  List<String> editors;
 
   Tournament({
     this.id,
@@ -27,6 +28,7 @@ class Tournament {
     this.endDate,
     this.owner,
     this.scorers,
+    this.editors,
   });
 
   Map<String, dynamic> toMap() {
@@ -41,6 +43,7 @@ class Tournament {
       'endDate': endDate,
       'owner': owner,
       'scorers': scorers,
+      'editors': editors,
     };
   }
 
@@ -51,16 +54,14 @@ class Tournament {
       id: map['id'],
       name: map['name'],
       details: map['details'],
-      status: EnumToString.fromString(
-        GameStatus.values,
-        map['status'],
-      ),
+      status: EnumToString.fromString(GameStatus.values, map['status']),
       year: map['year'],
       location: map['location'],
       startDate: map['startDate'],
       endDate: map['endDate'],
       owner: map['owner'],
       scorers: map['scorers']?.cast<String>(),
+      editors: map['editors']?.cast<String>(),
     );
   }
 
@@ -76,9 +77,10 @@ class Tournament {
       id: data['id'],
       location: data['location'],
       owner: data['owner'],
-      scorers: data['scorers']?.cast<String>(),
       status: EnumToString.fromString(GameStatus.values, data['status']),
       year: data['year'],
+      scorers: data['scorers']?.cast<String>(),
+      editors: data['editors']?.cast<String>(),
     );
   }
 

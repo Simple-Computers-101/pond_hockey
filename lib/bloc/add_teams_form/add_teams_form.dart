@@ -8,13 +8,14 @@ import 'package:uuid/uuid.dart';
 class AddTeamsFormBloc extends FormBloc<String, String> {
   AddTeamsFormBloc({this.tournament}) {
     addFieldBloc(
-      fieldBloc:
-          SelectFieldBloc<Map<String, dynamic>>(name: 'division', items: [
-        {'name': 'Open', 'value': Division.open},
-        {'name': 'Recreational', 'value': Division.rec},
-      ], validators: [
-        FieldBlocValidators.requiredSelectFieldBloc
-      ]),
+      fieldBloc: SelectFieldBloc<Map<String, dynamic>>(
+        name: 'division',
+        items: [
+          {'name': 'Open', 'value': Division.open},
+          {'name': 'Recreational', 'value': Division.rec},
+        ],
+        validators: [FieldBlocValidators.requiredSelectFieldBloc],
+      ),
     );
     addFieldBloc(fieldBloc: FieldBlocList(name: 'teams', fieldBlocs: []));
   }

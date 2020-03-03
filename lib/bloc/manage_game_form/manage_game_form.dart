@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pond_hockey/models/game.dart';
+import 'package:pond_hockey/services/databases/games_repository.dart';
 
 class ManageGameFormBloc extends FormBloc<String, String> {
   ManageGameFormBloc({@required this.game}) {
@@ -34,7 +35,11 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       yield state.toSuccess(successResponse: 'The scores were the same');
     }
 
-    
+    GamesRepository().updateScores(
+      game.id,
+      teamOneField.value,
+      teamTwoField.value,
+    );
 
     yield state.toSuccess();
   }

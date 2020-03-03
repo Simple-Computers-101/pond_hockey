@@ -11,6 +11,10 @@ class GamesRepository {
     return query;
   }
 
+  Future<void> addGameToTournament(Game game) {
+    return ref.document(game.id).setData(game.toMap());
+  }
+
   Future<Stream<Game>> getStreamFromGameId(String gameId) async {
     var doc = ref.document(gameId);
     if ((await doc.get()).exists == false) return null;
@@ -18,13 +22,15 @@ class GamesRepository {
   }
 
   Future<void> updateScores(String gameId, int teamOne, int teamTwo) {
-    return ref.document(gameId).updateData({
+    return ref.document(gameId).setData({
       'team_one': {
         'score': teamOne,
+        'differential': teamOne - teamTwo,
       },
       'team_two': {
         'score': teamTwo,
+        'differential': teamTwo - teamOne,
       }
-    });
+    }, merge: true);
   }
 }

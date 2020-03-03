@@ -13,6 +13,11 @@ class ManageGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var teamNameStyle = TextStyle(
+      fontSize: MediaQuery.of(context).size.width * 0.05,
+      fontFamily: 'CircularStd',
+    );
+
     return BlocProvider<ManageGameFormBloc>(
       create: (_) => ManageGameFormBloc(game: game),
       child: Builder(
@@ -25,10 +30,17 @@ class ManageGame extends StatelessWidget {
                 Container(
                   height: MediaQuery.of(context).size.height / 4,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(game.teamOne.name),
-                      Text('v.'),
-                      Text(game.teamTwo.name),
+                      Text(game.teamOne.name, style: teamNameStyle),
+                      Text(
+                        'vs',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.1,
+                          fontFamily: 'CircularStd',
+                        ),
+                      ),
+                      Text(game.teamTwo.name, style: teamNameStyle),
                     ],
                   ),
                 ),
@@ -50,8 +62,7 @@ class _ManageGameForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormBlocListener<ManageGameFormBloc, String, String>(
-      formBloc: formBloc,
-      onLoading: (_, __) => Center(child: CircularProgressIndicator()),
+      onSubmitting: (_, __) => Center(child: CircularProgressIndicator()),
       onSuccess: (_, __) => Router.navigator.pop(),
       child: Expanded(
         child: Container(
@@ -61,39 +72,36 @@ class _ManageGameForm extends StatelessWidget {
             ),
           ),
           child: BlocBuilder<ManageGameFormBloc, FormBlocState>(
-            builder: (context, state) {
-              final teamOneField = state
+            builder: (context, formState) {
+              if (formState.fieldBlocs.isEmpty) {
+                return Center(child: CircularProgressIndicator());
+              }
+              var oneField = formState
                   .fieldBlocFromPath('team-one_score')
                   .asInputFieldBloc<int>();
-              final teamTwoField = state
+              var twoField = formState
                   .fieldBlocFromPath('team-two_score')
                   .asInputFieldBloc<int>();
-
               return ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 children: <Widget>[
-                  BlocBuilder<InputFieldBloc<int>, InputFieldBlocState>(
-                    bloc: teamOneField,
+                  BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
+                    bloc: oneField,
                     builder: (context, state) {
-                      var oneValue = teamOneField.value;
-
                       return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.remove),
                             onPressed: () {
-                              teamOneField.updateValue(oneValue--);
+                              oneField.updateValue(state.value - 1);
                             },
                           ),
-                          Expanded(
-                            child: TextFormField(
-                              readOnly: true,
-                              initialValue: oneValue.toString(),
-                            ),
-                          ),
+                          Text(state.value.toString()),
                           IconButton(
                             icon: Icon(Icons.add),
                             onPressed: () {
-                              teamOneField.updateValue(oneValue++);
+                              oneField.updateValue(state.value + 1);
                             },
                           ),
                         ],
@@ -101,40 +109,36 @@ class _ManageGameForm extends StatelessWidget {
                     },
                   ),
                   BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
-                    bloc: teamTwoField,
+                    bloc: twoField,
                     builder: (context, state) {
-                      var twoValue = teamTwoField.value;
                       return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.remove),
                             onPressed: () {
-                              teamTwoField.updateValue(twoValue--);
+                              twoField.updateValue(state.value - 1);
                             },
                           ),
-                          Expanded(
-                            child: TextFormField(
-                              readOnly: true,
-                              initialValue: twoValue.toString(),
-                            ),
-                          ),
+                          Text(state.value.toString()),
                           IconButton(
                             icon: Icon(Icons.add),
                             onPressed: () {
-                              teamTwoField.updateValue(twoValue++);
+                              twoField.updateValue(state.value + 1);
                             },
                           ),
                         ],
                       );
                     },
                   ),
+                  const SizedBox(height: 40),
                   GradientButton(
                     onTap: formBloc.submit,
                     colors: [
                       Color.fromRGBO(255, 65, 109, 1),
                       Color.fromRGBO(255, 75, 43, 1),
                     ],
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    height: MediaQuery.of(context).size.height * 0.08,
                     text: 'Submit',
                   ),
                 ],
