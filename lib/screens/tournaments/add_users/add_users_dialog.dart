@@ -16,6 +16,7 @@ class AddUserDialog {
     if (user != null) {
       this.user = user;
       teEmail.text = user.email;
+      teName.text = user.name;
     }
 
     return AlertDialog(

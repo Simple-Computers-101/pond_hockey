@@ -14,7 +14,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc({
     @required this.userRepository,
-  })  : assert(userRepository != null);
+  }) : assert(userRepository != null);
 
   @override
   LoginState get initialState => LoginState.initial(isSignUp: false);
@@ -29,7 +29,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user =
             await userRepository.signInWithCredentials(event.authCredential);
         await addUserInfoToFireStore(user);
-     //   yield LoginState.initial(isSignUp: false);
+        //   yield LoginState.initial(isSignUp: false);
         yield LoginState.success();
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
@@ -45,7 +45,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user = await userRepository
             .signInWithCredentials(event.authCredential, email: event.email);
         await addUserInfoToFireStore(user);
-     //   yield LoginState.initial(isSignUp: false);
+        //   yield LoginState.initial(isSignUp: false);
         yield LoginState.success();
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
@@ -124,7 +124,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     add(GoogleLoginButtonPressed(credential));
   }
 
-  Future<void> signInWithApple({List<Scope> scopes = const []}) async {
+  Future<void> signInWithApple(
+      {List<Scope> scopes = const [Scope.email]}) async {
     final result = await AppleSignIn.performRequests(
         [AppleIdRequest(requestedScopes: scopes)]);
     switch (result.status) {

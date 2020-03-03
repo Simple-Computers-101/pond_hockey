@@ -99,8 +99,7 @@ class _MyHomePageState extends State<UserDashboard> implements AddUserCallback {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Maintener",
-                        // set some style to text
+                        user.name,
                         style: TextStyle(
                             fontSize: 20.0, color: Colors.lightBlueAccent),
                       ),

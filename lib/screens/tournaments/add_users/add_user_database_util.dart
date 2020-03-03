@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:pond_hockey/screens/tournaments/add_users/user.dart';
 
 class FirebaseDatabaseUtil {
-  CollectionReference _tournamentRef =
+  final _tournamentRef =
       Firestore.instance.collection('tournaments');
   var database = Firestore.instance;
   int _counter;
