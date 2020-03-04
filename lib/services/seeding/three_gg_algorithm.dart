@@ -8,14 +8,16 @@ class ThreeGGAlgorithm {
       return null;
     }
     var teams = List<String>.from(origTeams);
+    var maxRounds = 3;
     if (teams.length.isOdd) {
       teams.add('0');
+      maxRounds = 4;
     }
     // maxRounds = (teams.length - 1);
     var splitTeams = _splitList(teams);
     var rotatedTeams = splitTeams;
     var bracket = <List<String>>[];
-    for (var i = 1; i <= 3; i++) {
+    for (var i = 1; i <= maxRounds; i++) {
       for (var b = 0; b < rotatedTeams[0].length; b++) {
         bracket.add([rotatedTeams[0][b], rotatedTeams[1][b]]);
       }

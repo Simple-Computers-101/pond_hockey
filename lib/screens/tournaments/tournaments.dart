@@ -105,15 +105,15 @@ class TournamentsScreen extends StatelessWidget {
                 ? 'Manage Tournaments'
                 : isScoring() ? 'Score Tournaments' : 'Error',
             actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => UserDashboard()),
-                  );
-                },
-                child: Text("Manage"),
-              )
+              // FlatButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (_) => UserDashboard()),
+              //     );
+              //   },
+              //   child: Text("Manage"),
+              // )
             ],
           ),
           floatingActionButton: canEdit()

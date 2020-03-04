@@ -229,22 +229,27 @@ class _ManageTeamsView extends StatelessWidget {
               child: ManageTeamItem(team: team),
             );
           },
-          emptyChild: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('You don\'t have any teams.'),
-              Text('Add some with the button below.'),
-              GradientButton(
-                colors: [
-                  Color.fromRGBO(18, 194, 233, 1),
-                  Color.fromRGBO(196, 113, 237, 1),
-                  Color.fromRGBO(246, 79, 89, 1),
-                ],
-                text: 'Create Team',
-                height: MediaQuery.of(context).size.height * 0.05,
-                onTap: () {},
-              ),
-            ],
+          emptyChild: Container(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'You don\'t have any teams.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                Text(
+                  'Add some with the button below.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
