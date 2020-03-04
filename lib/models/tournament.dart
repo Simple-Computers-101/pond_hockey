@@ -83,8 +83,4 @@ class Tournament {
       editors: data['editors']?.cast<String>(),
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  static Tournament fromJson(String source) => fromMap(json.decode(source));
 }

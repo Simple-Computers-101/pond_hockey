@@ -52,8 +52,4 @@ class Team {
       pointDifferential: map['pointDifferential'],
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  static Team fromJson(String source) => fromMap(json.decode(source));
 }

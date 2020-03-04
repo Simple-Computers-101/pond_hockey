@@ -33,32 +33,8 @@ class Game {
     };
   }
 
-  static Game fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
-    return Game(
-      id: map['id'],
-      tournament: map['tournament'],
-      teamOne: GameTeam.fromMap(map['teamOne']),
-      teamTwo: GameTeam.fromMap(map['teamTwo']),
-      status: EnumToString.fromString(GameStatus.values, map['status']),
-      type: EnumToString.fromString(GameType.values, map['type']),
-    );
-  }
-
   static Game fromDocument(DocumentSnapshot doc) {
     var data = doc.data;
-
-    var teamOne;
-    var teamTwo;
-
-    if (data.containsKey('team_one')) {
-      teamOne = GameTeam.fromMap(data['team_one']);
-      teamTwo = GameTeam.fromMap(data['team_one']);
-    } else {
-      teamOne = GameTeam.fromMap(data['teamOne']);
-      teamTwo = GameTeam.fromMap(data['teamTwo']);
-    }
 
     var status = gameStatus.keys
         .firstWhere((element) => gameStatus[element] == data['status']);
@@ -69,16 +45,12 @@ class Game {
     return Game(
       id: data['id'],
       tournament: data['tournament'],
-      teamOne: teamOne,
-      teamTwo: teamTwo,
+      teamOne: GameTeam.fromMap(data['teamOne']),
+      teamTwo: GameTeam.fromMap(data['teamTwo']),
       status: status,
       type: type,
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  static Game fromJson(String source) => fromMap(json.decode(source));
 }
 
 class GameTeam {
@@ -113,8 +85,4 @@ class GameTeam {
       differential: map['differential'],
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  static GameTeam fromJson(String source) => fromMap(json.decode(source));
 }
