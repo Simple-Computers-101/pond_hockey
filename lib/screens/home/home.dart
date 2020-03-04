@@ -14,8 +14,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
     FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
-    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
 
     void _scoreGameButtonPress(
         GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {

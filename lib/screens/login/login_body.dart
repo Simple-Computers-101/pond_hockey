@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
@@ -18,7 +17,6 @@ import 'package:sealed_flutter_bloc/sealed_flutter_bloc.dart';
 class LoginBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
     return SealedBlocBuilder5<LoginBloc, LoginState, LoginInitial, LoginLoading,
         LoginFailure, LoginUnverified, LoginSuccess>(
       builder: (blocContext, states) {

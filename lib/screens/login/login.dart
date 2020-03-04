@@ -11,8 +11,6 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
     FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
-    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
 
     return Scaffold(
       appBar: CustomAppBar(

@@ -41,6 +41,6 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       teamTwoField.value,
     );
 
-    yield state.toSuccess();
+    yield state.toSuccess(canSubmitAgain: true);
   }
 }
