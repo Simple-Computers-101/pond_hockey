@@ -150,7 +150,8 @@ class ManageableTournamentsList extends StatelessWidget {
           ? repo.getEditableTournaments(uid)
           : repo.getScorerTournaments(uid),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(),
           );

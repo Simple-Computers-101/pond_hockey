@@ -42,7 +42,10 @@ class TournamentsRepository {
       ..addAll(ownedTournaments)
       ..addAll(editableTournaments);
 
-    return overlappedTournaments.toSet().toList().cast<Tournament>();
+    return overlappedTournaments
+        .toSet()
+        .toList(growable: false)
+        .cast<Tournament>();
   }
 
   Future<void> deleteTournament(String tournamentId) {
@@ -60,6 +63,9 @@ class TournamentsRepository {
       ..addAll(scorableTournaments)
       ..addAll(editableTournaments);
 
-    return overlappingTournaments.toSet().toList();
+    return overlappingTournaments
+        .toSet()
+        .toList(growable: false)
+        .cast<Tournament>();
   }
 }
