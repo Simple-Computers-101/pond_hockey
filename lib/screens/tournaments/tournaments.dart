@@ -162,18 +162,19 @@ class ManageableTournamentsList extends StatelessWidget {
               documents: snapshot.data,
             );
           } else {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'You don\'t have any tournaments!',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                Text(
-                  'Create some or be invited.',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ],
+            return Center(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'You don\'t have any tournaments!',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Text(
+                    'Create some or be invited.',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
+              ),
             );
           }
         }
