@@ -53,6 +53,7 @@ class _ManageGamesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void seedGames(GameType type) async {
+      await GamesRepository().deleteGamesFromTournament(tournamentId);
       var teams =
           await TeamsRepository().getTeamsFromTournamentId(tournamentId);
       if (teams.length < 4) {
@@ -112,35 +113,53 @@ class _ManageGamesView extends StatelessWidget {
         border: Border(top: BorderSide(color: Colors.grey[200])),
         color: Color(0xFFE9E9E9),
       ),
-      child: FirestoreAnimatedList(
-        query: GamesRepository().getGamesFromTournamentId(tournamentId),
-        padding: const EdgeInsets.all(24),
-        itemBuilder: (cntx, doc, anim, indx) {
-          var game = Game.fromDocument(doc);
-          return GameItem(
-            gameId: game.id,
-            onTap: () {
-              Router.navigator.pushNamed(Router.manageGame, arguments: game);
-            },
-          );
-        },
-        emptyChild: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('There are no games.'),
-            Text('Click below to create some.'),
-            GradientButton(
-              onTap: _showChooseGameTypeDialog,
-              width: MediaQuery.of(context).size.width * 0.35,
-              height: MediaQuery.of(context).size.height * 0.09,
-              colors: [
-                Color(0xFFC84E89),
-                Color(0xFFF15F79),
-              ],
-              text: 'Seed Games',
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: Icon(Icons.refresh),
+              tooltip: 'Re-seed games',
+              onPressed: _showChooseGameTypeDialog,
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: FirestoreAnimatedList(
+              query: GamesRepository().getGamesFromTournamentId(tournamentId),
+              padding: EdgeInsets.zero,
+              itemBuilder: (cntx, doc, anim, indx) {
+                var game = Game.fromDocument(doc);
+                return GameItem(
+                  gameId: game.id,
+                  onTap: () {
+                    Router.navigator.pushNamed(
+                      Router.manageGame,
+                      arguments: game,
+                    );
+                  },
+                );
+              },
+              emptyChild: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('There are no games.'),
+                  Text('Click below to create some.'),
+                  GradientButton(
+                    onTap: _showChooseGameTypeDialog,
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    height: MediaQuery.of(context).size.height * 0.09,
+                    colors: [
+                      Color(0xFFC84E89),
+                      Color(0xFFF15F79),
+                    ],
+                    text: 'Seed Games',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -162,6 +181,7 @@ class _ChooseGameTypeDialogState extends State<ChooseGameTypeDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: DropdownButton<GameType>(
+        isExpanded: true,
         items: [
           DropdownMenuItem(
             child: Text('Qualifier'),
@@ -190,7 +210,11 @@ class _ChooseGameTypeDialogState extends State<ChooseGameTypeDialog> {
             widget.onSubmit(chosen);
           },
           child: Text('Submit'),
-        )
+        ),
+        FlatButton(
+          onPressed: Router.navigator.pop,
+          child: Text('Cancel'),
+        ),
       ],
     );
   }

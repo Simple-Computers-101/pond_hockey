@@ -11,6 +11,13 @@ class GamesRepository {
     return query;
   }
 
+  Future<void> deleteGamesFromTournament(String id) async {
+    final query = await ref.where('tournament', isEqualTo: id).getDocuments();
+    for (var doc in query.documents) {
+      await doc.reference.delete();
+    }
+  }
+
   Future<void> addGameToTournament(Game game) {
     return ref.document(game.id).setData(game.toMap());
   }
