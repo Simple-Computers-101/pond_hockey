@@ -63,7 +63,13 @@ class _ManageGameForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBlocListener<ManageGameFormBloc, String, String>(
       onSubmitting: (_, __) => Center(child: CircularProgressIndicator()),
-      onSuccess: (_, __) => Router.navigator.pop(),
+      onSuccess: (context, _) {
+        Scaffold.of(context).hideCurrentSnackBar();
+        Scaffold.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text('Score has been updated'),
+        ));
+      },
       child: Expanded(
         child: Container(
           decoration: BoxDecoration(
