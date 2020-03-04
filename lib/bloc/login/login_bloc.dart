@@ -45,7 +45,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user = await userRepository
             .signInWithCredentials(event.authCredential, email: event.email);
         await addUserInfoToFireStore(user);
-        //   yield LoginState.initial(isSignUp: false);
         yield LoginState.success();
       } on Exception catch (error) {
         var errorMessage = _errorMessage(error);
@@ -60,7 +59,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final user = await userRepository.signInWithEmailAndPassword(
             event.email, event.password);
         if (await user.isEmailVerified) {
-//          yield LoginState.initial(isSignUp: false);
           yield LoginState.success();
         } else {
           await user.sendEmailVerification();
@@ -79,7 +77,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (event is SignUpButtonPressed) {
       try {
         await addUserInfoToFireStore(event.user);
-//        yield LoginState.initial(isSignUp: true);
         yield LoginState.success();
 
         // ignore: avoid_catches_without_on_clauses
