@@ -23,11 +23,11 @@ class GamesRepository {
 
   Future<void> updateScores(String gameId, int teamOne, int teamTwo) {
     return ref.document(gameId).setData({
-      'team_one': {
+      'teamOne': {
         'score': teamOne,
         'differential': teamOne - teamTwo,
       },
-      'team_two': {
+      'teamTwo': {
         'score': teamTwo,
         'differential': teamTwo - teamOne,
       }

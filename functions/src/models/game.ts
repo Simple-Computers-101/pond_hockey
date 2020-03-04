@@ -3,8 +3,8 @@ import { DocumentBuilder } from 'firebase-functions/lib/providers/firestore';
 export interface Game {
     id: number;
     status: GameStatus;
-    team_one: Map<string, any>;
-    team_two: Map<string, any>;
+    teamOne: Map<string, any>;
+    teamTwo: Map<string, any>;
     tournament: DocumentBuilder;
     type: GameType;
 }
