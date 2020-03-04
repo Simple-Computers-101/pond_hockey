@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "30531933960-oikmedi44jh5f3bkhvvinn64gcc8mam4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplecomputers101.pond_hockey",
+            "certificate_hash": "f82ffc207470bf7ef46d52e0ec71daa610fc1ffd"
+          }
+        },
+        {
           "client_id": "30531933960-9fr0n7t8vngkuukovn0anou86jmdbjpu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
