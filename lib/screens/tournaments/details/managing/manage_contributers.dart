@@ -14,7 +14,7 @@ class ManageContributors extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddContributersFormBloc(),
+      create: (_) => AddContributorsFormBloc(),
       child: Builder(
         builder: (context) {
           return DefaultTabController(
@@ -50,7 +50,6 @@ class _ManageEditors extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return StreamBuilder<DocumentSnapshot>(
       stream: Firestore.instance
           .collection("tournaments")
@@ -75,12 +74,37 @@ class _ManageEditors extends StatelessWidget {
               return ListView.builder(
                 itemCount: _tournament.editors.length,
                 itemBuilder: (context, index) {
-                  return showUser(_tournament.editors[index], _tournament.name,theme);
+                  return Column(
+                    children: <Widget>[
+                      //  showUser(_tournament.editors[index],_tournament.name),
+                      ListTile(
+                        leading: CircleAvatar(
+                          child: Icon(Icons.person),
+                          radius: 30.0,
+                        ),
+                        title: Text(_tournament.name),
+                        subtitle: Text(_tournament.editors[index]),
+                        trailing: Icon(
+                          Icons.delete,
+                          color: Color(0xFF167F67),
+                        ),
+                      ),
+                      Divider(),
+                      _newEditor()
+                    ],
+                  );
                 },
               );
             } else {
-              return Center(
-                child: Text("Uh oh! You didn't add any Editors"),
+              return Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text("Uh oh! You didn't add any Editors"),
+                  ),
+                  _newEditor()
+                ],
               );
             }
             break;
@@ -89,6 +113,18 @@ class _ManageEditors extends StatelessWidget {
           child: Text("Uh oh! Something went wrong"),
         );
       },
+    );
+  }
+
+  Widget _newEditor() {
+    return ListTile(
+      title: Text("New editor"),
+      subtitle: Text("Tap here to add new editor"),
+      leading: CircleAvatar(
+        child: Icon(Icons.add),
+        radius: 30.0,
+      ),
+      onTap: () {},
     );
   }
 }
@@ -107,56 +143,56 @@ class _ManageScorers extends StatelessWidget {
   }
 }
 
-Widget showUser(String email, String name, ThemeData theme) {
-  var item = Card(
-    child: Container(
-      child: Center(
-        child: Row(
-          children: <Widget>[
-            CircleAvatar(radius: 30.0, child: Icon(Icons.person)),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      name,
-                      style: TextStyle(
-                          fontSize: 18.0,),
-                    ),
-                    Text(
-                      email ?? 'No email',
-                      // set some style to text
-                      style: TextStyle(
-                          fontSize: 14.0),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: const Icon(
-                    Icons.edit,
-                    color: Color(0xFF167F67),
-                  ),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete_forever, color: Color(0xFF167F67)),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      padding: const EdgeInsets.only(left: 10),
-    ),
-  );
-
-  return item;
-}
+//Widget showUser(String email, String name) {
+//  var item = Card(
+//    child: Container(
+//      child: Center(
+//        child: Row(
+//          children: <Widget>[
+//            CircleAvatar(radius: 30.0, child: Icon(Icons.person)),
+//            Expanded(
+//              child: Padding(
+//                padding: EdgeInsets.all(10.0),
+//                child: Column(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+//                  children: <Widget>[
+//                    Text(
+//                      name,
+//                      style: TextStyle(
+//                        fontSize: 18.0,
+//                      ),
+//                    ),
+//                    Text(
+//                      email ?? 'No email',
+//                      // set some style to text
+//                      style: TextStyle(fontSize: 14.0),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//            ),
+//            Column(
+//              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//              children: <Widget>[
+//                IconButton(
+//                  icon: const Icon(
+//                    Icons.edit,
+//                    color: Color(0xFF167F67),
+//                  ),
+//                  onPressed: () {},
+//                ),
+//                IconButton(
+//                  icon: Icon(Icons.delete_forever, color: Color(0xFF167F67)),
+//                  onPressed: () {},
+//                ),
+//              ],
+//            ),
+//          ],
+//        ),
+//      ),
+//      padding: const EdgeInsets.only(left: 10),
+//    ),
+//  );
+//
+//  return item;
+//}

@@ -1,11 +1,11 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pond_hockey/enums/access_levels.dart';
 
-class AddContributersFormBloc extends FormBloc<String, String> {
-  AddContributersFormBloc() {
+class AddContributorsFormBloc extends FormBloc<String, String> {
+  AddContributorsFormBloc() {
     addFieldBloc(
       fieldBloc: FieldBlocList(
-        name: 'contributers',
+        name: 'contributors',
         fieldBlocs: [],
       ),
     );
