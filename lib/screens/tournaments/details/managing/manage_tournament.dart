@@ -8,6 +8,7 @@ import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/details/managing/manage_contributers.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
@@ -37,7 +38,9 @@ class ManageTournament extends StatelessWidget {
           children: [
             _ManageGamesView(tournamentId: tournament.id),
             _ManageTeamsView(tournament: tournament),
-            _TournamentOptionsView(),
+            _TournamentOptionsView(
+              tournamentId: tournament.id,
+            ),
           ],
         ),
       ),
@@ -312,6 +315,8 @@ class ManageTeamItem extends StatelessWidget {
 }
 
 class _TournamentOptionsView extends StatelessWidget {
+  _TournamentOptionsView({this.tournamentId});
+  final String tournamentId;
   @override
   Widget build(BuildContext context) {
     Widget buildDivider() {
@@ -340,7 +345,16 @@ class _TournamentOptionsView extends StatelessWidget {
               children: <Widget>[
                 _SettingsTile(
                   text: 'Contributers',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ManageContributors(
+                          tournamentId: tournamentId,
+                        ),
+                      ),
+                    );
+                  },
                   icon: Icons.people,
                 ),
                 buildDivider(),
