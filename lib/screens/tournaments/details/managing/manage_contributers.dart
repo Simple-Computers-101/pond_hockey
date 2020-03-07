@@ -71,40 +71,52 @@ class _ManageEditors extends StatelessWidget {
           case ConnectionState.done:
             if (snapshot.hasData) {
               var _tournament = Tournament.fromDocument(snapshot.data);
-              return ListView.builder(
-                itemCount: _tournament.editors.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      //  showUser(_tournament.editors[index],_tournament.name),
-                      ListTile(
+              if (_tournament.editors == null) {
+                return ListView(
+                  children: <Widget>[
+                    _newEditor(),
+                    SizedBox(
+                      height: 50.0,
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text("Uh oh! You didn't add any Editor")),
+                  ],
+                );
+              }
+              return Column(
+                children: <Widget>[
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _tournament.editors.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
                         leading: CircleAvatar(
                           child: Icon(Icons.person),
                           radius: 30.0,
                         ),
                         title: Text(_tournament.name),
                         subtitle: Text(_tournament.editors[index]),
-                        trailing: Icon(
-                          Icons.delete,
-                          color: Color(0xFF167F67),
+                        trailing: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Color(0xFF167F67),
+                            ),
+                          ),
+                          onTap: () {},
                         ),
-                      ),
-                      Divider(),
-                      _newEditor()
-                    ],
-                  );
-                },
-              );
-            } else {
-              return Stack(
-                alignment: Alignment.topCenter,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text("Uh oh! You didn't add any Editors"),
+                      );
+                    },
                   ),
+                  Divider(),
                   _newEditor()
                 ],
+              );
+            } else {
+              return Center(
+                child: Text("Uh oh! Something went wrong"),
               );
             }
             break;
@@ -136,9 +148,93 @@ class _ManageScorers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FirebaseAnimatedList(
-      query: null,
-      itemBuilder: null,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: Firestore.instance
+          .collection("tournaments")
+          .document(tournamentId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Center(
+              child: Text("Uh oh! Something went wrong"),
+            );
+            break;
+          case ConnectionState.waiting:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+            break;
+          case ConnectionState.active:
+          case ConnectionState.done:
+            if (snapshot.hasData) {
+              var _tournament = Tournament.fromDocument(snapshot.data);
+              if (_tournament.scorers == null) {
+                return ListView(
+                  children: <Widget>[
+                    _newScorer(),
+                    SizedBox(
+                      height: 50.0,
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text("Uh oh! You didn't add any Scorer")),
+                  ],
+                );
+              }
+              return Column(
+                children: <Widget>[
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _tournament.scorers.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          child: Icon(Icons.person),
+                          radius: 30.0,
+                        ),
+                        title: Text(_tournament.name),
+                        subtitle: Text(_tournament.scorers[index]),
+                        trailing: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Color(0xFF167F67),
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                      );
+                    },
+                  ),
+                  Divider(),
+                  _newScorer()
+                ],
+              );
+            } else {
+              return Center(
+                child: Text("Uh oh! Something went wrong"),
+              );
+            }
+            break;
+        }
+        return Center(
+          child: Text("Uh oh! Something went wrong"),
+        );
+      },
+    );
+  }
+
+  Widget _newScorer() {
+    return ListTile(
+      title: Text("New scorer"),
+      subtitle: Text("Tap here to add new scorer"),
+      leading: CircleAvatar(
+        child: Icon(Icons.add),
+        radius: 30.0,
+      ),
+      onTap: () {},
     );
   }
 }

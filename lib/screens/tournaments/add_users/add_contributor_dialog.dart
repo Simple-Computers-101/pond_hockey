@@ -84,7 +84,8 @@
 //        teEmail.text, teName.text);
 //  }
 //
-//  onTap(isEdit, AddContributorCallback _myHomePageState, BuildContext context) {
+//  onTap(isEdit, AddContributorCallback _myHomePageState,
+//  BuildContext context) {
 //    if (isEdit) {
 //      _myHomePageState.update(getData(isEdit));
 //      Navigator.of(context).pop();
