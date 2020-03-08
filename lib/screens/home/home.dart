@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
@@ -146,26 +147,34 @@ class HomeScreen extends StatelessWidget {
                             },
                             text: 'View Results',
                           ),
-                          const SizedBox(height: 30),
-                          _PortraitMenuButton(
-                            onPressed: () {
-                              _scoreGameButtonPress(
-                                _scaffoldKey,
-                                snapshot.hasData,
-                              );
-                            },
-                            text: 'Score Games',
-                          ),
-                          const SizedBox(height: 30),
-                          _PortraitMenuButton(
-                            onPressed: () {
-                              _manageTournamentButtonPress(
-                                _scaffoldKey,
-                                snapshot.hasData,
-                              );
-                            },
-                            text: 'Manage Tournaments',
-                          ),
+                          kIsWeb
+                              ? SizedBox.shrink()
+                              : const SizedBox(height: 30),
+                          kIsWeb
+                              ? SizedBox.shrink()
+                              : _PortraitMenuButton(
+                                  onPressed: () {
+                                    _scoreGameButtonPress(
+                                      _scaffoldKey,
+                                      snapshot.hasData,
+                                    );
+                                  },
+                                  text: 'Score Games',
+                                ),
+                          kIsWeb
+                              ? SizedBox.shrink()
+                              : const SizedBox(height: 30),
+                          kIsWeb
+                              ? SizedBox.shrink()
+                              : _PortraitMenuButton(
+                                  onPressed: () {
+                                    _manageTournamentButtonPress(
+                                      _scaffoldKey,
+                                      snapshot.hasData,
+                                    );
+                                  },
+                                  text: 'Manage Tournaments',
+                                ),
                         ],
                       );
                     } else {
@@ -189,26 +198,34 @@ class HomeScreen extends StatelessWidget {
                                 },
                                 text: 'View Results',
                               ),
-                              const SizedBox(height: 30),
-                              _LandscapeMenuButton(
-                                onPressed: () {
-                                  _scoreGameButtonPress(
-                                    _scaffoldKey,
-                                    snapshot.data,
-                                  );
-                                },
-                                text: 'Score Games',
-                              ),
-                              const SizedBox(height: 30),
-                              _LandscapeMenuButton(
-                                onPressed: () {
-                                  _manageTournamentButtonPress(
-                                    _scaffoldKey,
-                                    snapshot.hasData,
-                                  );
-                                },
-                                text: 'Manage Tournaments',
-                              ),
+                              kIsWeb
+                                  ? SizedBox.shrink()
+                                  : const SizedBox(height: 30),
+                              kIsWeb
+                                  ? SizedBox.shrink()
+                                  : _LandscapeMenuButton(
+                                      onPressed: () {
+                                        _scoreGameButtonPress(
+                                          _scaffoldKey,
+                                          snapshot.data,
+                                        );
+                                      },
+                                      text: 'Score Games',
+                                    ),
+                              kIsWeb
+                                  ? SizedBox.shrink()
+                                  : const SizedBox(height: 30),
+                              kIsWeb
+                                  ? SizedBox.shrink()
+                                  : _LandscapeMenuButton(
+                                      onPressed: () {
+                                        _manageTournamentButtonPress(
+                                          _scaffoldKey,
+                                          snapshot.hasData,
+                                        );
+                                      },
+                                      text: 'Manage Tournaments',
+                                    ),
                             ],
                           ),
                         ],
