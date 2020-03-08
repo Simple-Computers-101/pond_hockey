@@ -1,4 +1,3 @@
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
 import 'package:pond_hockey/enums/division.dart';
@@ -6,9 +5,9 @@ import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/router/router.gr.dart';
-import 'package:pond_hockey/screens/tournaments/details/managing/manage_tournament.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/seeding_settings_dialog.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 import 'package:pond_hockey/services/seeding/bracket_helper.dart';
@@ -27,14 +26,18 @@ class ManageGamesView extends StatefulWidget {
 
 class _ManageGamesViewState extends State<ManageGamesView> {
   Division division;
-  bool empty = true;
 
   @override
   Widget build(BuildContext context) {
-    void seedGames(GameType type) async {
-      await GamesRepository().deleteGamesFromTournament(widget.tournamentId);
-      var teams =
-          await TeamsRepository().getTeamsFromTournamentId(widget.tournamentId);
+    void seedGames(Division div, GameType type) async {
+      await GamesRepository().deleteGamesFromTournament(
+        widget.tournamentId,
+        div,
+      );
+      var teams = await TeamsRepository().getTeamsFromTournamentId(
+        widget.tournamentId,
+        div,
+      );
       if (teams.length < 4) {
         Scaffold.of(context).hideCurrentSnackBar();
         Scaffold.of(context).showSnackBar(SnackBar(
@@ -70,7 +73,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return ChooseGameTypeDialog(
+          return SeedingSettingsDialog(
             onSubmit: seedGames,
           );
         },
@@ -102,69 +105,75 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: <Widget>[
-          if (!empty)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.filter_list),
-                  onPressed: _showFilterDivisionDialog,
-                ),
-                if (widget.seeding)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.refresh),
-                      tooltip: 'Re-seed games',
-                      onPressed: _showChooseGameTypeDialog,
-                    ),
-                  ),
-              ],
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.filter_list),
+                onPressed: _showFilterDivisionDialog,
+              ),
+              Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+            ],
+          ),
+          if (widget.seeding)
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(Icons.refresh),
+                tooltip: 'Re-seed games',
+                onPressed: _showChooseGameTypeDialog,
+              ),
             ),
           Expanded(
-            child: FirestoreAnimatedList(
-              query: GamesRepository().getGamesFromTournamentId(
+            child: StreamBuilder(
+              stream: GamesRepository().getGamesFromTournamentId(
                 widget.tournamentId,
-                division,
+                division: division,
               ),
-              padding: widget.seeding
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.symmetric(vertical: 24),
-              onLoaded: (snap) {
-                setState(() {
-                  empty = snap.documents.isEmpty;
-                });
-              },
-              shrinkWrap: true,
-              itemBuilder: (cntx, doc, anim, indx) {
-                var game = Game.fromDocument(doc);
-                return GameItem(
-                  gameId: game.id,
-                  onTap: () {
-                    Router.navigator.pushNamed(
-                      Router.manageGame,
-                      arguments: game,
-                    );
-                  },
-                );
-              },
-              emptyChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('There are no games.'),
-                  Text('Click below to create some.'),
-                  GradientButton(
-                    onTap: _showChooseGameTypeDialog,
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    height: MediaQuery.of(context).size.height * 0.09,
-                    colors: [
-                      Color(0xFFC84E89),
-                      Color(0xFFF15F79),
+              builder: (cntx, snap) {
+                if (!snap.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snap.data.documents.isNotEmpty) {
+                  return ListView.separated(
+                    padding: widget.seeding
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.symmetric(vertical: 24),
+                    shrinkWrap: true,
+                    itemBuilder: (cntx, indx) {
+                      var game = Game.fromDocument(snap.data.documents[indx]);
+                      return GameItem(
+                        gameId: game.id,
+                        onTap: () {
+                          Router.navigator.pushNamed(
+                            Router.manageGame,
+                            arguments: game,
+                          );
+                        },
+                      );
+                    },
+                    separatorBuilder: (cntx, _) => Spacer(),
+                    itemCount: snap.data.documents.length,
+                  );
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('There are no games.'),
+                      Text('Click below to create some.'),
+                      GradientButton(
+                        onTap: _showChooseGameTypeDialog,
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        colors: [
+                          Color(0xFFC84E89),
+                          Color(0xFFF15F79),
+                        ],
+                        text: 'Seed Games',
+                      ),
                     ],
-                    text: 'Seed Games',
-                  ),
-                ],
-              ),
+                  );
+                }
+              },
             ),
           ),
         ],

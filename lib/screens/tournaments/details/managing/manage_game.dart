@@ -117,7 +117,7 @@ class _ManageGameForm extends StatelessWidget {
                           ),
                           child: IconButton(
                             icon: Icon(Icons.remove),
-                            padding: const EdgeInsets.all(24),
+                            padding: const EdgeInsets.all(48),
                             onPressed: () {
                               if (state.value > 0) {
                                 oneField.updateValue(state.value - 1);
@@ -144,7 +144,7 @@ class _ManageGameForm extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(24),
+                            padding: const EdgeInsets.all(48),
                             icon: Icon(Icons.add),
                             onPressed: () {
                               oneField.updateValue(state.value + 1);
@@ -170,7 +170,7 @@ class _ManageGameForm extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(24),
+                            padding: const EdgeInsets.all(48),
                             icon: Icon(Icons.remove),
                             onPressed: () {
                               if (state.value > 0) {
@@ -198,7 +198,7 @@ class _ManageGameForm extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(24),
+                            padding: const EdgeInsets.all(48),
                             icon: Icon(Icons.add),
                             onPressed: () {
                               twoField.updateValue(state.value + 1);
@@ -216,7 +216,9 @@ class _ManageGameForm extends StatelessWidget {
                   itemBuilder: (context, value) => gameStatus[value],
                   showEmptyItem: false,
                   decoration: InputDecoration(
-                      labelText: 'Game state', border: OutlineInputBorder()),
+                    labelText: 'Game state',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(height: 40),
                 GradientButton(

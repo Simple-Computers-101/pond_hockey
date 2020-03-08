@@ -10,7 +10,7 @@ class EmailHelper {
       await client.connectToServer(
         'simplecomputers101.com',
         993,
-        isSecure: false,
+        isSecure: true,
       );
       var response = await client.login(
         'pondhockey@simplecomputers101.com',
@@ -27,6 +27,7 @@ class EmailHelper {
       rethrow;
     } on SocketException {
       print('socket exception');
+      rethrow;
     }
   }
 }

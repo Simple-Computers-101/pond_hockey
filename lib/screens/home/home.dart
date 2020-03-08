@@ -21,6 +21,7 @@ class HomeScreen extends StatelessWidget {
       if (hasKey) {
         TournamentViewing.of(context).changeMode(ViewingMode.scoring);
         Router.navigator.pushNamed(Router.tournaments);
+        // TODO: fix
       } else {
         _scaffoldKey.currentState.removeCurrentSnackBar();
         _scaffoldKey.currentState.showSnackBar(
@@ -207,7 +208,7 @@ class HomeScreen extends StatelessWidget {
                                       onPressed: () {
                                         _scoreGameButtonPress(
                                           _scaffoldKey,
-                                          snapshot.data,
+                                          snapshot.hasData,
                                         );
                                       },
                                       text: 'Score Games',

@@ -39,8 +39,7 @@ class Team {
     if (map == null) return null;
 
     var divisionFromMap = divisionMap.keys.firstWhere(
-      (element) =>
-          divisionMap[element].toLowerCase() == map['division'].toLowerCase(),
+      (element) => divisionMap[element] == map['division'],
     );
 
     return Team(

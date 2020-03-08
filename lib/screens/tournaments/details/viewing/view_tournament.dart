@@ -1,4 +1,3 @@
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/enums/division.dart';
@@ -109,34 +108,37 @@ class _GamesPageState extends State<_GamesPage> {
               },
             ),
           Expanded(
-            child: FirestoreAnimatedList(
-              query: GamesRepository().getGamesFromTournamentId(
+            child: StreamBuilder(
+              stream: GamesRepository().getGamesFromTournamentId(
                 widget.tournament.id,
-                division,
+                division: division,
               ),
-              duration: Duration(milliseconds: 600),
-              padding: const EdgeInsets.all(24),
-              onLoaded: (snapshot) {
-                setState(() {
-                  empty = snapshot.documents.isEmpty;
-                });
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data.isNotEmpty) {
+                  return ListView.separated(
+                    itemCount: snapshot.data.length,
+                    padding: const EdgeInsets.all(24),
+                    itemBuilder: (cntx, indx) {
+                      var game = Game.fromDocument(snapshot.data[indx]);
+                      return GameItem(gameId: game.id);
+                    },
+                    separatorBuilder: (cntx, _) => Spacer(),
+                  );
+                } else {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(':('),
+                        Text('There\'s nothing here!'),
+                      ],
+                    ),
+                  );
+                }
               },
-              itemBuilder: (cntx, doc, anim, indx) {
-                var game = Game.fromDocument(doc);
-                return FadeTransition(
-                  opacity: anim,
-                  child: GameItem(gameId: game.id),
-                );
-              },
-              emptyChild: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(':('),
-                    Text('There\'s nothing here!'),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
@@ -145,46 +147,103 @@ class _GamesPageState extends State<_GamesPage> {
   }
 }
 
-class _TeamsPage extends StatelessWidget {
+class _TeamsPage extends StatefulWidget {
   const _TeamsPage({@required this.tournament});
 
   final Tournament tournament;
 
   @override
+  __TeamsPageState createState() => __TeamsPageState();
+}
+
+class __TeamsPageState extends State<_TeamsPage> {
+  Division division;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
-      body: FirestoreAnimatedList(
-        query: TeamsRepository().getTeamsStreamFromTournamentId(tournament.id),
-        padding: const EdgeInsets.all(24),
-        shrinkWrap: true,
-        itemBuilder: (cntx, doc, anim, indx) {
-          final team = Team.fromMap(doc.data);
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(left: 24),
+            alignment: FractionalOffset.centerLeft,
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => FilterDivisionDialog(
+                        onDivisionChanged: (div) {
+                          setState(() {
+                            division = div;
+                          });
+                        },
+                        division: division,
+                      ),
+                    );
+                  },
+                ),
+                Text('Current Division: ${divisionMap[division] ?? 'All'}')
+              ],
             ),
-            margin: const EdgeInsets.only(bottom: 10),
-            child: ListTile(
-              title: Text(team.name),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () => Router.navigator.pushNamed(
-                Router.teamDetails,
-                arguments: team,
-              ),
-            ),
-          );
-        },
-        emptyChild: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(':('),
-              Text('There\'s nothing here!'),
-            ],
           ),
-        ),
+          Expanded(
+            child: StreamBuilder(
+              stream: TeamsRepository().getTeamsStreamFromTournamentId(
+                widget.tournament.id,
+                division,
+              ),
+              builder: (context, snap) {
+                if (!snap.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snap.data.documents.isNotEmpty) {
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(24),
+                    itemBuilder: (context, indx) {
+                      final team = Team.fromMap(snap.data.documents[indx].data);
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: ListTile(
+                          title: Text(team.name),
+                          trailing: Icon(Icons.chevron_right),
+                          onTap: () => Router.navigator.pushNamed(
+                            Router.teamDetails,
+                            arguments: team,
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, indx) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      );
+                    },
+                    itemCount: snap.data.documents.length,
+                  );
+                } else {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(':('),
+                        Text('There\'s nothing here!'),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

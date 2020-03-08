@@ -1,11 +1,11 @@
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/tabbar.dart';
-import 'package:pond_hockey/enums/game_type.dart';
+import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/managing/manage_contributers.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/manage_games_view.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
@@ -43,72 +43,27 @@ class ManageTournament extends StatelessWidget {
   }
 }
 
-class ChooseGameTypeDialog extends StatefulWidget {
-  const ChooseGameTypeDialog({this.onSubmit});
-
-  final ValueChanged<GameType> onSubmit;
-
-  @override
-  _ChooseGameTypeDialogState createState() => _ChooseGameTypeDialogState();
-}
-
-class _ChooseGameTypeDialogState extends State<ChooseGameTypeDialog> {
-  GameType chosen = GameType.qualifier;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      content: DropdownButton<GameType>(
-        isExpanded: true,
-        items: [
-          DropdownMenuItem(
-            child: Text('Qualifier'),
-            value: GameType.qualifier,
-          ),
-          DropdownMenuItem(
-            child: Text('Semi-finals'),
-            value: GameType.semiFinal,
-          ),
-          DropdownMenuItem(
-            child: Text('Closing'),
-            value: GameType.closing,
-          ),
-        ],
-        value: chosen,
-        onChanged: (type) {
-          setState(() {
-            chosen = type;
-          });
-        },
-      ),
-      actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Router.navigator.pop();
-            widget.onSubmit(chosen);
-          },
-          child: Text('Submit'),
-        ),
-        FlatButton(
-          onPressed: Router.navigator.pop,
-          child: Text('Cancel'),
-        ),
-      ],
-    );
-  }
-}
-
-class _ManageTeamsView extends StatelessWidget {
+class _ManageTeamsView extends StatefulWidget {
   const _ManageTeamsView({@required this.tournament});
 
   final Tournament tournament;
+
+  @override
+  _ManageTeamsViewState createState() => _ManageTeamsViewState();
+}
+
+class _ManageTeamsViewState extends State<_ManageTeamsView> {
+  Division division;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Router.navigator.pushNamed(Router.addTeams, arguments: tournament);
+          Router.navigator.pushNamed(
+            Router.addTeams,
+            arguments: widget.tournament,
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -117,42 +72,87 @@ class _ManageTeamsView extends StatelessWidget {
           border: Border(top: BorderSide(color: Colors.grey[200])),
           color: Color(0xFFE9E9E9),
         ),
-        child: FirestoreAnimatedList(
-          primary: false,
-          padding: const EdgeInsets.all(24),
-          duration: Duration(milliseconds: 500),
-          query: TeamsRepository().getTeamsStreamFromTournamentId(
-            tournament.id,
-          ),
-          itemBuilder: (cntx, doc, anim, indx) {
-            var team = Team.fromMap(doc.data);
-            return FadeTransition(
-              opacity: anim,
-              child: ManageTeamItem(team: team),
-            );
-          },
-          emptyChild: Container(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'You don\'t have any teams.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.only(left: 24, top: 12),
+              alignment: FractionalOffset.centerLeft,
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.filter_list),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => FilterDivisionDialog(
+                          onDivisionChanged: (div) {
+                            setState(() {
+                              division = div;
+                            });
+                          },
+                          division: division,
+                        ),
+                      );
+                    },
                   ),
-                ),
-                Text(
-                  'Add some with the button below.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
+                  Text('Current Division: ${divisionMap[division] ?? 'All'}')
+                ],
+              ),
             ),
-          ),
+            Expanded(
+              child: StreamBuilder(
+                stream: TeamsRepository().getTeamsStreamFromTournamentId(
+                  widget.tournament.id,
+                  division,
+                ),
+                builder: (context, snap) {
+                  if (!snap.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snap.data.documents.isNotEmpty) {
+                    return ListView.separated(
+                      itemCount: snap.data.documents.length,
+                      itemBuilder: (context, index) {
+                        var team = Team.fromMap(
+                          snap.data.documents[index].data,
+                        );
+                        return ManageTeamItem(team: team);
+                      },
+                      padding: const EdgeInsets.all(24),
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        );
+                      },
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'You don\'t have any teams in this division.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                            ),
+                          ),
+                          Text(
+                            'Add some with the button below.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -252,9 +252,10 @@ class _TournamentOptionsView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
@@ -263,8 +264,11 @@ class _TournamentOptionsView extends StatelessWidget {
               ),
               child: _SettingsList(tournamentId: tournamentId),
             ),
-            Expanded(child: const SizedBox()),
-            buildDeleteTournamentButton(),
+            Flexible(fit: FlexFit.loose, child: const SizedBox()),
+            Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: buildDeleteTournamentButton(),
+            ),
           ],
         ),
       ),
@@ -290,47 +294,44 @@ class _SettingsList extends StatelessWidget {
       );
     }
 
-    return Material(
-      type: MaterialType.transparency,
-      child: ListView(
-        shrinkWrap: true,
-        primary: false,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        children: <Widget>[
-          _SettingsTile(
-            text: 'Contributers',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ManageContributors(
-                    tournamentId: tournamentId,
-                  ),
+    return Column(
+      // shrinkWrap: true,
+      // primary: false,
+      // padding: const EdgeInsets.symmetric(vertical: 12),
+      children: <Widget>[
+        _SettingsTile(
+          text: 'Contributers',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ManageContributors(
+                  tournamentId: tournamentId,
                 ),
-              );
-            },
-            icon: Icons.people,
-          ),
-          buildDivider(),
-          _SettingsTile(
-            text: 'Another Setting',
-            onTap: () {},
-            icon: Icons.edit,
-          ),
-          buildDivider(),
-          _SettingsTile(
-            text: 'Another Setting',
-            onTap: () {},
-            icon: Icons.edit,
-          ),
-          buildDivider(),
-          _SettingsTile(
-            text: 'Another Setting',
-            onTap: () {},
-            icon: Icons.edit,
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+          icon: Icons.people,
+        ),
+        buildDivider(),
+        _SettingsTile(
+          text: 'Another Setting',
+          onTap: () {},
+          icon: Icons.edit,
+        ),
+        buildDivider(),
+        _SettingsTile(
+          text: 'Another Setting',
+          onTap: () {},
+          icon: Icons.edit,
+        ),
+        buildDivider(),
+        _SettingsTile(
+          text: 'Another Setting',
+          onTap: () {},
+          icon: Icons.edit,
+        ),
+      ],
     );
   }
 }

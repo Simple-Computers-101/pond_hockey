@@ -8,22 +8,32 @@ import 'package:pond_hockey/models/game.dart';
 class GamesRepository {
   final CollectionReference ref = Firestore.instance.collection('games');
 
-  Stream<QuerySnapshot> getGamesFromTournamentId(String id, Division division) {
+  Stream<QuerySnapshot> getGamesFromTournamentId(String id,
+      {Division division}) {
     // GET GAMES FROM TOURNAMENT ID
     // FILTER GAMES BY DIVISION
     var query;
     if (division != null) {
       query = ref
           .where('tournament', isEqualTo: id)
-          .where('division', isEqualTo: divisionMap[division]);
+          .where('division', isEqualTo: divisionMap[division])
+          .snapshots();
     } else {
-      query = ref.where('tournament', isEqualTo: id);
+      query = ref.where('tournament', isEqualTo: id).snapshots();
     }
-    return query.snapshots();
+    return query;
   }
 
-  Future<void> deleteGamesFromTournament(String id) async {
-    final query = await ref.where('tournament', isEqualTo: id).getDocuments();
+  Future<void> deleteGamesFromTournament(String id, Division division) async {
+    var query;
+    if (division != null) {
+      query = await ref
+          .where('tournament', isEqualTo: id)
+          .where('division', isEqualTo: divisionMap[division])
+          .getDocuments();
+    } else {
+      query = await ref.where('tournament', isEqualTo: id).getDocuments();
+    }
     for (var doc in query.documents) {
       await doc.reference.delete();
     }
