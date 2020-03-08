@@ -36,10 +36,9 @@
 				<string>com.googleusercontent.apps.30531933960-cccb0u945h9flbiec7b7q4fnuckfm44t</string>
 			</array>
 		</dict>
-
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

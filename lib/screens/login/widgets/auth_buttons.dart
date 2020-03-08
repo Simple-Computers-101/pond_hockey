@@ -51,39 +51,39 @@ class GoogleSignInButton extends StatelessWidget {
   }
 }
 
-class AppleSignInButton extends StatelessWidget {
-  const AppleSignInButton({this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      width: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: Colors.white,
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(50),
-          onTap: onPressed,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.asset(
-                'assets/img/apple.png',
-                width: 30,
-                height: 50,
-              ),
-              Text('Apple'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//class AppleSignInButton extends StatelessWidget {
+//  const AppleSignInButton({this.onPressed});
+//
+//  final VoidCallback onPressed;
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Container(
+//      height: 50,
+//      width: 150,
+//      decoration: BoxDecoration(
+//        borderRadius: BorderRadius.circular(50),
+//        color: Colors.white,
+//      ),
+//      child: Material(
+//        type: MaterialType.transparency,
+//        child: InkWell(
+//          borderRadius: BorderRadius.circular(50),
+//          onTap: onPressed,
+//          child: Row(
+//            mainAxisSize: MainAxisSize.min,
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            children: <Widget>[
+//              Image.asset(
+//                'assets/img/apple.png',
+//                width: 30,
+//                height: 50,
+//              ),
+//              Text('Apple'),
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+//}
