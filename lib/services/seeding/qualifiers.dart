@@ -1,25 +1,36 @@
+import 'package:pond_hockey/models/team.dart';
+
 /// Seeding algorithm
 /// Each team plays three times
 /// Shouldn't play the same team
 
-class ThreeGGAlgorithm {
-  static List<List<String>> start(List<String> origTeams) {
+class QualifiersSeeding {
+  static List<List<Team>> start(List<Team> origTeams) {
     if (origTeams.length < 4) {
       return null;
     }
-    var teams = List<String>.from(origTeams);
+    
+    final teams = origTeams.map((e) => e.id).toList();
     var maxRounds = 3;
+
     if (teams.length.isOdd) {
       teams.add('0');
       maxRounds = 4;
     }
-    // maxRounds = (teams.length - 1);
-    var splitTeams = _splitList(teams);
+
+    final splitTeams = _splitList(teams);
     var rotatedTeams = splitTeams;
-    var bracket = <List<String>>[];
+    final bracket = <List<Team>>[];
+
+    Team getTeam(String id) {
+      return origTeams.firstWhere((element) => element.id == id);
+    }
+
     for (var i = 1; i <= maxRounds; i++) {
       for (var b = 0; b < rotatedTeams[0].length; b++) {
-        bracket.add([rotatedTeams[0][b], rotatedTeams[1][b]]);
+        var teamOne = getTeam(rotatedTeams[0][b]);
+        var teamTwo = getTeam(rotatedTeams[1][b]);
+        bracket.add([teamOne, teamTwo]);
       }
       rotatedTeams = _rotateTeams(splitTeams);
     }

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pond_hockey/bloc/add_contributers_form/add_contributers_form.dart';
@@ -61,77 +60,84 @@ class _ManageEditors extends StatelessWidget {
             return Center(
               child: Text("Uh oh! Something went wrong"),
             );
-            break;
           case ConnectionState.waiting:
             return Center(
               child: CircularProgressIndicator(),
             );
-            break;
           case ConnectionState.active:
+            return buildView(snapshot);
           case ConnectionState.done:
-            if (snapshot.hasData) {
-              var _tournament = Tournament.fromDocument(snapshot.data);
-              if (_tournament.editors == null) {
-                return ListView(
-                  children: <Widget>[
-                    _newEditor(),
-                    SizedBox(
-                      height: 50.0,
-                    ),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text("Uh oh! You didn't add any Editor")),
-                  ],
-                );
-              }
-              return Column(
-                children: <Widget>[
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _tournament.editors.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Icon(Icons.person),
-                          radius: 30.0,
-                        ),
-                        title: Text(_tournament.name),
-                        subtitle: Text(_tournament.editors[index]),
-                        trailing: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.delete,
-                              color: Color(0xFF167F67),
-                            ),
-                          ),
-                          onTap: () {},
-                        ),
-                      );
-                    },
-                  ),
-                  Divider(),
-                  _newEditor()
-                ],
-              );
-            } else {
-              return Center(
-                child: Text("Uh oh! Something went wrong"),
-              );
-            }
-            break;
+            return buildView(snapshot);
         }
-        return Center(
-          child: Text("Uh oh! Something went wrong"),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('??'),
+            Text('How\'d you get here?!'),
+          ],
         );
       },
     );
   }
 
+  Widget buildView(AsyncSnapshot snapshot) {
+    if (snapshot.hasData) {
+      var _tournament = Tournament.fromDocument(snapshot.data);
+      if (_tournament.editors == null) {
+        return ListView(
+          children: <Widget>[
+            _newEditor(),
+            SizedBox(
+              height: 50.0,
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text("There are no editors."),
+            ),
+          ],
+        );
+      }
+      return Column(
+        children: <Widget>[
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: _tournament.editors.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Icon(Icons.person),
+                  radius: 30.0,
+                ),
+                title: Text(_tournament.name),
+                subtitle: Text(_tournament.editors[index]),
+                trailing: InkWell(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Color(0xFF167F67),
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+              );
+            },
+          ),
+          Divider(),
+          _newEditor(),
+        ],
+      );
+    } else {
+      return Center(
+        child: Text("Uh oh! Something went wrong"),
+      );
+    }
+  }
+
   Widget _newEditor() {
     return ListTile(
       title: Text("New editor"),
-      subtitle: Text("Tap here to add new editor"),
+      subtitle: Text("Tap here to add a new editor"),
       leading: CircleAvatar(
         child: Icon(Icons.add),
         radius: 30.0,
@@ -159,71 +165,75 @@ class _ManageScorers extends StatelessWidget {
             return Center(
               child: Text("Uh oh! Something went wrong"),
             );
-            break;
           case ConnectionState.waiting:
             return Center(
               child: CircularProgressIndicator(),
             );
-            break;
           case ConnectionState.active:
+            return buildView(snapshot);
           case ConnectionState.done:
-            if (snapshot.hasData) {
-              var _tournament = Tournament.fromDocument(snapshot.data);
-              if (_tournament.scorers == null) {
-                return ListView(
-                  children: <Widget>[
-                    _newScorer(),
-                    SizedBox(
-                      height: 50.0,
-                    ),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text("Uh oh! You didn't add any Scorer")),
-                  ],
-                );
-              }
-              return Column(
-                children: <Widget>[
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _tournament.scorers.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Icon(Icons.person),
-                          radius: 30.0,
-                        ),
-                        title: Text(_tournament.name),
-                        subtitle: Text(_tournament.scorers[index]),
-                        trailing: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.delete,
-                              color: Color(0xFF167F67),
-                            ),
-                          ),
-                          onTap: () {},
-                        ),
-                      );
-                    },
-                  ),
-                  Divider(),
-                  _newScorer()
-                ],
-              );
-            } else {
-              return Center(
-                child: Text("Uh oh! Something went wrong"),
-              );
-            }
-            break;
+            return buildView(snapshot);
         }
-        return Center(
-          child: Text("Uh oh! Something went wrong"),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('??'),
+            Text('How\'d you get here?!'),
+          ],
         );
       },
     );
+  }
+
+  Widget buildView(AsyncSnapshot snapshot) {
+    if (snapshot.hasData) {
+      var _tournament = Tournament.fromDocument(snapshot.data);
+      if (_tournament.scorers == null) {
+        return ListView(
+          children: <Widget>[
+            _newScorer(),
+            SizedBox(
+              height: 50.0,
+            ),
+            Center(child: Text("There are no scorers.")),
+          ],
+        );
+      }
+      return Column(
+        children: <Widget>[
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: _tournament.scorers.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Icon(Icons.person),
+                  radius: 30.0,
+                ),
+                title: Text(_tournament.name),
+                subtitle: Text(_tournament.scorers[index]),
+                trailing: InkWell(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Color(0xFF167F67),
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+              );
+            },
+          ),
+          Divider(),
+          _newScorer()
+        ],
+      );
+    } else {
+      return Center(
+        child: Text("Uh oh! Something went wrong"),
+      );
+    }
   }
 
   Widget _newScorer() {

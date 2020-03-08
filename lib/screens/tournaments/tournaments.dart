@@ -161,8 +161,10 @@ class ManageableTournamentsList extends StatelessWidget {
               documents: snapshot.data,
             );
           } else {
-            return Center(
+            return Align(
+              alignment: Alignment.center,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
                     'You don\'t have any tournaments!',

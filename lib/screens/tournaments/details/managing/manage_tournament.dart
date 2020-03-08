@@ -1,19 +1,14 @@
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/tabbar.dart';
-import 'package:pond_hockey/components/buttons/gradient_btn.dart';
-import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/enums/game_type.dart';
-import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/managing/manage_contributers.dart';
-import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
-import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
-import 'package:pond_hockey/services/seeding/three_gg_algorithm.dart';
-import 'package:uuid/uuid.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/manage_games_view.dart';
+import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 
 class ManageTournament extends StatelessWidget {
   const ManageTournament({@required this.tournament});
@@ -36,133 +31,13 @@ class ManageTournament extends StatelessWidget {
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
           children: [
-            _ManageGamesView(tournamentId: tournament.id),
+            ManageGamesView(tournamentId: tournament.id),
             _ManageTeamsView(tournament: tournament),
             _TournamentOptionsView(
               tournamentId: tournament.id,
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ManageGamesView extends StatelessWidget {
-  const _ManageGamesView({this.tournamentId});
-
-  final String tournamentId;
-
-  @override
-  Widget build(BuildContext context) {
-    void seedGames(GameType type) async {
-      await GamesRepository().deleteGamesFromTournament(tournamentId);
-      var teams =
-          await TeamsRepository().getTeamsFromTournamentId(tournamentId);
-      if (teams.length < 4) {
-        Scaffold.of(context).hideCurrentSnackBar();
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text('You need at least four teams.'),
-          duration: Duration(seconds: 2),
-        ));
-        return null;
-      }
-      var teamIds = teams.map((e) => e.id).toList();
-      var bracket = ThreeGGAlgorithm.start(teamIds);
-      bracket.removeWhere((element) => element.contains('0'));
-      var games = bracket.map((e) async {
-        var teamOne = await TeamsRepository().getTeamFromId(e[0]);
-        var teamTwo = await TeamsRepository().getTeamFromId(e[1]);
-
-        return Game(
-          id: Uuid().v4(),
-          status: GameStatus.notStarted,
-          teamOne: GameTeam(
-            id: teamOne.id,
-            name: teamOne.name,
-            differential: 0,
-            score: 0,
-          ),
-          teamTwo: GameTeam(
-            id: teamTwo.id,
-            name: teamTwo.name,
-            differential: 0,
-            score: 0,
-          ),
-          tournament: tournamentId,
-          type: type,
-        );
-      });
-      var matches = await Future.wait(games);
-      for (final match in matches) {
-        await GamesRepository().addGameToTournament(match);
-      }
-    }
-
-    void _showChooseGameTypeDialog() {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return ChooseGameTypeDialog(
-            onSubmit: seedGames,
-          );
-        },
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[200])),
-        color: Color(0xFFE9E9E9),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: Icon(Icons.refresh),
-              tooltip: 'Re-seed games',
-              onPressed: _showChooseGameTypeDialog,
-            ),
-          ),
-          Expanded(
-            child: FirestoreAnimatedList(
-              query: GamesRepository().getGamesFromTournamentId(tournamentId),
-              padding: EdgeInsets.zero,
-              itemBuilder: (cntx, doc, anim, indx) {
-                var game = Game.fromDocument(doc);
-                return GameItem(
-                  gameId: game.id,
-                  onTap: () {
-                    Router.navigator.pushNamed(
-                      Router.manageGame,
-                      arguments: game,
-                    );
-                  },
-                );
-              },
-              emptyChild: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('There are no games.'),
-                  Text('Click below to create some.'),
-                  GradientButton(
-                    onTap: _showChooseGameTypeDialog,
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    height: MediaQuery.of(context).size.height * 0.09,
-                    colors: [
-                      Color(0xFFC84E89),
-                      Color(0xFFF15F79),
-                    ],
-                    text: 'Seed Games',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -319,6 +194,94 @@ class _TournamentOptionsView extends StatelessWidget {
   final String tournamentId;
   @override
   Widget build(BuildContext context) {
+    Widget buildDeleteTournamentButton() {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(25),
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Delete Tournament'),
+                      content: Text(
+                        'Are you SURE that you want to delete this tournament?',
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          onPressed: () {
+                            Router.navigator.pop();
+                            Router.navigator.pop();
+                            TournamentsRepository()
+                                .deleteTournament(tournamentId);
+                          },
+                          child: Text('YES'),
+                        ),
+                        FlatButton(
+                          onPressed: Router.navigator.pop,
+                          child: Text('NO'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text(
+                'DELETE TOURNAMENT',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.red,
+            ),
+            Text(
+              'Warning: This action CANNOT be undone!',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Color(0xFFE9E9E9),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+        child: Column(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: _SettingsList(tournamentId: tournamentId),
+            ),
+            Expanded(child: const SizedBox()),
+            buildDeleteTournamentButton(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsList extends StatelessWidget {
+  const _SettingsList({
+    Key key,
+    @required this.tournamentId,
+  }) : super(key: key);
+
+  final String tournamentId;
+
+  @override
+  Widget build(BuildContext context) {
     Widget buildDivider() {
       return const Divider(
         height: 15,
@@ -327,58 +290,46 @@ class _TournamentOptionsView extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: Color(0xFFE9E9E9),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+    return Material(
+      type: MaterialType.transparency,
+      child: ListView(
+        shrinkWrap: true,
+        primary: false,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        children: <Widget>[
+          _SettingsTile(
+            text: 'Contributers',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ManageContributors(
+                    tournamentId: tournamentId,
+                  ),
+                ),
+              );
+            },
+            icon: Icons.people,
           ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: ListView(
-              shrinkWrap: true,
-              primary: false,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              children: <Widget>[
-                _SettingsTile(
-                  text: 'Contributers',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ManageContributors(
-                          tournamentId: tournamentId,
-                        ),
-                      ),
-                    );
-                  },
-                  icon: Icons.people,
-                ),
-                buildDivider(),
-                _SettingsTile(
-                  text: 'Another Setting',
-                  onTap: () {},
-                  icon: Icons.edit,
-                ),
-                buildDivider(),
-                _SettingsTile(
-                  text: 'Another Setting',
-                  onTap: () {},
-                  icon: Icons.edit,
-                ),
-                buildDivider(),
-                _SettingsTile(
-                  text: 'Another Setting',
-                  onTap: () {},
-                  icon: Icons.edit,
-                ),
-              ],
-            ),
+          buildDivider(),
+          _SettingsTile(
+            text: 'Another Setting',
+            onTap: () {},
+            icon: Icons.edit,
           ),
-        ),
+          buildDivider(),
+          _SettingsTile(
+            text: 'Another Setting',
+            onTap: () {},
+            icon: Icons.edit,
+          ),
+          buildDivider(),
+          _SettingsTile(
+            text: 'Another Setting',
+            onTap: () {},
+            icon: Icons.edit,
+          ),
+        ],
       ),
     );
   }

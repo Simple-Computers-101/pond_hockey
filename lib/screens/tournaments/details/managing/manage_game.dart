@@ -3,8 +3,8 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pond_hockey/bloc/manage_game_form/manage_game_form.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
+import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/game.dart';
-import 'package:pond_hockey/router/router.gr.dart';
 
 class ManageGame extends StatelessWidget {
   const ManageGame({this.game});
@@ -25,27 +25,42 @@ class ManageGame extends StatelessWidget {
           final formBloc = context.bloc<ManageGameFormBloc>();
           return Scaffold(
             appBar: CustomAppBar(title: 'Manage Game'),
-            body: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height / 4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(game.teamOne.name, style: teamNameStyle),
-                      Text(
-                        'vs',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.1,
-                          fontFamily: 'CircularStd',
-                        ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: <Widget>[
+                  Text(game.teamOne.name, style: teamNameStyle),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFE9E9E9),
+                    ),
+                    child: Text(
+                      'vs',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.05,
+                        fontFamily: 'CircularStd',
                       ),
-                      Text(game.teamTwo.name, style: teamNameStyle),
-                    ],
+                    ),
                   ),
-                ),
-                _ManageGameForm(formBloc: formBloc),
-              ],
+                  Text(game.teamTwo.name, style: teamNameStyle),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  Text(
+                    'Press "Submit" to save',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w100,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  _ManageGameForm(formBloc: formBloc),
+                ],
+              ),
             ),
           );
         },
@@ -70,87 +85,152 @@ class _ManageGameForm extends StatelessWidget {
           content: Text('Score has been updated'),
         ));
       },
-      child: Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(50),
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(50),
           ),
-          child: BlocBuilder<ManageGameFormBloc, FormBlocState>(
-            builder: (context, formState) {
-              if (formState.fieldBlocs.isEmpty) {
-                return Center(child: CircularProgressIndicator());
-              }
-              var oneField = formState
-                  .fieldBlocFromPath('team-one_score')
-                  .asInputFieldBloc<int>();
-              var twoField = formState
-                  .fieldBlocFromPath('team-two_score')
-                  .asInputFieldBloc<int>();
-              return ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                children: <Widget>[
-                  BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
-                    bloc: oneField,
-                    builder: (context, state) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
+        ),
+        child: BlocBuilder<ManageGameFormBloc, FormBlocState>(
+          builder: (context, formState) {
+            if (formState.fieldBlocs.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            }
+            var oneField = formState
+                .fieldBlocFromPath('team-one_score')
+                .asInputFieldBloc<int>();
+            var twoField = formState
+                .fieldBlocFromPath('team-two_score')
+                .asInputFieldBloc<int>();
+            return Column(
+              children: <Widget>[
+                BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
+                  bloc: oneField,
+                  builder: (context, state) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFE9E9E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
                             icon: Icon(Icons.remove),
+                            padding: const EdgeInsets.all(24),
                             onPressed: () {
-                              oneField.updateValue(state.value - 1);
+                              if (state.value > 0) {
+                                oneField.updateValue(state.value - 1);
+                              } else {
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Score can not be below 0'),
+                                    duration: Duration(milliseconds: 500),
+                                  ),
+                                );
+                              }
                             },
                           ),
-                          Text(state.value.toString()),
-                          IconButton(
+                        ),
+                        Text(
+                          '${state.value}',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFE9E9E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(24),
                             icon: Icon(Icons.add),
                             onPressed: () {
                               oneField.updateValue(state.value + 1);
                             },
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                  BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
-                    bloc: twoField,
-                    builder: (context, state) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+                BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
+                  bloc: twoField,
+                  builder: (context, state) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFE9E9E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(24),
                             icon: Icon(Icons.remove),
                             onPressed: () {
-                              twoField.updateValue(state.value - 1);
+                              if (state.value > 0) {
+                                twoField.updateValue(state.value - 1);
+                              } else {
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Score can not be below 0'),
+                                    duration: Duration(milliseconds: 500),
+                                  ),
+                                );
+                              }
                             },
                           ),
-                          Text(state.value.toString()),
-                          IconButton(
+                        ),
+                        Text(
+                          '${state.value}',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFE9E9E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(24),
                             icon: Icon(Icons.add),
                             onPressed: () {
                               twoField.updateValue(state.value + 1);
                             },
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  GradientButton(
-                    onTap: formBloc.submit,
-                    colors: [
-                      Color.fromRGBO(255, 65, 109, 1),
-                      Color.fromRGBO(255, 75, 43, 1),
-                    ],
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    text: 'Submit',
-                  ),
-                ],
-              );
-            },
-          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                DropdownFieldBlocBuilder<GameStatus>(
+                  selectFieldBloc: formState
+                      .fieldBlocFromPath('game-state')
+                      .asSelectFieldBloc(),
+                  itemBuilder: (context, value) => gameStatus[value],
+                  showEmptyItem: false,
+                  decoration: InputDecoration(
+                      labelText: 'Game state', border: OutlineInputBorder()),
+                ),
+                const SizedBox(height: 40),
+                GradientButton(
+                  onTap: formBloc.submit,
+                  colors: [
+                    Color.fromRGBO(255, 65, 109, 1),
+                    Color.fromRGBO(255, 75, 43, 1),
+                  ],
+                  height: MediaQuery.of(context).size.height * 0.15,
+                  text: 'Submit',
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

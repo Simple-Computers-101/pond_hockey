@@ -1,5 +1,5 @@
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 
@@ -83,7 +83,7 @@ class GameItem extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        EnumToString.parseCamelCase(gameData.status),
+                        gameStatus[gameData.status],
                         textAlign: TextAlign.right,
                       ),
                     ),

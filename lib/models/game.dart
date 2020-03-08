@@ -1,9 +1,9 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:enum_to_string/enum_to_string.dart';
+import 'package:flutter/widgets.dart';
+import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/enums/game_type.dart';
+import 'package:pond_hockey/models/team.dart';
 
 class Game {
   String id;
@@ -12,14 +12,16 @@ class Game {
   GameTeam teamTwo;
   String tournament;
   GameType type;
+  Division division;
 
   Game({
     this.id,
     this.tournament,
-    this.status,
+    this.status = GameStatus.notStarted,
     this.teamOne,
     this.teamTwo,
     this.type,
+    @required this.division,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,19 +30,26 @@ class Game {
       'tournament': tournament,
       'teamOne': teamOne.toMap(),
       'teamTwo': teamTwo.toMap(),
-      'status': EnumToString.parseCamelCase(status),
-      'type': EnumToString.parseCamelCase(type),
+      'status': gameStatus[status],
+      'type': gameType[type],
+      'division': divisionMap[division],
     };
   }
 
   static Game fromDocument(DocumentSnapshot doc) {
-    var data = doc.data;
+    final data = doc.data;
 
-    var status = gameStatus.keys
-        .firstWhere((element) => gameStatus[element] == data['status']);
+    final status = gameStatus.keys.firstWhere(
+      (element) => gameStatus[element] == data['status'],
+    );
 
-    var type = gameType.keys
-        .firstWhere((element) => gameType[element] == data['type']);
+    final type = gameType.keys.firstWhere(
+      (element) => gameType[element] == data['type'],
+    );
+
+    final division = divisionMap.keys.firstWhere(
+      (element) => divisionMap[element] == data['division'],
+    );
 
     return Game(
       id: data['id'],
@@ -48,6 +57,7 @@ class Game {
       teamOne: GameTeam.fromMap(data['teamOne']),
       teamTwo: GameTeam.fromMap(data['teamTwo']),
       status: status,
+      division: division,
       type: type,
     );
   }
@@ -62,8 +72,8 @@ class GameTeam {
   GameTeam({
     this.id,
     this.name,
-    this.score,
-    this.differential,
+    this.score = 0,
+    this.differential = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -73,6 +83,13 @@ class GameTeam {
       'score': score,
       'differential': differential,
     };
+  }
+
+  static GameTeam fromTeam(Team team) {
+    return GameTeam(
+      id: team.id,
+      name: team.name,
+    );
   }
 
   static GameTeam fromMap(Map<String, dynamic> map) {

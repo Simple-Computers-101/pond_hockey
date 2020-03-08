@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 
 class Tournament {
@@ -36,7 +33,7 @@ class Tournament {
       'id': id,
       'name': name,
       'details': details,
-      'status': EnumToString.parseCamelCase(status),
+      'status': gameStatus[status],
       'year': year,
       'location': location,
       'startDate': startDate,
@@ -50,11 +47,15 @@ class Tournament {
   static Tournament fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
 
+    var statusFromMap = gameStatus.keys.firstWhere(
+      (element) => gameStatus[element] == map['status'],
+    );
+
     return Tournament(
       id: map['id'],
       name: map['name'],
       details: map['details'],
-      status: EnumToString.fromString(GameStatus.values, map['status']),
+      status: statusFromMap,
       year: map['year'],
       location: map['location'],
       startDate: map['startDate'],
@@ -69,6 +70,11 @@ class Tournament {
     var data = doc.data;
     var startTimestamp = data['startDate'] as Timestamp;
     var endTimestamp = data['endDate'] as Timestamp;
+
+    var statusFromMap = gameStatus.keys.firstWhere(
+      (element) => gameStatus[element] == data['status'],
+    );
+
     return Tournament(
       startDate: startTimestamp?.toDate(),
       endDate: endTimestamp?.toDate(),
@@ -77,7 +83,7 @@ class Tournament {
       id: data['id'],
       location: data['location'],
       owner: data['owner'],
-      status: EnumToString.fromString(GameStatus.values, data['status']),
+      status: statusFromMap,
       year: data['year'],
       scorers: data['scorers']?.cast<String>(),
       editors: data['editors']?.cast<String>(),

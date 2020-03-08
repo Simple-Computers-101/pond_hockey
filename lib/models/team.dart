@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pond_hockey/enums/division.dart';
 
@@ -30,7 +27,7 @@ class Team {
       'id': id,
       'name': name,
       'currentTournament': currentTournament,
-      'division': EnumToString.parse(division),
+      'division': divisionMap[division],
       'gamesLost': gamesLost,
       'gamesPlayed': gamesPlayed,
       'gamesWon': gamesWon,
@@ -41,11 +38,16 @@ class Team {
   static Team fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
 
+    var divisionFromMap = divisionMap.keys.firstWhere(
+      (element) =>
+          divisionMap[element].toLowerCase() == map['division'].toLowerCase(),
+    );
+
     return Team(
       id: map['id'],
       name: map['name'],
       currentTournament: map['currentTournament'],
-      division: EnumToString.fromString(Division.values, map['division']),
+      division: divisionFromMap,
       gamesLost: map['gamesLost'],
       gamesPlayed: map['gamesPlayed'],
       gamesWon: map['gamesWon'],

@@ -1,24 +1,21 @@
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
+import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
-class ViewTournament extends StatefulWidget {
-  const ViewTournament({@required this.tournament});
+class ViewTournament extends StatelessWidget {
+  const ViewTournament({this.tournament});
 
   final Tournament tournament;
 
-  @override
-  _ViewTournamentState createState() => _ViewTournamentState();
-}
-
-class _ViewTournamentState extends State<ViewTournament> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -32,7 +29,7 @@ class _ViewTournamentState extends State<ViewTournament> {
               SliverAppBar(
                 centerTitle: true,
                 title: Text(
-                  widget.tournament.name,
+                  tournament.name,
                   // style: Theme.of(context).textTheme.headline5,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
@@ -60,18 +57,12 @@ class _ViewTournamentState extends State<ViewTournament> {
               ),
             ];
           },
-          body: Container(
-            // decoration: BoxDecoration(
-            //   borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
-            //   color: Color(0xFFE9E9E9),
-            // ),
-            child: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                _GamesPage(tournamentId: widget.tournament.id),
-                _TeamsPage(tournament: widget.tournament),
-              ],
-            ),
+          body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              _GamesPage(tournament: tournament),
+              _TeamsPage(tournament: tournament),
+            ],
           ),
         ),
       ),
@@ -79,26 +70,76 @@ class _ViewTournamentState extends State<ViewTournament> {
   }
 }
 
-class _GamesPage extends StatelessWidget {
-  const _GamesPage({this.tournamentId});
+class _GamesPage extends StatefulWidget {
+  const _GamesPage({this.tournament});
 
-  final String tournamentId;
+  final Tournament tournament;
+
+  @override
+  _GamesPageState createState() => _GamesPageState();
+}
+
+class _GamesPageState extends State<_GamesPage> {
+  Division division;
+  bool empty = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
-      body: FirestoreAnimatedList(
-        query: GamesRepository().getGamesFromTournamentId(tournamentId),
-        duration: Duration(milliseconds: 600),
-        padding: const EdgeInsets.all(24),
-        itemBuilder: (cntx, doc, anim, indx) {
-          var game = Game.fromDocument(doc);
-          return FadeTransition(
-            opacity: anim,
-            child: GameItem(gameId: game.id),
-          );
-        },
+      body: Column(
+        children: <Widget>[
+          if (!empty)
+            IconButton(
+              icon: Icon(Icons.filter_list),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return FilterDivisionDialog(
+                      division: division,
+                      onDivisionChanged: (value) {
+                        setState(() {
+                          division = value;
+                        });
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          Expanded(
+            child: FirestoreAnimatedList(
+              query: GamesRepository().getGamesFromTournamentId(
+                widget.tournament.id,
+                division,
+              ),
+              duration: Duration(milliseconds: 600),
+              padding: const EdgeInsets.all(24),
+              onLoaded: (snapshot) {
+                setState(() {
+                  empty = snapshot.documents.isEmpty;
+                });
+              },
+              itemBuilder: (cntx, doc, anim, indx) {
+                var game = Game.fromDocument(doc);
+                return FadeTransition(
+                  opacity: anim,
+                  child: GameItem(gameId: game.id),
+                );
+              },
+              emptyChild: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(':('),
+                    Text('There\'s nothing here!'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -113,15 +154,6 @@ class _TeamsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Router.navigator.pushNamed(
-            Router.addTeams,
-            arguments: tournament,
-          );
-        },
-        child: Icon(Icons.add),
-      ),
       body: FirestoreAnimatedList(
         query: TeamsRepository().getTeamsStreamFromTournamentId(tournament.id),
         padding: const EdgeInsets.all(24),
@@ -144,6 +176,15 @@ class _TeamsPage extends StatelessWidget {
             ),
           );
         },
+        emptyChild: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(':('),
+              Text('There\'s nothing here!'),
+            ],
+          ),
+        ),
       ),
     );
   }
