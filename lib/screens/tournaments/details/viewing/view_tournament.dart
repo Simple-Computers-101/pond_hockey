@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/enums/division.dart';
@@ -117,15 +118,20 @@ class _GamesPageState extends State<_GamesPage> {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
-                if (snapshot.data.isNotEmpty) {
+                var data = snapshot.data as QuerySnapshot;
+                if (data.documents.isNotEmpty) {
                   return ListView.separated(
-                    itemCount: snapshot.data.length,
+                    itemCount: data.documents.length,
                     padding: const EdgeInsets.all(24),
                     itemBuilder: (cntx, indx) {
-                      var game = Game.fromDocument(snapshot.data[indx]);
+                      var game = Game.fromDocument(
+                        data.documents[indx],
+                      );
                       return GameItem(gameId: game.id);
                     },
-                    separatorBuilder: (cntx, _) => Spacer(),
+                    separatorBuilder: (cntx, _) => SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
                   );
                 } else {
                   return Center(

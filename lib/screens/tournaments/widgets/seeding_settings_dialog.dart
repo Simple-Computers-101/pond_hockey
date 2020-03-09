@@ -15,6 +15,7 @@ class SeedingSettingsDialog extends StatefulWidget {
 class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
   GameType gameType = GameType.qualifier;
   Division division;
+  int semiFinalTeams;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +61,15 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
             onChanged: (type) {
               setState(() {
                 gameType = type;
+              });
+            },
+          ),
+          TextFormField(
+            keyboardType: TextInputType.number,
+            initialValue: semiFinalTeams.toString(),
+            onChanged: (value) {
+              setState(() {
+                semiFinalTeams = int.parse(value);
               });
             },
           ),
