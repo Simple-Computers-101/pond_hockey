@@ -106,8 +106,25 @@ class TournamentsScreen extends StatelessWidget {
           ),
           floatingActionButton: canEdit()
               ? FloatingActionButton(
-                  onPressed: () {
-                    Router.navigator.pushNamed(Router.addTournament);
+                  onPressed: () async {
+                    if (uid == "Vpdl33VmgzU6hyOhbrIKsHNvumt2") {
+                      Router.navigator.pushNamed(Router.addTournament);
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text(
+                                    "Adding tournament feature will come soon"),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("Ok"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              ));
+                    }
                   },
                   child: Icon(Icons.add),
                 )
