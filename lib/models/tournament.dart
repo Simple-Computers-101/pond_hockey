@@ -11,8 +11,8 @@ class Tournament {
   DateTime startDate;
   DateTime endDate;
   String owner;
-  List<String> scorers;
-  List<String> editors;
+  List<Map<String, dynamic>> scorers;
+  List<Map<String, dynamic>> editors;
 
   Tournament({
     this.id,
@@ -85,8 +85,8 @@ class Tournament {
       owner: data['owner'],
       status: statusFromMap,
       year: data['year'],
-      scorers: data['scorers']?.cast<String>(),
-      editors: data['editors']?.cast<String>(),
+      scorers: data['scorers']?.cast<Map<String,dynamic>>(),
+      editors: data['editors']?.cast<Map<String,dynamic>>(),
     );
   }
 }
