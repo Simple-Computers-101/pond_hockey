@@ -145,31 +145,72 @@ class EditorDialog extends StatefulWidget {
 class _EditorDialogState extends State<EditorDialog> {
   var database = Firestore.instance;
   final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  var errorMessage = "";
+  var isProcessing = false;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.isEdit ? 'Edit detail!' : 'Add editor'),
       content: Wrap(
         children: <Widget>[
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(hintText: "Email"),
+          isProcessing ? LinearProgressIndicator() : SizedBox.shrink(),
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              controller: _emailController,
+              decoration: InputDecoration(
+                hintText: "Email",
+              ),
+              validator: validateEmail,
+            ),
           ),
+          Text(errorMessage,style: TextStyle(color: Colors.red,),),
         ],
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () {
-            database
-                .collection("tournament")
-                .document(widget.tournamentId)
-                .setData({"editors": []
-                });
+          onPressed: () async {
+            if (_formKey.currentState.validate()) {
+              setState(() {
+                isProcessing = true;
+              });
+              final documents =
+                  await database.collection("users").getDocuments();
+              setState(() {
+                isProcessing = false;
+              });
+              var uid;
+             for (var element in documents.documents){
+               if (element.data["email"] == _emailController.text) {
+                 uid = element["uid"];
+               }
+             }
+             if (uid != null) {
+               Navigator.of(context).pop();
+             }else {
+               setState(() {
+                 errorMessage = "User with this email address does not exist";
+               });
+             }
+            }
           },
           child: Text(widget.isEdit ? "Edit" : "Add"),
         ),
       ],
     );
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    var regex = RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Enter Valid Email';
+    } else {
+      return null;
+    }
   }
 
   @override
