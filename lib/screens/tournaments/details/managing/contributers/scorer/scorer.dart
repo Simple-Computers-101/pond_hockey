@@ -140,7 +140,7 @@ class _ScorerDialogState extends State<ScorerDialog> {
       actions: <Widget>[
         FlatButton(
           onPressed: () {},
-          child: Text("Edit"),
+          child: Text(widget.isEdit ? "Edit" : "Add"),
         ),
       ],
     );

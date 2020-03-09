@@ -90,7 +90,10 @@ class _EditorState extends State<ManageEditors> {
                   showDialog(
                       context: context,
                       builder: (_) {
-                        return EditorDialog();
+                        return EditorDialog(
+                          isEdit: true,
+                          tournamentId: widget.tournamentId,
+                        );
                       });
                 },
               );
@@ -119,31 +122,33 @@ class _EditorState extends State<ManageEditors> {
         showDialog(
             context: context,
             builder: (_) {
-              return null;
+              return EditorDialog(
+                isEdit: false,
+                tournamentId: widget.tournamentId,
+              );
             });
       },
     );
   }
-
-
 }
 
 class EditorDialog extends StatefulWidget {
-  EditorDialog({this.isEdit});
+  EditorDialog({this.isEdit, this.tournamentId});
+  final String tournamentId;
   final bool isEdit;
   @override
   State<StatefulWidget> createState() {
     return _EditorDialogState();
   }
-
 }
 
 class _EditorDialogState extends State<EditorDialog> {
+  var database = Firestore.instance;
   final _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ? 'Edit detail!': 'Add editor'),
+      title: Text(widget.isEdit ? 'Edit detail!' : 'Add editor'),
       content: Wrap(
         children: <Widget>[
           TextField(
@@ -154,12 +159,19 @@ class _EditorDialogState extends State<EditorDialog> {
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () {},
-          child: Text("Edit"),
+          onPressed: () {
+            database
+                .collection("tournament")
+                .document(widget.tournamentId)
+                .setData({"editors": []
+                });
+          },
+          child: Text(widget.isEdit ? "Edit" : "Add"),
         ),
       ],
     );
   }
+
   @override
   void dispose() {
     _emailController.dispose();
