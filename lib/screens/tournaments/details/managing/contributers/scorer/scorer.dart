@@ -25,9 +25,9 @@ class ManageScorers extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           case ConnectionState.active:
-            return buildView(snapshot,context);
+            return buildView(snapshot, context);
           case ConnectionState.done:
-            return buildView(snapshot,context);
+            return buildView(snapshot, context);
         }
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,41 +79,47 @@ class ManageScorers extends StatelessWidget {
                     showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                          content: Text("Are you sure to remove this user"),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text("Cancel"),
-                            ),
-                            FlatButton(
-                              onPressed: () async {
-                                try {
-                                  await Firestore.instance
-                                      .collection("tournament")
-                                      .document(tournamentId)
-                                      .updateData({});
-                                  Navigator.of(context).pop();
-                                  // ignore: avoid_catches_without_on_clauses
-                                } catch (error) {
-                                  Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(error.code),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Text("Yes"),
-                            )
-                          ],
-                        ));
+                              content: Text("Are you sure to remove this user"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel"),
+                                ),
+                                FlatButton(
+                                  onPressed: () async {
+                                    try {
+                                      await Firestore.instance
+                                          .collection("tournament")
+                                          .document(tournamentId)
+                                          .updateData({});///here delete data
+                                      Navigator.of(context).pop();
+                                      // ignore: avoid_catches_without_on_clauses
+                                    } catch (error) {
+                                      Scaffold.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(error.code),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text("Yes"),
+                                )
+                              ],
+                            ));
                   },
                 ),
                 onTap: () {
-                  showDialog(context: context,builder: (_){
-                    return ScorerDialog(isEdit: true,);
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        return ScorerDialog(
+                          isEdit: true,
+                          tournamentId: tournamentId,
+                          email: _tournament.scorers[index]['email'],
+                        );
+                      });
                 },
               );
             },
@@ -138,23 +144,29 @@ class ManageScorers extends StatelessWidget {
         radius: 30.0,
       ),
       onTap: () {
-        showDialog(context: context,builder: (_){
-          return ScorerDialog(isEdit: false,);
-        });
+        showDialog(
+            context: context,
+            builder: (_) {
+              return ScorerDialog(
+                isEdit: false,
+                tournamentId: tournamentId,
+              );
+            });
       },
     );
   }
 }
 
 class ScorerDialog extends StatefulWidget {
-  ScorerDialog({this.isEdit,this.tournamentId});
+  ScorerDialog(
+      {@required this.isEdit, @required this.tournamentId, this.email});
   final bool isEdit;
   final String tournamentId;
+  final String email;
   @override
   State<StatefulWidget> createState() {
     return _ScorerDialogState();
   }
-
 }
 
 class _ScorerDialogState extends State<ScorerDialog> {
@@ -167,9 +179,15 @@ class _ScorerDialogState extends State<ScorerDialog> {
   var isProcessing = false;
 
   @override
+  void initState() {
+    _emailController.text = widget.email == null ? "Email" : widget.email;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ? 'Edit detail!': 'Add Scorer'),
+      title: Text(widget.isEdit ? 'Edit detail!' : 'Add Scorer'),
       content: Wrap(
         children: <Widget>[
           isProcessing ? LinearProgressIndicator() : SizedBox.shrink(),
@@ -177,11 +195,19 @@ class _ScorerDialogState extends State<ScorerDialog> {
             key: _formKey,
             child: TextFormField(
               controller: _emailController,
-              decoration: InputDecoration(hintText: "Email"),
+              initialValue: widget.email == null ? "Email" : widget.email,
+              decoration: InputDecoration(
+                hintText: "Email",
+              ),
               validator: validateEmail,
             ),
           ),
-          Text(errorMessage,style: TextStyle(color: Colors.red,),),
+          Text(
+            errorMessage,
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
         ],
       ),
       actions: <Widget>[
@@ -194,41 +220,41 @@ class _ScorerDialogState extends State<ScorerDialog> {
 
               try {
                 final documents =
-                await database.collection("users").getDocuments();
+                    await database.collection("users").getDocuments();
                 var uid;
-                for (var element in documents.documents){
+                for (var element in documents.documents) {
                   if (element.data["email"] == _emailController.text) {
                     uid = element["uid"];
                   }
                 }
                 if (uid != null) {
-                  if (widget.isEdit){
-                    await database.collection("tournament")
+                  if (widget.isEdit) {
+                    await database
+                        .collection("tournament")
                         .document(widget.tournamentId)
-                        .updateData({"scorers": ""});
-                  }else{
-                    await database.collection("tournament")
+                        .updateData({"scorers": ""});///here edit data
+                  } else {
+                    await database
+                        .collection("tournament")
                         .document(widget.tournamentId)
-                        .setData({"scorers":""});
+                        .setData({"scorers": ""});///here new data
                   }
                   Navigator.of(context).pop();
-                }else {
+                } else {
                   setState(() {
-                    errorMessage
-                    = "User with this email address does not exist";
+                    errorMessage =
+                        "User with this email address does not exist";
                     isProcessing = false;
                   });
                 }
               }
               // ignore: avoid_catches_without_on_clauses
-              catch(error){
+              catch (error) {
                 setState(() {
-                  errorMessage
-                  = error.code;
+                  errorMessage = error.code;
                   isProcessing = false;
                 });
               }
-
             }
           },
           child: Text(widget.isEdit ? "Edit" : "Add"),
@@ -243,9 +269,9 @@ class _ScorerDialogState extends State<ScorerDialog> {
     var regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
       return 'Enter Valid Email';
+    } else {
+      return null;
     }
-    else{
-      return null;}
   }
 
   @override

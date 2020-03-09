@@ -102,7 +102,7 @@ class _EditorState extends State<ManageEditors> {
                                       await Firestore.instance
                                           .collection("tournament")
                                           .document(widget.tournamentId)
-                                          .updateData({});
+                                          .updateData({});///here delete data
                                       Navigator.of(context).pop();
                                       // ignore: avoid_catches_without_on_clauses
                                     } catch (error) {
@@ -126,6 +126,7 @@ class _EditorState extends State<ManageEditors> {
                         return EditorDialog(
                           isEdit: true,
                           tournamentId: widget.tournamentId,
+                          email: _tournament.editors[index]['email'],
                         );
                       });
                 },
@@ -166,9 +167,11 @@ class _EditorState extends State<ManageEditors> {
 }
 
 class EditorDialog extends StatefulWidget {
-  EditorDialog({this.isEdit, this.tournamentId});
+  EditorDialog(
+      {@required this.isEdit, @required this.tournamentId, this.email});
   final String tournamentId;
   final bool isEdit;
+  final String email;
   @override
   State<StatefulWidget> createState() {
     return _EditorDialogState();
@@ -181,6 +184,13 @@ class _EditorDialogState extends State<EditorDialog> {
   final _formKey = GlobalKey<FormState>();
   var errorMessage = "";
   var isProcessing = false;
+
+  @override
+  void initState() {
+    _emailController.text = widget.email == null ? "" : widget.email;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -229,12 +239,12 @@ class _EditorDialogState extends State<EditorDialog> {
                     await database
                         .collection("tournament")
                         .document(widget.tournamentId)
-                        .updateData({"editors": ""});
+                        .updateData({"editors": ""});///here edit data
                   } else {
                     await database
                         .collection("tournament")
                         .document(widget.tournamentId)
-                        .setData({"editors": ""});
+                        .setData({"editors": ""});///here add new data
                   }
                   Navigator.of(context).pop();
                 } else {
