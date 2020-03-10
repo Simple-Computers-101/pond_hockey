@@ -26,14 +26,26 @@ versionCheck(context) async {
     // Using default duration to force fetching from remote server.
     await remoteConfig.fetch(expiration: const Duration(seconds: 0));
     await remoteConfig.activateFetched();
-    remoteConfig.getString('force_update_current_version');
-    var newVersion = double.parse(remoteConfig
-        .getString('force_update_current_version')
-        .trim()
-        .replaceAll(".", ""));
-    if (newVersion > currentVersion) {
-      _showVersionDialog(context);
+    if (Platform.isAndroid){
+      remoteConfig.getString('force_update_current_version_android');
+      var newVersion = double.parse(remoteConfig
+          .getString('force_update_current_version_android')
+          .trim()
+          .replaceAll(".", ""));
+      if (newVersion > currentVersion) {
+        _showVersionDialog(context);
+      }
+    }else{
+      remoteConfig.getString('force_update_current_version_ios');
+      var newVersion = double.parse(remoteConfig
+          .getString('force_update_current_version_ios')
+          .trim()
+          .replaceAll(".", ""));
+      if (newVersion > currentVersion) {
+        _showVersionDialog(context);
+      }
     }
+
   } on FetchThrottledException catch (exception) {
     // Fetch throttled.
     print(exception);
