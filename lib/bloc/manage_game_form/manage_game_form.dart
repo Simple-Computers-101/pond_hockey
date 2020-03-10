@@ -3,6 +3,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
+import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class ManageGameFormBloc extends FormBloc<String, String> {
   final Game game;
@@ -55,6 +56,9 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       teamOneField.value,
       teamTwoField.value,
     );
+
+    await TeamsRepository().calculateDifferential(game.teamOne.id);
+    await TeamsRepository().calculateDifferential(game.teamTwo.id);
 
     await GamesRepository().updateStatus(game.id, status.value);
 

@@ -15,13 +15,13 @@ class Game {
   Division division;
 
   Game({
-    this.id,
-    this.tournament,
-    this.status = GameStatus.notStarted,
-    this.teamOne,
-    this.teamTwo,
-    this.type,
+    @required this.id,
+    @required this.tournament,
+    @required this.teamOne,
+    @required this.teamTwo,
+    @required this.type,
     @required this.division,
+    this.status = GameStatus.notStarted,
   });
 
   Map<String, dynamic> toMap() {

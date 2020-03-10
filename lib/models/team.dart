@@ -42,6 +42,7 @@ class Team {
       (element) => divisionMap[element] == map['division'],
     );
 
+
     return Team(
       id: map['id'],
       name: map['name'],

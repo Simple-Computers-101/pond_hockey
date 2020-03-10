@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/enums/game_status.dart';
+import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 
@@ -76,6 +77,7 @@ class GameItem extends StatelessWidget {
                                   fontSize: 32,
                                 ),
                               ),
+                              
                             ],
                           ),
                         ),
@@ -84,6 +86,12 @@ class GameItem extends StatelessWidget {
                     Container(
                       child: Text(
                         gameStatus[gameData.status],
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        gameType[gameData.type],
                         textAlign: TextAlign.right,
                       ),
                     ),

@@ -8,7 +8,7 @@ import 'package:pond_hockey/models/game.dart';
 class GamesRepository {
   final CollectionReference ref = Firestore.instance.collection('games');
 
-  Stream<QuerySnapshot> getGamesFromTournamentId(String id,
+  Stream<QuerySnapshot> getGamesStreamFromTournamentId(String id,
       {Division division}) {
     // GET GAMES FROM TOURNAMENT ID
     // FILTER GAMES BY DIVISION
@@ -22,6 +22,48 @@ class GamesRepository {
       query = ref.where('tournament', isEqualTo: id).snapshots();
     }
     return query;
+  }
+
+  Future<List<Game>> getGamesFromTournamentId(String tournamentId,
+      {Division division}) async {
+    QuerySnapshot query;
+    if (division != null) {
+      query = await ref
+          .where('tournament', isEqualTo: tournamentId)
+          .where('division', isEqualTo: divisionMap[division])
+          .getDocuments();
+    } else {
+      query =
+          await ref.where('tournament', isEqualTo: tournamentId).getDocuments();
+    }
+    return query.documents.map(Game.fromDocument).toList();
+  }
+
+  Future<bool> allGamesAreCompleted(String tournamentId,
+      {Division division}) async {
+    var games =
+        await getGamesFromTournamentId(tournamentId, division: division);
+    for (var game in games) {
+      if (game.status != GameStatus.finished) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<int> getDifferentialFromTeamId(String teamId) async {
+    var differential = 0;
+    var teamOneQuery =
+        await ref.where('teamOne.id', isEqualTo: teamId).getDocuments();
+    var teamTwoQuery =
+        await ref.where('teamTwo.id', isEqualTo: teamId).getDocuments();
+    for (final team in teamOneQuery.documents) {
+      differential += team.data['teamOne']['differential'] as int;
+    }
+    for (final team in teamTwoQuery.documents) {
+      differential += team.data['teamTwo']['differential'] as int;
+    }
+    return differential;
   }
 
   Future<void> deleteGamesFromTournament(String id, Division division) async {
@@ -39,7 +81,7 @@ class GamesRepository {
     }
   }
 
-  Future<void> addGameToTournament(Game game) {
+  Future<void> addGame(Game game) {
     return ref.document(game.id).setData(game.toMap());
   }
 
@@ -49,8 +91,8 @@ class GamesRepository {
     return doc.snapshots().map(Game.fromDocument);
   }
 
-  Future<void> updateScores(String gameId, int teamOne, int teamTwo) {
-    return ref.document(gameId).setData({
+  Future<void> updateScores(String gameId, int teamOne, int teamTwo) async {
+    await ref.document(gameId).setData({
       'teamOne': {
         'score': teamOne,
         'differential': teamOne - teamTwo,
@@ -62,8 +104,9 @@ class GamesRepository {
     }, merge: true);
   }
 
-  Future<void> updateStatus(String id, GameStatus status) {
-    return ref.document(id).updateData({
+  Future<void> updateStatus(String gameId, GameStatus status) {
+    if (status == GameStatus.finished) {}
+    return ref.document(gameId).updateData({
       'status': gameStatus[status],
     });
   }

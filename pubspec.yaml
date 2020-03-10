@@ -11,7 +11,6 @@ dependencies:
     sdk: flutter
   
   google_fonts: ^0.3.9
-  flutter_statusbarcolor: ^0.2.3
   auto_route: ^0.3.0
   uuid: ^2.0.4
   assorted_layout_widgets: ^1.0.15

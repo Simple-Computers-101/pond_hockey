@@ -4,6 +4,7 @@ import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/details/managing/add_a_game.dart';
 import 'package:pond_hockey/screens/tournaments/details/managing/manage_contributers.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
@@ -104,7 +105,7 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
               child: StreamBuilder(
                 stream: TeamsRepository().getTeamsStreamFromTournamentId(
                   widget.tournament.id,
-                  division,
+                  division: division,
                 ),
                 builder: (context, snap) {
                   if (!snap.hasData) {
@@ -117,10 +118,10 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
                         var team = Team.fromMap(
                           snap.data.documents[index].data,
                         );
-                        return ManageTeamItem(team: team);
+                        return _ManageTeamItem(team: team);
                       },
                       padding: const EdgeInsets.all(24),
-                      separatorBuilder: (context, index) {
+                      separatorBuilder: (_, __) {
                         return SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01,
                         );
@@ -159,15 +160,14 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
   }
 }
 
-class ManageTeamItem extends StatelessWidget {
-  const ManageTeamItem({Key key, this.team}) : super(key: key);
+class _ManageTeamItem extends StatelessWidget {
+  const _ManageTeamItem({Key key, this.team}) : super(key: key);
 
   final Team team;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
@@ -200,7 +200,7 @@ class _TournamentOptionsView extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: <Widget>[
             RaisedButton(
@@ -253,7 +253,7 @@ class _TournamentOptionsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -264,7 +264,7 @@ class _TournamentOptionsView extends StatelessWidget {
               ),
               child: _SettingsList(tournamentId: tournamentId),
             ),
-            Flexible(fit: FlexFit.loose, child: const SizedBox()),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Align(
               alignment: FractionalOffset.bottomCenter,
               child: buildDeleteTournamentButton(),
@@ -295,9 +295,6 @@ class _SettingsList extends StatelessWidget {
     }
 
     return Column(
-      // shrinkWrap: true,
-      // primary: false,
-      // padding: const EdgeInsets.symmetric(vertical: 12),
       children: <Widget>[
         _SettingsTile(
           text: 'Contributers',
@@ -315,20 +312,16 @@ class _SettingsList extends StatelessWidget {
         ),
         buildDivider(),
         _SettingsTile(
-          text: 'Another Setting',
-          onTap: () {},
-          icon: Icons.edit,
-        ),
-        buildDivider(),
-        _SettingsTile(
-          text: 'Another Setting',
-          onTap: () {},
-          icon: Icons.edit,
-        ),
-        buildDivider(),
-        _SettingsTile(
-          text: 'Another Setting',
-          onTap: () {},
+          text: 'Add a game',
+          onTap: () {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AddAGameDialog(tournamentId: tournamentId);
+              }
+            );
+          },
           icon: Icons.edit,
         ),
       ],

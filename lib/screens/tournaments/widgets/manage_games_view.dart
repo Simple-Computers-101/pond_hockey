@@ -13,6 +13,7 @@ import 'package:pond_hockey/services/databases/teams_repository.dart';
 import 'package:pond_hockey/services/seeding/bracket_helper.dart';
 import 'package:pond_hockey/services/seeding/qualifiers.dart';
 import 'package:pond_hockey/services/seeding/semi_finals.dart';
+import 'package:uuid/uuid.dart';
 
 class ManageGamesView extends StatefulWidget {
   const ManageGamesView({this.tournamentId, this.seeding = true});
@@ -29,16 +30,18 @@ class _ManageGamesViewState extends State<ManageGamesView> {
 
   @override
   Widget build(BuildContext context) {
-    void seedGames(Division div, GameType type) async {
-      await GamesRepository().deleteGamesFromTournament(
-        widget.tournamentId,
-        div,
-      );
+    void seedGames(Division div, GameType type, int semiFinalTeams) async {
+      if (type == GameType.qualifier) {
+        await GamesRepository().deleteGamesFromTournament(
+          widget.tournamentId,
+          div,
+        );
+      }
       var teams = await TeamsRepository().getTeamsFromTournamentId(
         widget.tournamentId,
-        div,
+        division: div,
       );
-      if (teams.length < 4) {
+      if (teams.length < 4 && type != GameType.closing) {
         Scaffold.of(context).hideCurrentSnackBar();
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('You need at least four teams.'),
@@ -53,10 +56,46 @@ class _ManageGamesViewState extends State<ManageGamesView> {
           bracket.removeWhere((element) => element.contains('0'));
           break;
         case GameType.semiFinal:
-          bracket = SemiFinalsSeeding.start(teams);
+          if (await GamesRepository()
+              .allGamesAreCompleted(widget.tournamentId, division: division)) {
+            var semiTeams = await TeamsRepository().getTeamsFromPointDiff(
+              widget.tournamentId,
+              semiFinalTeams,
+              division: division,
+            );
+            bracket = SemiFinalsSeeding.start(semiTeams);
+          } else {
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text('All games are not completed'),
+              ),
+            );
+          }
           break;
         case GameType.closing:
-          // TODO: create closing seeding algorithm
+          if (await GamesRepository()
+              .allGamesAreCompleted(widget.tournamentId, division: division)) {
+            var teams = await TeamsRepository().getTeamsFromPointDiff(
+              widget.tournamentId,
+              2,
+              division: division,
+            );
+            var game = Game(
+              id: Uuid().v4(),
+              tournament: widget.tournamentId,
+              teamOne: GameTeam.fromTeam(teams[0]),
+              teamTwo: GameTeam.fromTeam(teams[1]),
+              type: GameType.closing,
+              division: div,
+            );
+            GamesRepository().addGame(game);
+          } else {
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text('All games are not completed'),
+              ),
+            );
+          }
           break;
       }
       if (bracket == null) {
@@ -64,7 +103,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       }
       var games = BracketHelper.convertToGames(bracket, type);
       for (final game in games) {
-        await GamesRepository().addGameToTournament(game);
+        await GamesRepository().addGame(game);
       }
     }
 
@@ -106,26 +145,31 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       child: Column(
         children: <Widget>[
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.filter_list),
-                onPressed: _showFilterDivisionDialog,
+              Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.filter_list),
+                    onPressed: _showFilterDivisionDialog,
+                  ),
+                  Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+                ],
               ),
-              Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+              if (widget.seeding)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: Icon(Icons.refresh),
+                    tooltip: 'Re-seed games',
+                    onPressed: _showChooseGameTypeDialog,
+                  ),
+                ),
             ],
           ),
-          if (widget.seeding)
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: Icon(Icons.refresh),
-                tooltip: 'Re-seed games',
-                onPressed: _showChooseGameTypeDialog,
-              ),
-            ),
           Expanded(
             child: StreamBuilder(
-              stream: GamesRepository().getGamesFromTournamentId(
+              stream: GamesRepository().getGamesStreamFromTournamentId(
                 widget.tournamentId,
                 division: division,
               ),

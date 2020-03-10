@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_item.dart';
 
@@ -13,7 +12,6 @@ class TournamentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setNavigationBarColor(Color(0xFFE9E9E9));
     var tournaments;
     if (documents is! List<Tournament>) {
       var docs = List<DocumentSnapshot>.from(documents);

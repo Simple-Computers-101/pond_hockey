@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
@@ -110,14 +111,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> signInWithGoogle() async {
-    final googleSignInAccount = await userRepository.googleSignIn.signIn();
-    final googleSignInAuthentication = await googleSignInAccount.authentication;
-
+    GoogleSignInAccount googleSignInAccount;
+    GoogleSignInAuthentication googleSignInAuthentication;
+    try {
+      googleSignInAccount = await userRepository.googleSignIn.signIn();
+      googleSignInAuthentication = await googleSignInAccount.authentication;
+    } on PlatformException catch (e) {
+      if (e.code == 'sign_in_canceled') {
+        print('sign in canceled');
+        return Future.error(e);
+      }
+      rethrow;
+    } on Exception {
+      print('an exception has occured');
+    }
     final credential = GoogleAuthProvider.getCredential(
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
     );
-
     add(GoogleLoginButtonPressed(credential));
   }
 

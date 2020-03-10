@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 
 class ManageEditors extends StatefulWidget {
   ManageEditors({this.tournamentId});
@@ -48,8 +49,8 @@ class _EditorState extends State<ManageEditors> {
 
   Widget buildView(AsyncSnapshot snapshot, BuildContext context) {
     if (snapshot.hasData) {
-      var _tournament = Tournament.fromDocument(snapshot.data);
-      if (_tournament.editors == null) {
+      var tournament = Tournament.fromDocument(snapshot.data);
+      if (tournament.editors == null) {
         return ListView(
           children: <Widget>[
             _newEditor(context),
@@ -67,15 +68,15 @@ class _EditorState extends State<ManageEditors> {
         children: <Widget>[
           ListView.builder(
             shrinkWrap: true,
-            itemCount: _tournament.editors.length,
+            itemCount: tournament.editors.length,
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
                   child: Icon(Icons.person),
                   radius: 30.0,
                 ),
-                title: Text(_tournament.name),
-                subtitle: Text(_tournament.editors[index]['email']),
+                title: Text(tournament.name),
+                subtitle: Text(tournament.editors[index]['email']),
                 trailing: InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -85,50 +86,20 @@ class _EditorState extends State<ManageEditors> {
                     ),
                   ),
                   onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              content: Text("Are you sure to remove this user"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("Cancel"),
-                                ),
-                                FlatButton(
-                                  onPressed: () async {
-                                    try {
-                                      await Firestore.instance
-                                          .collection("tournament")
-                                          .document(widget.tournamentId)
-                                          .updateData({});///here delete data
-                                      Navigator.of(context).pop();
-                                      // ignore: avoid_catches_without_on_clauses
-                                    } catch (error) {
-                                      Scaffold.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(error.code),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Text("Yes"),
-                                )
-                              ],
-                            ));
+                    _deleteUserDialog(tournament, index);
                   },
                 ),
                 onTap: () {
                   showDialog(
-                      context: context,
-                      builder: (_) {
-                        return EditorDialog(
-                          isEdit: true,
-                          tournamentId: widget.tournamentId,
-                          email: _tournament.editors[index]['email'],
-                        );
-                      });
+                    context: context,
+                    builder: (_) {
+                      return EditorDialog(
+                        isEdit: true,
+                        tournamentId: widget.tournamentId,
+                        email: tournament.editors[index]['email'],
+                      );
+                    },
+                  );
                 },
               );
             },
@@ -144,6 +115,46 @@ class _EditorState extends State<ManageEditors> {
     }
   }
 
+  void _deleteUserDialog(Tournament tournament, int index) async {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Text("Are you sure to remove this user?"),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: Router.navigator.pop,
+            child: Text("Cancel"),
+          ),
+          FlatButton(
+            onPressed: () async {
+              try {
+                await Firestore.instance
+                    .collection("tournament")
+                    .document(widget.tournamentId)
+                    .updateData({
+                  'editors': FieldValue.arrayRemove(
+                    [tournament.editors[index]],
+                  )
+                });
+
+                ///here delete data
+                Router.navigator.pop();
+                // ignore: avoid_catches_without_on_clauses
+              } catch (error) {
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(error.code),
+                  ),
+                );
+              }
+            },
+            child: Text("Yes"),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _newEditor(BuildContext context) {
     return ListTile(
       title: Text("New editor"),
@@ -154,13 +165,14 @@ class _EditorState extends State<ManageEditors> {
       ),
       onTap: () {
         showDialog(
-            context: context,
-            builder: (_) {
-              return EditorDialog(
-                isEdit: false,
-                tournamentId: widget.tournamentId,
-              );
-            });
+          context: context,
+          builder: (_) {
+            return EditorDialog(
+              isEdit: false,
+              tournamentId: widget.tournamentId,
+            );
+          },
+        );
       },
     );
   }
@@ -239,12 +251,16 @@ class _EditorDialogState extends State<EditorDialog> {
                     await database
                         .collection("tournament")
                         .document(widget.tournamentId)
-                        .updateData({"editors": ""});///here edit data
+                        .updateData({"editors": ""});
+
+                    ///here edit data
                   } else {
                     await database
                         .collection("tournament")
                         .document(widget.tournamentId)
-                        .setData({"editors": ""});///here add new data
+                        .setData({"editors": ""});
+
+                    ///here add new data
                   }
                   Navigator.of(context).pop();
                 } else {

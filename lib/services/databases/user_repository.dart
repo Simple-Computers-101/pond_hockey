@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pond_hockey/bloc/auth/auth_providers.dart';
+import 'package:pond_hockey/models/user.dart';
 
 class UserRepository {
   final _authProvider = AuthProvider();
@@ -10,6 +12,7 @@ class UserRepository {
       'https://www.googleapis.com/auth/contacts.readonly',
     ],
   );
+  final CollectionReference ref = Firestore.instance.collection('users');
 
   Future<FirebaseUser> signInWithCredentials(AuthCredential credential,
       {String email}) async {
@@ -61,21 +64,9 @@ class UserRepository {
     return _authProvider.authInstance();
   }
 
-  Future<void> deleteToken() async {
-    /// delete from keystore/keychain
-    await Future.delayed(Duration(seconds: 1));
-    return;
-  }
+  Future<User> getUserFromEmail(String email) async {
+    var query = await ref.where('email', isEqualTo: email).getDocuments();
 
-  Future<void> persistToken(String token) async {
-    /// write to keystore/keychain
-    await Future.delayed(Duration(seconds: 1));
-    return;
-  }
-
-  Future<bool> hasToken() async {
-    /// read from keystore/keychain
-    await Future.delayed(Duration(seconds: 1));
-    return null;
+    return User.fromMap(query.documents.first.data);
   }
 }

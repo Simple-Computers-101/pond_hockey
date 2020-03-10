@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:form_bloc/form_bloc.dart';
 import 'package:pond_hockey/models/tournament.dart';
 
 class ManageScorers extends StatelessWidget {
@@ -93,7 +94,9 @@ class ManageScorers extends StatelessWidget {
                                       await Firestore.instance
                                           .collection("tournament")
                                           .document(tournamentId)
-                                          .updateData({});///here delete data
+                                          .updateData({});
+
+                                      ///here delete data
                                       Navigator.of(context).pop();
                                       // ignore: avoid_catches_without_on_clauses
                                     } catch (error) {
@@ -158,8 +161,11 @@ class ManageScorers extends StatelessWidget {
 }
 
 class ScorerDialog extends StatefulWidget {
-  ScorerDialog(
-      {@required this.isEdit, @required this.tournamentId, this.email});
+  ScorerDialog({
+    @required this.isEdit,
+    @required this.tournamentId,
+    this.email,
+  });
   final bool isEdit;
   final String tournamentId;
   final String email;
@@ -180,32 +186,27 @@ class _ScorerDialogState extends State<ScorerDialog> {
 
   @override
   void initState() {
-    _emailController.text = widget.email == null ? "Email" : widget.email;
+    _emailController.text = widget.email ?? '';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ? 'Edit detail!' : 'Add Scorer'),
-      content: Wrap(
+      title: Text(widget.isEdit ? 'Edit details' : 'Add Scorer'),
+      scrollable: true,
+      content: Column(
         children: <Widget>[
           isProcessing ? LinearProgressIndicator() : SizedBox.shrink(),
           Form(
             key: _formKey,
             child: TextFormField(
               controller: _emailController,
-              initialValue: widget.email == null ? "Email" : widget.email,
               decoration: InputDecoration(
-                hintText: "Email",
+                labelText: "Email",
+                errorText: errorMessage,
               ),
-              validator: validateEmail,
-            ),
-          ),
-          Text(
-            errorMessage,
-            style: TextStyle(
-              color: Colors.red,
+              validator: FieldBlocValidators.email,
             ),
           ),
         ],
@@ -217,8 +218,8 @@ class _ScorerDialogState extends State<ScorerDialog> {
               setState(() {
                 isProcessing = true;
               });
-
               try {
+                // TODO: use query
                 final documents =
                     await database.collection("users").getDocuments();
                 var uid;
@@ -230,14 +231,18 @@ class _ScorerDialogState extends State<ScorerDialog> {
                 if (uid != null) {
                   if (widget.isEdit) {
                     await database
-                        .collection("tournament")
+                        .collection("tournaments")
                         .document(widget.tournamentId)
-                        .updateData({"scorers": ""});///here edit data
+                        .setData({"scorers": [uid]}, merge: true);
+
+                    ///here edit data
                   } else {
                     await database
-                        .collection("tournament")
+                        .collection("tournaments")
                         .document(widget.tournamentId)
-                        .setData({"scorers": ""});///here new data
+                        .setData({"scorers": ""});
+
+                    ///here new data
                   }
                   Navigator.of(context).pop();
                 } else {
@@ -261,17 +266,6 @@ class _ScorerDialogState extends State<ScorerDialog> {
         ),
       ],
     );
-  }
-
-  String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    var regex = RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Enter Valid Email';
-    } else {
-      return null;
-    }
   }
 
   @override

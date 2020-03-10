@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/router/router.gr.dart';
@@ -13,9 +12,6 @@ class HomeScreen extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
-    FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
-
     void _scoreGameButtonPress(
         GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {
       if (hasKey) {
@@ -255,7 +251,7 @@ class _LandscapeMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var btnWidth = MediaQuery.of(context).size.width * 0.35;
-    var fontSize = MediaQuery.of(context).size.width * 0.03;
+    var fontSize = MediaQuery.of(context).size.height * 0.06;
     var btnHeight = MediaQuery.of(context).size.height * 0.13;
 
     return Container(
@@ -294,7 +290,7 @@ class _PortraitMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var btnWidth = MediaQuery.of(context).size.width * 0.75;
-    var fontSize = MediaQuery.of(context).size.width * 0.06;
+    var fontSize = MediaQuery.of(context).size.height * 0.03;
     var btnHeight = MediaQuery.of(context).size.height * 0.07;
 
     return Container(

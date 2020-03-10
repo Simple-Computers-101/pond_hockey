@@ -6,7 +6,7 @@ import 'package:pond_hockey/router/router.gr.dart';
 class SeedingSettingsDialog extends StatefulWidget {
   const SeedingSettingsDialog({this.onSubmit});
 
-  final Function(Division, GameType) onSubmit;
+  final Function(Division, GameType, int) onSubmit;
 
   @override
   _SeedingSettingsDialogState createState() => _SeedingSettingsDialogState();
@@ -64,22 +64,46 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
               });
             },
           ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            initialValue: semiFinalTeams.toString(),
-            onChanged: (value) {
-              setState(() {
-                semiFinalTeams = int.parse(value);
-              });
-            },
-          ),
+          if (gameType == GameType.semiFinal)
+            DropdownButton<int>(
+              isExpanded: true,
+              hint: Text('Semi-final teams'),
+              items: [
+                DropdownMenuItem(
+                  child: Text('4'),
+                  value: 4,
+                ),
+                DropdownMenuItem(
+                  child: Text('6'),
+                  value: 6,
+                ),
+                DropdownMenuItem(
+                  child: Text('8'),
+                  value: 8,
+                ),
+                DropdownMenuItem(
+                  child: Text('10'),
+                  value: 10,
+                ),
+                DropdownMenuItem(
+                  child: Text('12'),
+                  value: 12,
+                ),
+              ],
+              value: semiFinalTeams,
+              onChanged: (value) {
+                setState(() {
+                  semiFinalTeams = value;
+                });
+              },
+            ),
         ],
       ),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
             Router.navigator.pop();
-            widget.onSubmit(division, gameType);
+            widget.onSubmit(division, gameType, semiFinalTeams);
           },
           child: Text('Submit'),
         ),

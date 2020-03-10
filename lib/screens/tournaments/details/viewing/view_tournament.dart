@@ -81,74 +81,83 @@ class _GamesPage extends StatefulWidget {
 
 class _GamesPageState extends State<_GamesPage> {
   Division division;
-  bool empty = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE9E9E9),
-      body: Column(
-        children: <Widget>[
-          if (!empty)
-            IconButton(
-              icon: Icon(Icons.filter_list),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return FilterDivisionDialog(
-                      division: division,
-                      onDivisionChanged: (value) {
-                        setState(() {
-                          division = value;
-                        });
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: _showFilterDivisionDialog,
+                ),
+                Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+              ],
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: GamesRepository().getGamesStreamFromTournamentId(
+                  widget.tournament.id,
+                  division: division,
+                ),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  var data = snapshot.data as QuerySnapshot;
+                  if (data.documents.isNotEmpty) {
+                    return ListView.separated(
+                      itemCount: data.documents.length,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (cntx, indx) {
+                        var game = Game.fromDocument(
+                          data.documents[indx],
+                        );
+                        return GameItem(gameId: game.id);
                       },
+                      separatorBuilder: (cntx, _) => SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
                     );
-                  },
-                );
-              },
-            ),
-          Expanded(
-            child: StreamBuilder(
-              stream: GamesRepository().getGamesFromTournamentId(
-                widget.tournament.id,
-                division: division,
+                  } else {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(':('),
+                          Text('There\'s nothing here!'),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                var data = snapshot.data as QuerySnapshot;
-                if (data.documents.isNotEmpty) {
-                  return ListView.separated(
-                    itemCount: data.documents.length,
-                    padding: const EdgeInsets.all(24),
-                    itemBuilder: (cntx, indx) {
-                      var game = Game.fromDocument(
-                        data.documents[indx],
-                      );
-                      return GameItem(gameId: game.id);
-                    },
-                    separatorBuilder: (cntx, _) => SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(':('),
-                        Text('There\'s nothing here!'),
-                      ],
-                    ),
-                  );
-                }
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showFilterDivisionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return FilterDivisionDialog(
+          division: division,
+          onDivisionChanged: (value) {
+            setState(() {
+              division = value;
+            });
+          },
+        );
+      },
     );
   }
 }
@@ -201,7 +210,7 @@ class __TeamsPageState extends State<_TeamsPage> {
             child: StreamBuilder(
               stream: TeamsRepository().getTeamsStreamFromTournamentId(
                 widget.tournament.id,
-                division,
+                division: division,
               ),
               builder: (context, snap) {
                 if (!snap.hasData) {
