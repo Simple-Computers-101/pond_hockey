@@ -15,6 +15,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _emailController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var isProcessing = false;
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,14 +27,27 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: _emailController,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validateEmail,
+                  decoration: InputDecoration(
+                      hintText: "Email", border: OutlineInputBorder()),
+                ),
+              ),
             ),
             RaisedButton(
                 child: Text("Reset"),
                 onPressed: isProcessing
                     ? null
                     : () async {
+                        if (!_formKey.currentState.validate()) {
+                          return;
+                        }
                         setState(() {
                           isProcessing = true;
                         });
@@ -81,6 +95,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         ),
       ),
     );
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    var regex = RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Enter Valid Email';
+    } else {
+      return null;
+    }
   }
 
   @override

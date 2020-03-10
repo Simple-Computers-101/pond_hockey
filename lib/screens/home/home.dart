@@ -7,11 +7,13 @@ import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
+import 'package:pond_hockey/utils/remote_config.dart';
 
 class HomeScreen extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    versionCheck(context);
     void _scoreGameButtonPress(
         GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {
       if (hasKey) {
