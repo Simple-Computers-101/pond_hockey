@@ -166,8 +166,7 @@ class _EditorState extends State<ManageEditors> {
 }
 
 class EditorDialog extends StatefulWidget {
-  EditorDialog(
-      {@required this.tournamentId});
+  EditorDialog({@required this.tournamentId});
   final String tournamentId;
   @override
   State<StatefulWidget> createState() {
@@ -231,12 +230,18 @@ class _EditorDialogState extends State<EditorDialog> {
                   }
                 }
                 if (uid != null) {
-                    await database
-                        .collection("tournament")
-                        .document(widget.tournamentId)
-                        .setData({"editors": ""});
-                    ///here add new data
-
+                  await database
+                      .collection("tournament")
+                      .document(widget.tournamentId)
+                      .setData(
+                    {
+                      "editors": FieldValue.arrayUnion(
+                        [
+                          {"email": _emailController.text, "uid": uid}
+                        ],
+                      ),
+                    },merge: true
+                  );
                   Navigator.of(context).pop();
                 } else {
                   setState(() {

@@ -94,7 +94,11 @@ class ManageScorers extends StatelessWidget {
                                       await Firestore.instance
                                           .collection("tournament")
                                           .document(tournamentId)
-                                          .updateData({});
+                                          .updateData({
+                                        'scorers': FieldValue.arrayRemove(
+                                          [_tournament.editors[index]],
+                                        )
+                                      });
 
                                       ///here delete data
                                       Navigator.of(context).pop();
@@ -207,12 +211,18 @@ class _ScorerDialogState extends State<ScorerDialog> {
                   }
                 }
                 if (uid != null) {
-                    await database
-                        .collection("tournaments")
-                        .document(widget.tournamentId)
-                        .setData({"scorers": ""});
+                  await database
+                      .collection("tournaments")
+                      .document(widget.tournamentId)
+                      .setData({
+                    "scorers": FieldValue.arrayUnion(
+                      [
+                        {"email": _emailController.text, "uid": uid}
+                      ],
+                    ),
+                  },merge: true);
 
-                    ///here new data
+                  ///here new data
                   Navigator.of(context).pop();
                 } else {
                   setState(() {

@@ -109,25 +109,27 @@ class TournamentsScreen extends StatelessWidget {
           floatingActionButton: canEdit()
               ? FloatingActionButton(
                   onPressed: () async {
-                    if (uid == "Vpdl33VmgzU6hyOhbrIKsHNvumt2" &&
-                        Platform.isAndroid) {
-                      Router.navigator.pushNamed(Router.addTournament);
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                title: Text(
-                                    "Adding tournament feature will come soon"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text("Ok"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  )
-                                ],
-                              ));
-                    }
+                    Router.navigator.pushNamed(Router.addTournament);
+//                    if (uid != "Vpdl33VmgzU6hyOhbrIKsHNvumt2" &&
+//                        Platform.isAndroid) {
+//                      showDialog(
+//                          context: context,
+//                          builder: (_) => AlertDialog(
+//                                title: Text(
+//                                    "Adding tournament feature will
+//                                    come soon"),
+//                                actions: <Widget>[
+//                                  FlatButton(
+//                                    child: Text("Ok"),
+//                                    onPressed: () {
+//                                      Navigator.of(context).pop();
+//                                    },
+//                                  )
+//                                ],
+//                              ));
+//                    } else {
+//                      Router.navigator.pushNamed(Router.addTournament);
+//                    }
                   },
                   child: Icon(Icons.add),
                 )
