@@ -113,17 +113,6 @@ class ManageScorers extends StatelessWidget {
                             ));
                   },
                 ),
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (_) {
-                        return ScorerDialog(
-                          isEdit: true,
-                          tournamentId: tournamentId,
-                          email: _tournament.scorers[index]['email'],
-                        );
-                      });
-                },
               );
             },
           ),
@@ -151,7 +140,6 @@ class ManageScorers extends StatelessWidget {
             context: context,
             builder: (_) {
               return ScorerDialog(
-                isEdit: false,
                 tournamentId: tournamentId,
               );
             });
@@ -162,13 +150,9 @@ class ManageScorers extends StatelessWidget {
 
 class ScorerDialog extends StatefulWidget {
   ScorerDialog({
-    @required this.isEdit,
     @required this.tournamentId,
-    this.email,
   });
-  final bool isEdit;
   final String tournamentId;
-  final String email;
   @override
   State<StatefulWidget> createState() {
     return _ScorerDialogState();
@@ -185,15 +169,9 @@ class _ScorerDialogState extends State<ScorerDialog> {
   var isProcessing = false;
 
   @override
-  void initState() {
-    _emailController.text = widget.email ?? '';
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ? 'Edit details' : 'Add Scorer'),
+      title: Text('Add Scorer'),
       scrollable: true,
       content: Column(
         children: <Widget>[
@@ -229,21 +207,12 @@ class _ScorerDialogState extends State<ScorerDialog> {
                   }
                 }
                 if (uid != null) {
-                  if (widget.isEdit) {
-                    await database
-                        .collection("tournaments")
-                        .document(widget.tournamentId)
-                        .setData({"scorers": [uid]}, merge: true);
-
-                    ///here edit data
-                  } else {
                     await database
                         .collection("tournaments")
                         .document(widget.tournamentId)
                         .setData({"scorers": ""});
 
                     ///here new data
-                  }
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
@@ -262,7 +231,7 @@ class _ScorerDialogState extends State<ScorerDialog> {
               }
             }
           },
-          child: Text(widget.isEdit ? "Edit" : "Add"),
+          child: Text("Add"),
         ),
       ],
     );

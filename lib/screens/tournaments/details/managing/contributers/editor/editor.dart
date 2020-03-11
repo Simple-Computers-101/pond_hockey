@@ -89,18 +89,6 @@ class _EditorState extends State<ManageEditors> {
                     _deleteUserDialog(tournament, index);
                   },
                 ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) {
-                      return EditorDialog(
-                        isEdit: true,
-                        tournamentId: widget.tournamentId,
-                        email: tournament.editors[index]['email'],
-                      );
-                    },
-                  );
-                },
               );
             },
           ),
@@ -168,7 +156,6 @@ class _EditorState extends State<ManageEditors> {
           context: context,
           builder: (_) {
             return EditorDialog(
-              isEdit: false,
               tournamentId: widget.tournamentId,
             );
           },
@@ -180,10 +167,8 @@ class _EditorState extends State<ManageEditors> {
 
 class EditorDialog extends StatefulWidget {
   EditorDialog(
-      {@required this.isEdit, @required this.tournamentId, this.email});
+      {@required this.tournamentId});
   final String tournamentId;
-  final bool isEdit;
-  final String email;
   @override
   State<StatefulWidget> createState() {
     return _EditorDialogState();
@@ -199,14 +184,13 @@ class _EditorDialogState extends State<EditorDialog> {
 
   @override
   void initState() {
-    _emailController.text = widget.email == null ? "" : widget.email;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ? 'Edit detail!' : 'Add editor'),
+      title: Text('Add editor'),
       content: Wrap(
         children: <Widget>[
           isProcessing ? LinearProgressIndicator() : SizedBox.shrink(),
@@ -247,21 +231,12 @@ class _EditorDialogState extends State<EditorDialog> {
                   }
                 }
                 if (uid != null) {
-                  if (widget.isEdit) {
-                    await database
-                        .collection("tournament")
-                        .document(widget.tournamentId)
-                        .updateData({"editors": ""});
-
-                    ///here edit data
-                  } else {
                     await database
                         .collection("tournament")
                         .document(widget.tournamentId)
                         .setData({"editors": ""});
-
                     ///here add new data
-                  }
+
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
@@ -280,7 +255,7 @@ class _EditorDialogState extends State<EditorDialog> {
               }
             }
           },
-          child: Text(widget.isEdit ? "Edit" : "Add"),
+          child: Text("Add"),
         ),
       ],
     );
