@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +109,8 @@ class TournamentsScreen extends StatelessWidget {
           floatingActionButton: canEdit()
               ? FloatingActionButton(
                   onPressed: () async {
-                    if (uid == "Vpdl33VmgzU6hyOhbrIKsHNvumt2") {
+                    if (uid == "Vpdl33VmgzU6hyOhbrIKsHNvumt2" &&
+                        Platform.isAndroid) {
                       Router.navigator.pushNamed(Router.addTournament);
                     } else {
                       showDialog(
