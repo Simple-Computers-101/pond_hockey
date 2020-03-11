@@ -66,8 +66,7 @@ class ManageScorers extends StatelessWidget {
                   child: Icon(Icons.person),
                   radius: 30.0,
                 ),
-                title: Text(_tournament.name),
-                subtitle: Text(_tournament.scorers[index]['email']),
+                title: Text(_tournament.scorers[index]['email']),
                 trailing: InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -92,11 +91,11 @@ class ManageScorers extends StatelessWidget {
                                   onPressed: () async {
                                     try {
                                       await Firestore.instance
-                                          .collection("tournament")
+                                          .collection("tournaments")
                                           .document(tournamentId)
                                           .updateData({
                                         'scorers': FieldValue.arrayRemove(
-                                          [_tournament.editors[index]],
+                                          [_tournament.scorers[index]],
                                         )
                                       });
 
@@ -220,7 +219,7 @@ class _ScorerDialogState extends State<ScorerDialog> {
                         {"email": _emailController.text, "uid": uid}
                       ],
                     ),
-                  },merge: true);
+                  }, merge: true);
 
                   ///here new data
                   Navigator.of(context).pop();

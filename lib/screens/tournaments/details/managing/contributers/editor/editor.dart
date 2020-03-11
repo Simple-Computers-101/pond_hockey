@@ -75,8 +75,7 @@ class _EditorState extends State<ManageEditors> {
                   child: Icon(Icons.person),
                   radius: 30.0,
                 ),
-                title: Text(tournament.name),
-                subtitle: Text(tournament.editors[index]['email']),
+                title: Text(tournament.editors[index]['email']),
                 trailing: InkWell(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -117,7 +116,7 @@ class _EditorState extends State<ManageEditors> {
             onPressed: () async {
               try {
                 await Firestore.instance
-                    .collection("tournament")
+                    .collection("tournaments")
                     .document(widget.tournamentId)
                     .updateData({
                   'editors': FieldValue.arrayRemove(
@@ -231,17 +230,15 @@ class _EditorDialogState extends State<EditorDialog> {
                 }
                 if (uid != null) {
                   await database
-                      .collection("tournament")
+                      .collection("tournaments")
                       .document(widget.tournamentId)
-                      .setData(
-                    {
-                      "editors": FieldValue.arrayUnion(
-                        [
-                          {"email": _emailController.text, "uid": uid}
-                        ],
-                      ),
-                    },merge: true
-                  );
+                      .setData({
+                    "editors": FieldValue.arrayUnion(
+                      [
+                        {"email": _emailController.text, "uid": uid}
+                      ],
+                    ),
+                  }, merge: true);
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
