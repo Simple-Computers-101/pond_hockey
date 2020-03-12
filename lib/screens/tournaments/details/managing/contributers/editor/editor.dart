@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -177,19 +178,15 @@ class _EditorDialogState extends State<EditorDialog> {
   var database = Firestore.instance;
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  var errorMessage = "";
+  var errorMessage;
   var isProcessing = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Add editor'),
-      content: Wrap(
+      scrollable: true,
+      content: Column(
         children: <Widget>[
           isProcessing ? LinearProgressIndicator() : SizedBox.shrink(),
           Form(
@@ -198,15 +195,13 @@ class _EditorDialogState extends State<EditorDialog> {
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               decoration: InputDecoration(
-                hintText: "Email",
+                labelText: "Email",
+                errorText: errorMessage,
+                focusedBorder: UnderlineInputBorder(),
               ),
-              validator: validateEmail,
-            ),
-          ),
-          Text(
-            errorMessage,
-            style: TextStyle(
-              color: Colors.red,
+              validator: FormBuilderValidators.email(
+                errorText: 'Invalid email',
+              ),
             ),
           ),
         ],
@@ -243,7 +238,7 @@ class _EditorDialogState extends State<EditorDialog> {
                 } else {
                   setState(() {
                     errorMessage =
-                        "User with this email address does not exist";
+                        "No account with that email";
                     isProcessing = false;
                   });
                 }
@@ -261,17 +256,6 @@ class _EditorDialogState extends State<EditorDialog> {
         ),
       ],
     );
-  }
-
-  String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    var regex = RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Enter Valid Email';
-    } else {
-      return null;
-    }
   }
 
   @override

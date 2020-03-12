@@ -7,6 +7,7 @@ import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/filter_gametype_dialog.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/seeding_settings_dialog.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
@@ -26,7 +27,8 @@ class ManageGamesView extends StatefulWidget {
 }
 
 class _ManageGamesViewState extends State<ManageGamesView> {
-  Division division;
+  Division _selectedDivision;
+  GameType _selectedGameType;
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +58,12 @@ class _ManageGamesViewState extends State<ManageGamesView> {
           bracket.removeWhere((element) => element.contains('0'));
           break;
         case GameType.semiFinal:
-          if (await GamesRepository()
-              .allGamesAreCompleted(widget.tournamentId, division: division)) {
+          if (await GamesRepository().areAllGamesCompleted(widget.tournamentId,
+              division: _selectedDivision)) {
             var semiTeams = await TeamsRepository().getTeamsFromPointDiff(
               widget.tournamentId,
               semiFinalTeams,
-              division: division,
+              division: _selectedDivision,
             );
             bracket = SemiFinalsSeeding.start(semiTeams);
           } else {
@@ -73,12 +75,12 @@ class _ManageGamesViewState extends State<ManageGamesView> {
           }
           break;
         case GameType.closing:
-          if (await GamesRepository()
-              .allGamesAreCompleted(widget.tournamentId, division: division)) {
+          if (await GamesRepository().areAllGamesCompleted(widget.tournamentId,
+              division: _selectedDivision)) {
             var teams = await TeamsRepository().getTeamsFromPointDiff(
               widget.tournamentId,
               2,
-              division: division,
+              division: _selectedDivision,
             );
             var game = Game(
               id: Uuid().v4(),
@@ -125,10 +127,27 @@ class _ManageGamesViewState extends State<ManageGamesView> {
         barrierDismissible: false,
         builder: (context) {
           return FilterDivisionDialog(
-            division: division,
+            division: _selectedDivision,
             onDivisionChanged: (value) {
               setState(() {
-                division = value;
+                _selectedDivision = value;
+              });
+            },
+          );
+        },
+      );
+    }
+
+    void _showFilterGameTypeDialog() {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return FilterGameTypeDialog(
+            gameType: _selectedGameType,
+            onGameTypeChanged: (value) {
+              setState(() {
+                _selectedGameType = value;
               });
             },
           );
@@ -138,90 +157,119 @@ class _ManageGamesViewState extends State<ManageGamesView> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[200])),
         color: Color(0xFFE9E9E9),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: StreamBuilder(
+        stream: GamesRepository().getGamesStreamFromTournamentId(
+          widget.tournamentId,
+          division: _selectedDivision,
+          pGameType: _selectedGameType,
+        ),
+        builder: (cntx, snap) {
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.filter_list),
+                        onPressed: _showFilterDivisionDialog,
+                      ),
+                      Text(
+                        'Current Division: ${divisionMap[_selectedDivision] ?? 'All'}',
+                      ),
+                    ],
+                  ),
+                  if (widget.seeding)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(Icons.refresh),
+                        tooltip: 'Re-seed games',
+                        onPressed: _showChooseGameTypeDialog,
+                      ),
+                    ),
+                ],
+              ),
               Row(
                 children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.filter_list),
-                    onPressed: _showFilterDivisionDialog,
+                    onPressed: _showFilterGameTypeDialog,
                   ),
-                  Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+                  Text(
+                    'Current Type: ${gameType[_selectedGameType] ?? 'All'}',
+                  ),
                 ],
               ),
-              if (widget.seeding)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: Icon(Icons.refresh),
-                    tooltip: 'Re-seed games',
-                    onPressed: _showChooseGameTypeDialog,
-                  ),
-                ),
+              if (!snap.hasData)
+                Center(child: CircularProgressIndicator())
+              else if (snap.data?.documents?.isNotEmpty)
+                buildGamesList(snap)
+              else
+                ...buildNoGames(_showChooseGameTypeDialog, context),
             ],
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream: GamesRepository().getGamesStreamFromTournamentId(
-                widget.tournamentId,
-                division: division,
-              ),
-              builder: (cntx, snap) {
-                if (!snap.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snap.data.documents.isNotEmpty) {
-                  return ListView.separated(
-                    padding: widget.seeding
-                        ? EdgeInsets.zero
-                        : const EdgeInsets.symmetric(vertical: 24),
-                    shrinkWrap: true,
-                    itemBuilder: (cntx, indx) {
-                      var game = Game.fromDocument(snap.data.documents[indx]);
-                      return GameItem(
-                        gameId: game.id,
-                        onTap: () {
-                          Router.navigator.pushNamed(
-                            Router.manageGame,
-                            arguments: game,
-                          );
-                        },
-                      );
-                    },
-                    separatorBuilder: (cntx, _) => Spacer(),
-                    itemCount: snap.data.documents.length,
-                  );
-                } else {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('There are no games.'),
-                      Text('Click below to create some.'),
-                      GradientButton(
-                        onTap: _showChooseGameTypeDialog,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        height: MediaQuery.of(context).size.height * 0.09,
-                        colors: [
-                          Color(0xFFC84E89),
-                          Color(0xFFF15F79),
-                        ],
-                        text: 'Seed Games',
-                      ),
-                    ],
-                  );
-                }
-              },
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> buildNoGames(
+      void _showChooseGameTypeDialog(), BuildContext context) {
+    return [
+      if (widget.seeding) ...[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('There are no games.'),
+            Text('Click below to create some.'),
+            GradientButton(
+              onTap: _showChooseGameTypeDialog,
+              width: MediaQuery.of(context).size.width * 0.35,
+              height: MediaQuery.of(context).size.height * 0.09,
+              colors: [
+                Color(0xFFC84E89),
+                Color(0xFFF15F79),
+              ],
+              text: 'Seed Games',
             ),
-          ),
+          ],
+        ),
+      ],
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('There are no games.'),
         ],
       ),
+    ];
+  }
+
+  ListView buildGamesList(AsyncSnapshot snap) {
+    return ListView.separated(
+      padding: widget.seeding
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(vertical: 24),
+      shrinkWrap: true,
+      primary: false,
+      itemBuilder: (cntx, indx) {
+        var game = Game.fromDocument(snap.data.documents[indx]);
+        return GameItem(
+          gameId: game.id,
+          onTap: () {
+            Router.navigator.pushNamed(
+              Router.manageGame,
+              arguments: game,
+            );
+          },
+        );
+      },
+      separatorBuilder: (cntx, _) => Spacer(),
+      itemCount: snap.data.documents.length,
     );
   }
 }

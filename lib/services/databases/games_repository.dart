@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_status.dart';
+import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
+import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class GamesRepository {
   final CollectionReference ref = Firestore.instance.collection('games');
 
   Stream<QuerySnapshot> getGamesStreamFromTournamentId(String id,
-      {Division division}) {
+      {Division division, GameType pGameType}) {
     // GET GAMES FROM TOURNAMENT ID
     // FILTER GAMES BY DIVISION
     var query;
@@ -17,6 +19,17 @@ class GamesRepository {
       query = ref
           .where('tournament', isEqualTo: id)
           .where('division', isEqualTo: divisionMap[division])
+          .snapshots();
+    } else if (pGameType != null && division != null) {
+      query = ref
+          .where('tournament', isEqualTo: id)
+          .where('division', isEqualTo: divisionMap[division])
+          .where('type', isEqualTo: gameType[pGameType])
+          .snapshots();
+    } else if (pGameType != null) {
+      query = ref
+          .where('tournament', isEqualTo: id)
+          .where('type', isEqualTo: gameType[pGameType])
           .snapshots();
     } else {
       query = ref.where('tournament', isEqualTo: id).snapshots();
@@ -39,7 +52,7 @@ class GamesRepository {
     return query.documents.map(Game.fromDocument).toList();
   }
 
-  Future<bool> allGamesAreCompleted(String tournamentId,
+  Future<bool> areAllGamesCompleted(String tournamentId,
       {Division division}) async {
     var games =
         await getGamesFromTournamentId(tournamentId, division: division);
@@ -85,6 +98,10 @@ class GamesRepository {
     return ref.document(game.id).setData(game.toMap());
   }
 
+  Future<void> updateGame(String gameId, Map<String, dynamic> data) {
+    return ref.document(gameId).updateData(data);
+  }
+
   Future<Stream<Game>> getStreamFromGameId(String gameId) async {
     var doc = ref.document(gameId);
     if ((await doc.get()).exists == false) return null;
@@ -104,8 +121,20 @@ class GamesRepository {
     }, merge: true);
   }
 
-  Future<void> updateStatus(String gameId, GameStatus status) {
-    if (status == GameStatus.finished) {}
+  Future<void> updateStatus(String gameId, GameStatus status) async {
+    if (status == GameStatus.finished) {
+      var doc = await ref.document(gameId).get();
+      var game = Game.fromDocument(doc);
+      if (game.teamOne.score > game.teamTwo.score) {
+        TeamsRepository()
+          ..addTeamVictory(game.teamOne.id)
+          ..addTeamLoss(game.teamTwo.id);
+      } else if (game.teamOne.score < game.teamTwo.score) {
+        TeamsRepository()
+          ..addTeamVictory(game.teamTwo.id)
+          ..addTeamLoss(game.teamOne.id);
+      }
+    }
     return ref.document(gameId).updateData({
       'status': gameStatus[status],
     });

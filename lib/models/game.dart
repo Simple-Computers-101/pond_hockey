@@ -13,6 +13,7 @@ class Game {
   String tournament;
   GameType type;
   Division division;
+  DateTime startDate;
 
   Game({
     @required this.id,
@@ -22,6 +23,7 @@ class Game {
     @required this.type,
     @required this.division,
     this.status = GameStatus.notStarted,
+    this.startDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +35,7 @@ class Game {
       'status': gameStatus[status],
       'type': gameType[type],
       'division': divisionMap[division],
+      'startDate': startDate,
     };
   }
 
@@ -51,6 +54,8 @@ class Game {
       (element) => divisionMap[element] == data['division'],
     );
 
+    var startDate = data['startDate'] as Timestamp;
+
     return Game(
       id: data['id'],
       tournament: data['tournament'],
@@ -59,6 +64,7 @@ class Game {
       status: status,
       division: division,
       type: type,
+      startDate: startDate?.toDate(),
     );
   }
 }

@@ -16,27 +16,27 @@ dependencies:
   assorted_layout_widgets: ^1.0.15
   intl: ^0.16.1
   flutter_form_builder: ^3.8.0+1
-  form_bloc: ^0.10.1
-  flutter_form_bloc: ^0.10.1
   enough_mail: ^0.0.5
+  datetime_picker_formfield: ^1.0.0
 
   bloc: ^3.0.0
   flutter_bloc: ^3.2.0
   equatable: ^1.1.0
   sealed_flutter_bloc: ^3.0.0
-  apple_sign_in: ^0.1.0
+  form_bloc: ^0.10.1
+  flutter_form_bloc: ^0.10.1
 
   # Firebase
   firebase_auth: ^0.15.4
   cloud_firestore: ^0.13.2+1
   firebase_analytics: ^5.0.11
   google_sign_in: ^4.1.4
+  apple_sign_in: ^0.1.0
   url_launcher: ^5.4.2
   package_info: ^0.4.0+14
   firebase_remote_config: ^0.3.0+3
 
   md2_tab_indicator: ^1.0.2
-  outline_material_icons: ^0.1.1
 
   cupertino_icons: ^0.1.2
 

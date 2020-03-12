@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
 import 'package:pond_hockey/components/form/background.dart';

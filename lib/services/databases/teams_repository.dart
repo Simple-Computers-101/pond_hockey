@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pond_hockey/enums/division.dart';
-import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 
@@ -39,16 +38,20 @@ class TeamsRepository {
   }
 
   Future<void> addTeamVictory(String teamId) async {
-    var oldVictories = (await ref.document(teamId).get()).data['gamesWon'];
-    var oldPlays = (await ref.document(teamId).get()).data['gamesPlayed'];
+    var doc = await ref.document(teamId).get();
+    var team = Team.fromMap(doc.data);
+    var oldVictories = team.gamesWon;
+    var oldPlays = team.gamesPlayed;
     return ref.document(teamId).setData(
       {'gamesLost': oldVictories++, 'gamesPlayed': oldPlays++},
     );
   }
 
   Future<void> addTeamLoss(String teamId) async {
-    var oldLosses = (await ref.document(teamId).get()).data['gamesLost'];
-    var oldPlays = (await ref.document(teamId).get()).data['gamesPlayed'];
+    var doc = await ref.document(teamId).get();
+    var team = Team.fromMap(doc.data);
+    var oldLosses = team.gamesLost;
+    var oldPlays = team.gamesPlayed;
     return ref.document(teamId).setData(
       {'gamesLost': oldLosses++, 'gamesPlayed': oldPlays++},
     );

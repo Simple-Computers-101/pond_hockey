@@ -131,6 +131,7 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
                     return Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             'You don\'t have any teams in this division.',
@@ -144,6 +145,7 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
+                              color: Color(0xFF808080),
                             ),
                           ),
                         ],

@@ -12,33 +12,35 @@ class TeamDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: '"${team.name}"'),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text("Team Information"),
-          ListTile(
-            title: Text('Division'),
-            subtitle: Text(
-              divisionMap[team.division] ?? 'No division',
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Team Information"),
+            ListTile(
+              title: Text('Division'),
+              subtitle: Text(
+                divisionMap[team.division] ?? 'No division',
+              ),
             ),
-          ),
-          ListTile(
-            title: Text('Games Played'),
-            subtitle: Text('${team.gamesPlayed}'),
-          ),
-          ListTile(
-            title: Text('Games Won'),
-            subtitle: Text('${team.gamesWon}'),
-          ),
-          ListTile(
-            title: Text('Games Lost'),
-            subtitle: Text('${team.gamesLost}'),
-          ),
-          ListTile(
-            title: Text('Point Differential'),
-            subtitle: Text('${team.pointDifferential}'),
-          ),
-        ],
+            ListTile(
+              title: Text('Games Played'),
+              subtitle: Text('${team.gamesPlayed}'),
+            ),
+            ListTile(
+              title: Text('Games Won'),
+              subtitle: Text('${team.gamesWon}'),
+            ),
+            ListTile(
+              title: Text('Games Lost'),
+              subtitle: Text('${team.gamesLost}'),
+            ),
+            ListTile(
+              title: Text('Point Differential'),
+              subtitle: Text('${team.pointDifferential}'),
+            ),
+          ],
+        ),
       ),
     );
   }

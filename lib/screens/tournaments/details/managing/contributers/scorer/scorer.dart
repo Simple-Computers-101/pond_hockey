@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:form_bloc/form_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/models/tournament.dart';
 
 class ManageScorers extends StatelessWidget {
@@ -168,7 +168,7 @@ class _ScorerDialogState extends State<ScorerDialog> {
 
   var database = Firestore.instance;
 
-  var errorMessage = "";
+  var errorMessage;
   var isProcessing = false;
 
   @override
@@ -186,8 +186,11 @@ class _ScorerDialogState extends State<ScorerDialog> {
               decoration: InputDecoration(
                 labelText: "Email",
                 errorText: errorMessage,
+                focusedBorder: UnderlineInputBorder(),
               ),
-              validator: FieldBlocValidators.email,
+              validator: FormBuilderValidators.email(
+                errorText: 'Invalid email',
+              ),
             ),
           ),
         ],
@@ -226,7 +229,7 @@ class _ScorerDialogState extends State<ScorerDialog> {
                 } else {
                   setState(() {
                     errorMessage =
-                        "User with this email address does not exist";
+                        "No account with that email";
                     isProcessing = false;
                   });
                 }

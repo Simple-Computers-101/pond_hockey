@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:pond_hockey/router/guard.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
@@ -7,6 +8,7 @@ import 'package:pond_hockey/theme/style.dart';
 
 void main() {
   Router.navigator.addGuards([AuthGuard()]);
+  initializeDateFormatting();
   EmailHelper().start();
   runApp(MyApp());
 }

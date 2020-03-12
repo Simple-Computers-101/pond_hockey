@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/enums/division.dart';
+import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/filter_gametype_dialog.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
@@ -80,7 +82,25 @@ class _GamesPage extends StatefulWidget {
 }
 
 class _GamesPageState extends State<_GamesPage> {
-  Division division;
+  Division _selectedDivision;
+  GameType _selectedGameType;
+
+  void _showFilterGameTypeDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return FilterGameTypeDialog(
+          gameType: _selectedGameType,
+          onGameTypeChanged: (value) {
+            setState(() {
+              _selectedGameType = value;
+            });
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +117,28 @@ class _GamesPageState extends State<_GamesPage> {
                   icon: Icon(Icons.filter_list),
                   onPressed: _showFilterDivisionDialog,
                 ),
-                Text('Current Division: ${divisionMap[division] ?? 'All'}'),
+                Text(
+                  'Current Division: ${divisionMap[_selectedDivision] ?? 'All'}',
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: _showFilterGameTypeDialog,
+                ),
+                Text(
+                  'Current Type: ${gameType[_selectedGameType] ?? 'All'}',
+                ),
               ],
             ),
             Expanded(
               child: StreamBuilder(
                 stream: GamesRepository().getGamesStreamFromTournamentId(
                   widget.tournament.id,
-                  division: division,
+                  division: _selectedDivision,
+                  pGameType: _selectedGameType,
                 ),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -150,10 +184,10 @@ class _GamesPageState extends State<_GamesPage> {
       context: context,
       builder: (context) {
         return FilterDivisionDialog(
-          division: division,
+          division: _selectedDivision,
           onDivisionChanged: (value) {
             setState(() {
-              division = value;
+              _selectedDivision = value;
             });
           },
         );

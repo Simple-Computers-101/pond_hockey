@@ -1,5 +1,7 @@
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:pond_hockey/bloc/manage_game_form/manage_game_form.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
@@ -85,12 +87,8 @@ class _ManageGameForm extends StatelessWidget {
           content: Text('Score has been updated'),
         ));
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(50),
-          ),
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         child: BlocBuilder<ManageGameFormBloc, FormBlocState>(
           builder: (context, formState) {
             if (formState.fieldBlocs.isEmpty) {
@@ -209,16 +207,73 @@ class _ManageGameForm extends StatelessWidget {
                     );
                   },
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
                 DropdownFieldBlocBuilder<GameStatus>(
                   selectFieldBloc: formState
                       .fieldBlocFromPath('game-state')
                       .asSelectFieldBloc(),
                   itemBuilder: (context, value) => gameStatus[value],
                   showEmptyItem: false,
+                  padding: EdgeInsets.zero,
                   decoration: InputDecoration(
                     labelText: 'Game state',
                     border: OutlineInputBorder(),
                   ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+                BlocBuilder<InputFieldBloc<DateTime>, InputFieldBlocState>(
+                  bloc: formState
+                      .fieldBlocFromPath('game-time')
+                      .asInputFieldBloc<DateTime>(),
+                  builder: (context, state) {
+                    var lanCode = Localizations.localeOf(context).languageCode;
+                    var use24Hour =
+                        MediaQuery.of(context).alwaysUse24HourFormat;
+                    var format = use24Hour
+                        ? DateFormat('yyyy-MM-dd HH:mm', lanCode)
+                        : DateFormat('yyyy-MM-dd', lanCode).add_jm();
+                    var now = DateTime.now();
+                    return DateTimeField(
+                      format: format,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Start date',
+                        errorText: state.error,
+                      ),
+                      onShowPicker: (context, value) async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: value ?? now,
+                          firstDate: now,
+                          lastDate: DateTime(2100),
+                        );
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(
+                              value ?? now,
+                            ),
+                          );
+                          final combined = DateTimeField.combine(date, time);
+                          formState
+                              .fieldBlocFromPath('game-time')
+                              .asInputFieldBloc<DateTime>()
+                              .updateValue(combined);
+                          return combined;
+                        } else {
+                          formState
+                              .fieldBlocFromPath('game-time')
+                              .asInputFieldBloc<DateTime>()
+                              .updateValue(value);
+                          return value;
+                        }
+                      },
+                    );
+                  },
                 ),
                 const SizedBox(height: 40),
                 GradientButton(

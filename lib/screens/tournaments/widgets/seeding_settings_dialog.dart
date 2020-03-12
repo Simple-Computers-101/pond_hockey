@@ -14,7 +14,7 @@ class SeedingSettingsDialog extends StatefulWidget {
 
 class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
   GameType gameType = GameType.qualifier;
-  Division division;
+  Division division = Division.open;
   int semiFinalTeams;
 
   @override
@@ -27,7 +27,6 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
           DropdownButton<Division>(
             isExpanded: true,
             items: [
-              DropdownMenuItem(child: Text('All'), value: null),
               DropdownMenuItem(child: Text('Open'), value: Division.open),
               DropdownMenuItem(
                 child: Text('Recreational'),
