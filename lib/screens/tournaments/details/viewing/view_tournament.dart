@@ -146,18 +146,100 @@ class _GamesPageState extends State<_GamesPage> {
                   }
                   var data = snapshot.data as QuerySnapshot;
                   if (data.documents.isNotEmpty) {
-                    return ListView.separated(
-                      itemCount: data.documents.length,
+                    var docs = data.documents;
+                    var games = docs.map(Game.fromDocument);
+                    var qualifiers = games
+                        .where((element) => element.type == GameType.qualifier)
+                        .toList();
+                    var semiFinals = games
+                        .where((element) => element.type == GameType.semiFinal)
+                        .toList();
+                    var closings = games
+                        .where((element) => element.type == GameType.closing)
+                        .toList();
+                    return ListView(
                       padding: EdgeInsets.zero,
-                      itemBuilder: (cntx, indx) {
-                        var game = Game.fromDocument(
-                          data.documents[indx],
-                        );
-                        return GameItem(gameId: game.id);
-                      },
-                      separatorBuilder: (cntx, _) => SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
+                      children: <Widget>[
+                        Text(
+                          'Qualifiers',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'CircularStd',
+                          ),
+                        ),
+                        ListView.separated(
+                          itemCount: qualifiers.length,
+                          shrinkWrap: true,
+                          primary: false,
+                          itemBuilder: (cntx, indx) {
+                            return GameItem(
+                              gameId: qualifiers[indx].id,
+                              onTap: () {
+                                Router.navigator.pushNamed(
+                                  Router.manageGame,
+                                  arguments: qualifiers[indx],
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (cntx, _) => Spacer(),
+                        ),
+                        Text(
+                          'Semi-finals',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'CircularStd',
+                          ),
+                        ),
+                        ListView.separated(
+                          itemCount: semiFinals.length,
+                          shrinkWrap: true,
+                          primary: false,
+                          itemBuilder: (cntx, indx) {
+                            return GameItem(
+                              gameId: semiFinals[indx].id,
+                              onTap: () {
+                                Router.navigator.pushNamed(
+                                  Router.manageGame,
+                                  arguments: semiFinals[indx],
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (cntx, _) => Spacer(),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03),
+                        Text(
+                          'Closings',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'CircularStd',
+                          ),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03),
+                        ListView.separated(
+                          itemCount: closings.length,
+                          shrinkWrap: true,
+                          primary: false,
+                          itemBuilder: (cntx, indx) {
+                            return GameItem(
+                              gameId: closings[indx].id,
+                              onTap: () {
+                                Router.navigator.pushNamed(
+                                  Router.manageGame,
+                                  arguments: closings[indx],
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (cntx, _) => Spacer(),
+                        ),
+                      ],
                     );
                   } else {
                     return Center(
