@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
 import 'package:pond_hockey/enums/division.dart';
@@ -208,7 +209,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
               if (!snap.hasData)
                 Center(child: CircularProgressIndicator())
               else if (snap.data?.documents?.isNotEmpty)
-                buildGamesList(snap)
+                ...buildGamesList(snap)
               else
                 ...buildNoGames(_showChooseGameTypeDialog, context),
             ],
@@ -239,37 +240,115 @@ class _ManageGamesViewState extends State<ManageGamesView> {
             ),
           ],
         ),
-      ],
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('There are no games.'),
-        ],
-      ),
+      ] else
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('There are no games.'),
+          ],
+        ),
     ];
   }
 
-  ListView buildGamesList(AsyncSnapshot snap) {
-    return ListView.separated(
-      padding: widget.seeding
-          ? EdgeInsets.zero
-          : const EdgeInsets.symmetric(vertical: 24),
-      shrinkWrap: true,
-      primary: false,
-      itemBuilder: (cntx, indx) {
-        var game = Game.fromDocument(snap.data.documents[indx]);
-        return GameItem(
-          gameId: game.id,
-          onTap: () {
-            Router.navigator.pushNamed(
-              Router.manageGame,
-              arguments: game,
-            );
-          },
-        );
-      },
-      separatorBuilder: (cntx, _) => Spacer(),
-      itemCount: snap.data.documents.length,
-    );
+  List<Widget> buildGamesList(AsyncSnapshot snap) {
+    var docs = snap.data.documents as List<DocumentSnapshot>;
+    var games = docs.map(Game.fromDocument);
+    var qualifiers =
+        games.where((element) => element.type == GameType.qualifier).toList();
+    var semiFinals =
+        games.where((element) => element.type == GameType.semiFinal).toList();
+    var closings =
+        games.where((element) => element.type == GameType.closing).toList();
+    return [
+      Text(
+        'Qualifiers',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: widget.seeding
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(vertical: 24),
+        itemCount: qualifiers.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: qualifiers[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: qualifiers[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      Text(
+        'Semi-finals',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: widget.seeding
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(vertical: 24),
+        itemCount: semiFinals.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: semiFinals[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: semiFinals[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      Text(
+        'Closings',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: widget.seeding
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(vertical: 24),
+        itemCount: closings.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: closings[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: closings[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+    ];
   }
 }
