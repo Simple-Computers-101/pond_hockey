@@ -39,7 +39,8 @@ class TeamsRepository {
       return [];
     }
     teams.sort((teamOne, teamTwo) {
-      return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
+      return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+      return teamOne.gamesWon.compareTo(teamTwo.pointDifferential);
     });
     return teams.reversed.take(number).toList();
   }
