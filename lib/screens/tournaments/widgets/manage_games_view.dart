@@ -62,11 +62,22 @@ class _ManageGamesViewState extends State<ManageGamesView> {
         case GameType.semiFinal:
           if (await GamesRepository().areAllGamesCompleted(widget.tournamentId,
               division: _selectedDivision)) {
-            var semiTeams = await TeamsRepository().getTeamsFromPointDiff(
-              widget.tournamentId,
-              semiFinalTeams,
-              division: _selectedDivision,
-            );
+            var semiTeams;
+            if (await GamesRepository()
+                .alreadySemiFinalGames(widget.tournamentId)) {
+              semiTeams = await TeamsRepository().getTeamsFromPointDiff(
+                widget.tournamentId,
+                semiFinalTeams,
+                division: _selectedDivision,
+                useWins: true,
+              );
+            } else {
+              semiTeams = await TeamsRepository().getTeamsFromPointDiff(
+                widget.tournamentId,
+                semiFinalTeams,
+                division: _selectedDivision,
+              );
+            }
             bracket = SemiFinalsSeeding.start(semiTeams);
           } else {
             Scaffold.of(context).showSnackBar(
@@ -84,6 +95,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
               2,
               division: _selectedDivision,
               gameType: GameType.semiFinal,
+              useWins: true,
             );
             var game = Game(
               id: Uuid().v4(),

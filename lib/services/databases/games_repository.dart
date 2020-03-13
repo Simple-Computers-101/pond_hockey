@@ -121,6 +121,14 @@ class GamesRepository {
     }, merge: true);
   }
 
+  Future<bool> alreadySemiFinalGames(String tournamentId) async {
+    var query = await ref
+        .where('tournament', isEqualTo: tournamentId)
+        .where('type', isEqualTo: gameType[GameType.semiFinal])
+        .getDocuments();
+    return query.documents.isNotEmpty;
+  }
+
   Future<void> updateStatus(String gameId, GameStatus status) async {
     if (status == GameStatus.finished) {
       var doc = await ref.document(gameId).get();

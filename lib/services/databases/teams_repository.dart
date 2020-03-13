@@ -33,14 +33,20 @@ class TeamsRepository {
   }
 
   Future<List<Team>> getTeamsFromPointDiff(String tournament, int number,
-      {Division division, GameType gameType}) async {
+      {Division division, GameType gameType, bool useWins = false}) async {
     var teams = await getTeamsFromTournamentId(tournament, division: division);
     if (number > teams.length) {
       return [];
     }
-    teams.sort((teamOne, teamTwo) {
-      return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
-    });
+    if (useWins) {
+      teams.sort((teamOne, teamTwo) {
+        return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
+      });
+    } else {
+      teams.sort((teamOne, teamTwo) {
+        return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+      });
+    }
     return teams.reversed.take(number).toList();
   }
 

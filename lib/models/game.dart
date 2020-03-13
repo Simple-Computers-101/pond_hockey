@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/enums/game_type.dart';
@@ -65,6 +68,64 @@ class Game {
       division: division,
       type: type,
       startDate: startDate?.toDate(),
+    );
+  }
+}
+
+class SemiFinalGame {
+  String id;
+  GameStatus status;
+  GameTeam teamOne;
+  GameTeam teamTwo;
+  String tournament;
+  int round;
+  Division division;
+  DateTime startDate;
+
+  SemiFinalGame({
+    this.id,
+    this.status,
+    this.teamOne,
+    this.teamTwo,
+    this.tournament,
+    this.division,
+    this.startDate,
+    this.round,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'status': gameStatus[status],
+      'teamOne': teamOne.toMap(),
+      'teamTwo': teamTwo.toMap(),
+      'tournament': tournament,
+      'division': divisionMap[division],
+      'startDate': startDate.millisecondsSinceEpoch,
+      'round': round,
+    };
+  }
+
+  static SemiFinalGame fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+
+    final division = divisionMap.keys.firstWhere(
+      (element) => divisionMap[element] == map['division'],
+    );
+
+    final status = gameStatus.keys.firstWhere(
+      (element) => gameStatus[element] == map['status'],
+    );
+
+    return SemiFinalGame(
+      id: map['id'],
+      status: status,
+      teamOne: GameTeam.fromMap(map['teamOne']),
+      teamTwo: GameTeam.fromMap(map['teamTwo']),
+      tournament: map['tournament'],
+      division: division,
+      round: map['round'],
+      startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']),
     );
   }
 }
