@@ -13,6 +13,9 @@ class BracketHelper {
       if (teams[0].currentTournament != teams[1].currentTournament) {
         throw Exception('Team\'s tournaments don\'t match!');
       }
+      if (teams[0].division != teams[1].division) {
+        continue;
+      }
       games.add(
         Game(
           id: Uuid().v4(),
@@ -22,6 +25,7 @@ class BracketHelper {
           teamTwo: GameTeam.fromTeam(teams[1]),
           tournament: teams[0].currentTournament,
           type: type,
+          round: null
         ),
       );
     }

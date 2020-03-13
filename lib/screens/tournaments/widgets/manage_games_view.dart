@@ -54,28 +54,31 @@ class _ManageGamesViewState extends State<ManageGamesView> {
         return null;
       }
       var bracket = <List<Team>>[];
+      var qualifiersBracket = <String, List<List<Team>>>{};
       switch (type) {
         case GameType.qualifier:
-          bracket = QualifiersSeeding.start(teams);
-          bracket.removeWhere((element) => element.contains('0'));
+          qualifiersBracket = QualifiersSeeding.start(teams);
+          qualifiersBracket.removeWhere(
+            (key, value) => value.expand((element) => element).contains('0'),
+          );
           break;
         case GameType.semiFinal:
-          if (await GamesRepository().areAllGamesCompleted(widget.tournamentId,
-              division: _selectedDivision)) {
+          if (await GamesRepository()
+              .areAllGamesCompleted(widget.tournamentId, division: div)) {
             var semiTeams;
             if (await GamesRepository()
                 .alreadySemiFinalGames(widget.tournamentId)) {
               semiTeams = await TeamsRepository().getTeamsFromPointDiff(
                 widget.tournamentId,
                 semiFinalTeams,
-                division: _selectedDivision,
+                division: div,
                 useWins: true,
               );
             } else {
               semiTeams = await TeamsRepository().getTeamsFromPointDiff(
                 widget.tournamentId,
                 semiFinalTeams,
-                division: _selectedDivision,
+                division: div,
               );
             }
             bracket = SemiFinalsSeeding.start(semiTeams);
@@ -104,6 +107,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
               teamTwo: GameTeam.fromTeam(teams[1]),
               type: GameType.closing,
               division: div,
+              round: 1,
             );
             GamesRepository().addGame(game);
           } else {
@@ -115,12 +119,30 @@ class _ManageGamesViewState extends State<ManageGamesView> {
           }
           break;
       }
-      if (bracket == null) {
-        throw Exception('No matching game type to seed.');
+      if (bracket.isNotEmpty) {
+        var games = BracketHelper.convertToGames(bracket, type);
+        for (final game in games) {
+          await GamesRepository().addGame(game);
+        }
+        return;
       }
-      var games = BracketHelper.convertToGames(bracket, type);
-      for (final game in games) {
-        await GamesRepository().addGame(game);
+      if (qualifiersBracket.isNotEmpty) {
+        final rounds = qualifiersBracket.keys.length;
+        for (var i = 1; i <= rounds; i++) {
+          var thing = qualifiersBracket['round$i'];
+          for (var teams in thing) {
+            var game = Game(
+              id: Uuid().v4(),
+              tournament: widget.tournamentId,
+              teamOne: GameTeam.fromTeam(teams[0]),
+              teamTwo: GameTeam.fromTeam(teams[1]),
+              type: type,
+              division: div,
+              round: i,
+            );
+            await GamesRepository().addGame(game);
+          }
+        }
       }
     }
 
@@ -208,13 +230,21 @@ class _ManageGamesViewState extends State<ManageGamesView> {
   }
 
   List<Widget> buildGamesList(AsyncSnapshot snap) {
-    var docs = snap.data.documents as List<DocumentSnapshot>;
-    var games = docs.map(Game.fromDocument);
-    var qualifiers =
+    final docs = snap.data.documents as List<DocumentSnapshot>;
+    final games = docs.map(Game.fromDocument);
+    final qualifiers =
         games.where((element) => element.type == GameType.qualifier).toList();
-    var semiFinals =
+    final qRoundOne =
+        qualifiers.where((element) => element.round == 1).toList();
+    final qRoundTwo =
+        qualifiers.where((element) => element.round == 2).toList();
+    final qRoundThree =
+        qualifiers.where((element) => element.round == 3).toList();
+    final qRoundFour =
+        qualifiers.where((element) => element.round == 4).toList();
+    final semiFinals =
         games.where((element) => element.type == GameType.semiFinal).toList();
-    var closings =
+    final closings =
         games.where((element) => element.type == GameType.closing).toList();
     return [
       SizedBox(height: MediaQuery.of(context).size.height * 0.03),
@@ -227,18 +257,108 @@ class _ManageGamesViewState extends State<ManageGamesView> {
         ),
       ),
       SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      Text(
+        'Round 1',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
       ListView.separated(
         padding: EdgeInsets.zero,
-        itemCount: qualifiers.length,
+        itemCount: qRoundOne.length,
         shrinkWrap: true,
         primary: false,
         itemBuilder: (cntx, indx) {
           return GameItem(
-            gameId: qualifiers[indx].id,
+            gameId: qRoundOne[indx].id,
             onTap: () {
               Router.navigator.pushNamed(
                 Router.manageGame,
-                arguments: qualifiers[indx],
+                arguments: qRoundOne[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+      Text(
+        'Round 2',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: qRoundTwo.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: qRoundTwo[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: qRoundTwo[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+      Text(
+        'Round 3',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: qRoundThree.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: qRoundThree[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: qRoundThree[indx],
+              );
+            },
+          );
+        },
+        separatorBuilder: (cntx, _) => Spacer(),
+      ),
+      Text(
+        'Round 4',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'CircularStd',
+        ),
+      ),
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+      ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: qRoundFour.length,
+        shrinkWrap: true,
+        primary: false,
+        itemBuilder: (cntx, indx) {
+          return GameItem(
+            gameId: qRoundFour[indx].id,
+            onTap: () {
+              Router.navigator.pushNamed(
+                Router.manageGame,
+                arguments: qRoundFour[indx],
               );
             },
           );

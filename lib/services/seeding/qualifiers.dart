@@ -5,7 +5,7 @@ import 'package:pond_hockey/models/team.dart';
 /// Shouldn't play the same team
 
 class QualifiersSeeding {
-  static List<List<Team>> start(List<Team> origTeams) {
+  static Map<String, List<List<Team>>> start(List<Team> origTeams) {
     if (origTeams.length < 4) return null;
 
     final teams = origTeams.map((e) => e.id).toList();
@@ -18,7 +18,7 @@ class QualifiersSeeding {
 
     final splitTeams = _splitList(teams);
     var rotatedTeams = splitTeams;
-    final bracket = <List<Team>>[];
+    final bracket = <String, List<List<Team>>>{};
 
     Team getTeam(String id) {
       if (id == '0') return null;
@@ -29,12 +29,14 @@ class QualifiersSeeding {
 
       print('Round $i');
 
+      bracket['round$i'] = <List<Team>>[];
+
       for (var b = 0; b < teams.length ~/ 2; b++) {
         var teamOne = getTeam(rotatedTeams[0][b]);
         var teamTwo = getTeam(rotatedTeams[1][b]);
-        print('${rotatedTeams[0][b]} vs. + ${rotatedTeams[1][b]}');
+        print('${rotatedTeams[0][b]} vs. ${rotatedTeams[1][b]}');
         if (teamOne == null || teamTwo == null) continue;
-        bracket.add([teamOne, teamTwo]);
+        bracket['round$i'].add([teamOne, teamTwo]);
       }
       rotatedTeams = _rotateTeams(splitTeams);
     }

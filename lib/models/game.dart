@@ -17,6 +17,7 @@ class Game {
   GameType type;
   Division division;
   DateTime startDate;
+  int round;
 
   Game({
     @required this.id,
@@ -25,6 +26,7 @@ class Game {
     @required this.teamTwo,
     @required this.type,
     @required this.division,
+    @required this.round,
     this.status = GameStatus.notStarted,
     this.startDate,
   });
@@ -39,6 +41,7 @@ class Game {
       'type': gameType[type],
       'division': divisionMap[division],
       'startDate': startDate,
+      'rounds': round,
     };
   }
 
@@ -68,6 +71,7 @@ class Game {
       division: division,
       type: type,
       startDate: startDate?.toDate(),
+      round: data['rounds'] ?? 0,
     );
   }
 }

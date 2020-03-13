@@ -23,6 +23,7 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
   Team teamTwo;
   Division division;
   GameType gameType;
+  int round = 0;
 
   @override
   void initState() {
@@ -132,6 +133,34 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
             hint: Text('Game type'),
             value: gameType,
           ),
+          DropdownButton<int>(
+            isExpanded: true,
+            items: [
+              DropdownMenuItem(
+                child: Text('1'),
+                value: 1,
+              ),
+              DropdownMenuItem(
+                child: Text('2'),
+                value: 2,
+              ),
+              DropdownMenuItem(
+                child: Text('3'),
+                value: 3,
+              ),
+              DropdownMenuItem(
+                child: Text('4'),
+                value: 4,
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                round = value;
+              });
+            },
+            hint: Text('Round'),
+            value: round,
+          ),
         ],
       ),
       actions: <Widget>[
@@ -149,6 +178,7 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
               teamTwo: GameTeam.fromTeam(teamTwo),
               tournament: widget.tournamentId,
               type: gameType,
+              round: round,
             );
             GamesRepository().addGame(game);
             Router.navigator.pop();
