@@ -26,9 +26,13 @@ class QualifiersSeeding {
     }
 
     for (var i = 1; i <= maxRounds; i++) {
-      for (var b = 0; b < rotatedTeams[0].length; b++) {
+
+      print('Round $i');
+
+      for (var b = 0; b < teams.length ~/ 2; b++) {
         var teamOne = getTeam(rotatedTeams[0][b]);
         var teamTwo = getTeam(rotatedTeams[1][b]);
+        print('${rotatedTeams[0][b]} vs. + ${rotatedTeams[1][b]}');
         if (teamOne == null || teamTwo == null) continue;
         bracket.add([teamOne, teamTwo]);
       }
