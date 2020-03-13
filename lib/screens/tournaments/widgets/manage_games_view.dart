@@ -8,6 +8,7 @@ import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/filter_games_buttons.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_gametype_dialog.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/seeding_settings_dialog.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
@@ -18,10 +19,10 @@ import 'package:pond_hockey/services/seeding/semi_finals.dart';
 import 'package:uuid/uuid.dart';
 
 class ManageGamesView extends StatefulWidget {
-  const ManageGamesView({this.tournamentId, this.seeding = true});
+  const ManageGamesView({this.tournamentId, this.isSeeding = true});
 
   final String tournamentId;
-  final bool seeding;
+  final bool isSeeding;
 
   @override
   _ManageGamesViewState createState() => _ManageGamesViewState();
@@ -82,6 +83,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
               widget.tournamentId,
               2,
               division: _selectedDivision,
+              gameType: GameType.semiFinal,
             );
             var game = Game(
               id: Uuid().v4(),
@@ -110,50 +112,44 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       }
     }
 
-    void _showChooseGameTypeDialog() {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return SeedingSettingsDialog(
-            onSubmit: seedGames,
-          );
-        },
-      );
-    }
-
-    void _showFilterDivisionDialog() {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return FilterDivisionDialog(
-            division: _selectedDivision,
-            onDivisionChanged: (value) {
-              setState(() {
-                _selectedDivision = value;
-              });
-            },
-          );
-        },
-      );
-    }
-
-    void _showFilterGameTypeDialog() {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return FilterGameTypeDialog(
-            gameType: _selectedGameType,
-            onGameTypeChanged: (value) {
-              setState(() {
-                _selectedGameType = value;
-              });
-            },
-          );
-        },
-      );
+    List<Widget> buildNoGames() {
+      return [
+        if (widget.isSeeding) ...[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('There are no games.'),
+              Text('Click below to create some.'),
+              GradientButton(
+                onTap: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return SeedingSettingsDialog(
+                        onSubmit: seedGames,
+                      );
+                    },
+                  );
+                },
+                width: MediaQuery.of(context).size.width * 0.35,
+                height: MediaQuery.of(context).size.height * 0.09,
+                colors: [
+                  Color(0xFFC84E89),
+                  Color(0xFFF15F79),
+                ],
+                text: 'Seed Games',
+              ),
+            ],
+          ),
+        ] else
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('There are no games.'),
+            ],
+          ),
+      ];
     }
 
     return Container(
@@ -170,84 +166,33 @@ class _ManageGamesViewState extends State<ManageGamesView> {
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.filter_list),
-                        onPressed: _showFilterDivisionDialog,
-                      ),
-                      Text(
-                        'Current Division: ${divisionMap[_selectedDivision] ?? 'All'}',
-                      ),
-                    ],
-                  ),
-                  if (widget.seeding)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        tooltip: 'Re-seed games',
-                        onPressed: _showChooseGameTypeDialog,
-                      ),
-                    ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.filter_list),
-                    onPressed: _showFilterGameTypeDialog,
-                  ),
-                  Text(
-                    'Current Type: ${gameType[_selectedGameType] ?? 'All'}',
-                  ),
-                ],
+              FilterGamesButtons(
+                isSeeding: widget.isSeeding,
+                onDivisionChanged: (value) {
+                  setState(() {
+                    _selectedDivision = value;
+                  });
+                },
+                onGameTypeChanged: (value) {
+                  setState(() {
+                    _selectedGameType = value;
+                  });
+                },
+                onSeedingSubmitted: seedGames,
+                selectedDivision: _selectedDivision,
+                selectedGameType: _selectedGameType,
               ),
               if (!snap.hasData)
                 Center(child: CircularProgressIndicator())
               else if (snap.data?.documents?.isNotEmpty)
                 ...buildGamesList(snap)
               else
-                ...buildNoGames(_showChooseGameTypeDialog, context),
+                ...buildNoGames(),
             ],
           );
         },
       ),
     );
-  }
-
-  List<Widget> buildNoGames(
-      void _showChooseGameTypeDialog(), BuildContext context) {
-    return [
-      if (widget.seeding) ...[
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('There are no games.'),
-            Text('Click below to create some.'),
-            GradientButton(
-              onTap: _showChooseGameTypeDialog,
-              width: MediaQuery.of(context).size.width * 0.35,
-              height: MediaQuery.of(context).size.height * 0.09,
-              colors: [
-                Color(0xFFC84E89),
-                Color(0xFFF15F79),
-              ],
-              text: 'Seed Games',
-            ),
-          ],
-        ),
-      ] else
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('There are no games.'),
-          ],
-        ),
-    ];
   }
 
   List<Widget> buildGamesList(AsyncSnapshot snap) {
@@ -260,6 +205,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
     var closings =
         games.where((element) => element.type == GameType.closing).toList();
     return [
+      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
       Text(
         'Qualifiers',
         style: TextStyle(
@@ -270,9 +216,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       ),
       SizedBox(height: MediaQuery.of(context).size.height * 0.03),
       ListView.separated(
-        padding: widget.seeding
-            ? EdgeInsets.zero
-            : const EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.zero,
         itemCount: qualifiers.length,
         shrinkWrap: true,
         primary: false,
@@ -300,9 +244,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       ),
       SizedBox(height: MediaQuery.of(context).size.height * 0.03),
       ListView.separated(
-        padding: widget.seeding
-            ? EdgeInsets.zero
-            : const EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.zero,
         itemCount: semiFinals.length,
         shrinkWrap: true,
         primary: false,
@@ -330,9 +272,7 @@ class _ManageGamesViewState extends State<ManageGamesView> {
       ),
       SizedBox(height: MediaQuery.of(context).size.height * 0.03),
       ListView.separated(
-        padding: widget.seeding
-            ? EdgeInsets.zero
-            : const EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.zero,
         itemCount: closings.length,
         shrinkWrap: true,
         primary: false,

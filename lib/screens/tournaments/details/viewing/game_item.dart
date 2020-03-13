@@ -89,12 +89,6 @@ class GameItem extends StatelessWidget {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    Container(
-                      child: Text(
-                        gameType[gameData.type],
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
                   ],
                 ),
               ),

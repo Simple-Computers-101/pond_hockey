@@ -6,10 +6,8 @@ import 'package:pond_hockey/models/team.dart';
 
 class QualifiersSeeding {
   static List<List<Team>> start(List<Team> origTeams) {
-    if (origTeams.length < 4) {
-      return null;
-    }
-    
+    if (origTeams.length < 4) return null;
+
     final teams = origTeams.map((e) => e.id).toList();
     var maxRounds = 3;
 
@@ -23,6 +21,7 @@ class QualifiersSeeding {
     final bracket = <List<Team>>[];
 
     Team getTeam(String id) {
+      if (id == '0') return null;
       return origTeams.firstWhere((element) => element.id == id);
     }
 
@@ -30,6 +29,7 @@ class QualifiersSeeding {
       for (var b = 0; b < rotatedTeams[0].length; b++) {
         var teamOne = getTeam(rotatedTeams[0][b]);
         var teamTwo = getTeam(rotatedTeams[1][b]);
+        if (teamOne == null || teamTwo == null) continue;
         bracket.add([teamOne, teamTwo]);
       }
       rotatedTeams = _rotateTeams(splitTeams);

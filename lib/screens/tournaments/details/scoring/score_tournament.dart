@@ -14,7 +14,7 @@ class ScoreTournament extends StatelessWidget {
       appBar: CustomAppBar(title: 'Score Games'),
       body: ManageGamesView(
         tournamentId: tournament.id,
-        seeding: false,
+        isSeeding: false,
       ),
     );
   }

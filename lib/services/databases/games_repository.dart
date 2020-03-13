@@ -109,7 +109,7 @@ class GamesRepository {
   }
 
   Future<void> updateScores(String gameId, int teamOne, int teamTwo) async {
-    await ref.document(gameId).setData({
+    return ref.document(gameId).setData({
       'teamOne': {
         'score': teamOne,
         'differential': teamOne - teamTwo,
@@ -126,14 +126,14 @@ class GamesRepository {
       var doc = await ref.document(gameId).get();
       var game = Game.fromDocument(doc);
       if (game.teamOne.score > game.teamTwo.score) {
-        TeamsRepository()
-          ..addTeamVictory(game.teamOne.id)
-          ..addTeamLoss(game.teamTwo.id);
+        await TeamsRepository().addTeamVictory(game.teamOne.id);
+        await TeamsRepository().addTeamLoss(game.teamTwo.id);
       } else if (game.teamOne.score < game.teamTwo.score) {
-        TeamsRepository()
-          ..addTeamVictory(game.teamTwo.id)
-          ..addTeamLoss(game.teamOne.id);
+        await TeamsRepository().addTeamVictory(game.teamTwo.id);
+        await TeamsRepository().addTeamLoss(game.teamOne.id);
       }
+      await TeamsRepository().addGamePlayed(game.teamOne.id);
+      await TeamsRepository().addGamePlayed(game.teamTwo.id);
     }
     return ref.document(gameId).updateData({
       'status': gameStatus[status],

@@ -35,6 +35,7 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       fieldBloc: InputFieldBloc<DateTime>(
         name: 'game-time',
         validators: [FieldBlocValidators.requiredInputFieldBloc],
+        initialValue: game.startDate,
       ),
     );
   }

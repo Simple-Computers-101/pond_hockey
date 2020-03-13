@@ -3,10 +3,12 @@ import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
+typedef SeedingSubmit = void Function(Division, GameType, int);
+
 class SeedingSettingsDialog extends StatefulWidget {
   const SeedingSettingsDialog({this.onSubmit});
 
-  final Function(Division, GameType, int) onSubmit;
+  final SeedingSubmit onSubmit;
 
   @override
   _SeedingSettingsDialogState createState() => _SeedingSettingsDialogState();

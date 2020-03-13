@@ -244,6 +244,7 @@ class _ManageGameForm extends StatelessWidget {
                         labelText: 'Start date',
                         errorText: state.error,
                       ),
+                      initialValue: state.value,
                       onShowPicker: (context, value) async {
                         final date = await showDatePicker(
                           context: context,
