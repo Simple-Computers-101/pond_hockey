@@ -91,7 +91,7 @@ class GameItem extends StatelessWidget {
                         Text(divisionMap[gameData.division]),
                         Text(
                           date != null
-                              ? DateFormat.yMMMd().format(date)
+                              ? DateFormat.yMd().add_jm().format(date)
                               : 'No date',
                         ),
                       ],
