@@ -149,7 +149,12 @@ class _GamesListState extends State<GamesList> {
     final docs = snap.data.documents as List<DocumentSnapshot>;
     final games = docs.map(Game.fromDocument);
     final qualifiers =
-        games.where((element) => element.type == GameType.qualifier).toList();
+        games.where((element) => element.type == GameType.qualifier).toList()
+          ..sort(
+            (gameOne, gameTwo) {
+              return gameOne.startDate.compareTo(gameTwo.startDate);
+            },
+          );
     final qRoundOne =
         qualifiers.where((element) => element.round == 1).toList();
     final qRoundTwo =
@@ -167,61 +172,121 @@ class _GamesListState extends State<GamesList> {
       fontWeight: FontWeight.bold,
       fontFamily: 'CircularStd',
     );
+    var titleStyle = TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'CircularStd',
+    );
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.95,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
+      child: ListView(
+        primary: false,
+        shrinkWrap: true,
         children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width * 0.20,
-            decoration: BoxDecoration(
-              color: Color(0xFF4f4f4f),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: SubGamesList(
-              data: qRoundOne,
-              isManaging: widget.isManaging,
-            ),
+          Text('Qualifiers', style: titleStyle),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * 0.20,
+                decoration: BoxDecoration(
+                  color: Color(0xFF4f4f4f),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                child: SubGamesList(
+                  data: qRoundOne,
+                  isManaging: widget.isManaging,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.20,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xFF4f4f4f),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: SubGamesList(
+                  data: qRoundTwo,
+                  isManaging: widget.isManaging,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.20,
+                decoration: BoxDecoration(
+                  color: Color(0xFF4f4f4f),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                child: SubGamesList(
+                  data: qRoundThree,
+                  isManaging: widget.isManaging,
+                ),
+              ),
+              if (qRoundFour.isNotEmpty)
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.20,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF4f4f4f),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  child: SubGamesList(
+                    data: qRoundFour,
+                    isManaging: widget.isManaging,
+                  ),
+                ),
+            ],
           ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.20,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: Color(0xFF4f4f4f),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: SubGamesList(
-              data: qRoundTwo,
-              isManaging: widget.isManaging,
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.20,
-            decoration: BoxDecoration(
-              color: Color(0xFF4f4f4f),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: SubGamesList(
-              data: qRoundThree,
-              isManaging: widget.isManaging,
-            ),
-          ),
-          if (qRoundFour.isNotEmpty)
+          if (semiFinals.isNotEmpty) ...[
+            Text('Semi-finals', style: titleStyle),
             Container(
               width: MediaQuery.of(context).size.width * 0.20,
               decoration: BoxDecoration(
                 color: Color(0xFF4f4f4f),
                 borderRadius: BorderRadius.circular(25),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
               child: SubGamesList(
-                data: qRoundFour,
+                data: semiFinals,
                 isManaging: widget.isManaging,
               ),
             ),
+          ],
+          if (closings.isNotEmpty) ...[
+            Text('Closings', style: titleStyle),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.20,
+              decoration: BoxDecoration(
+                color: Color(0xFF4f4f4f),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
+              child: SubGamesList(
+                data: closings,
+                isManaging: widget.isManaging,
+              ),
+            ),
+          ]
         ],
       ),
     );

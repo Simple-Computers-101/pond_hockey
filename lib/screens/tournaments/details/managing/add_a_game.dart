@@ -23,7 +23,7 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
   Team teamTwo;
   Division division;
   GameType gameType;
-  int round = 0;
+  int round = 1;
 
   @override
   void initState() {
