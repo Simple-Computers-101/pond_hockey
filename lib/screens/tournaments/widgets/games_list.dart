@@ -209,18 +209,19 @@ class _GamesListState extends State<GamesList> {
               isManaging: widget.isManaging,
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.20,
-            decoration: BoxDecoration(
-              color: Color(0xFF4f4f4f),
-              borderRadius: BorderRadius.circular(25),
+          if (qRoundFour.isNotEmpty)
+            Container(
+              width: MediaQuery.of(context).size.width * 0.20,
+              decoration: BoxDecoration(
+                color: Color(0xFF4f4f4f),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: SubGamesList(
+                data: qRoundFour,
+                isManaging: widget.isManaging,
+              ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: SubGamesList(
-              data: qRoundFour,
-              isManaging: widget.isManaging,
-            ),
-          ),
         ],
       ),
     );
