@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_status.dart';
-import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/services/databases/games_repository.dart';
 
@@ -32,14 +33,15 @@ class GameItem extends StatelessWidget {
               return buildLoading();
             }
             var gameData = snapshot.data as Game;
+            var date = gameData.startDate;
             return InkWell(
               onTap: onTap,
               child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                margin: const EdgeInsets.only(bottom: 10),
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -77,17 +79,22 @@ class GameItem extends StatelessWidget {
                                   fontSize: 32,
                                 ),
                               ),
-                              
                             ],
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      child: Text(
-                        gameStatus[gameData.status],
-                        textAlign: TextAlign.right,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(gameStatus[gameData.status]),
+                        Text(divisionMap[gameData.division]),
+                        Text(
+                          date != null
+                              ? DateFormat.yMMMd().format(date)
+                              : 'No date',
+                        ),
+                      ],
                     ),
                   ],
                 ),

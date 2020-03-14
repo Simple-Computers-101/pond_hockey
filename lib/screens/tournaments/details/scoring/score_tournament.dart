@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/models/tournament.dart';
-import 'package:pond_hockey/screens/tournaments/widgets/manage_games_view.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/games_list.dart';
 
 class ScoreTournament extends StatelessWidget {
   const ScoreTournament({this.tournament});
@@ -12,9 +12,9 @@ class ScoreTournament extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Score Games'),
-      body: ManageGamesView(
+      body: GamesList(
         tournamentId: tournament.id,
-        isSeeding: false,
+        isManaging: true,
       ),
     );
   }

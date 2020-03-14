@@ -20,7 +20,7 @@ class SemiFinalsSeeding {
       return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
     });
     // loops through half the length of the list
-    for (var i = 0; i < (copy.length) ~/ 2; i++) {
+    for (var i = 0; i < copy.length ~/ 2; i++) {
       // gets the index from the other side of the list
       var secondIndex = (copy.length - 1) - i;
       // adds the team with the first index (low point dif) 

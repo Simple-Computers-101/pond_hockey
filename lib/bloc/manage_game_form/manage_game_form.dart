@@ -34,7 +34,6 @@ class ManageGameFormBloc extends FormBloc<String, String> {
     addFieldBloc(
       fieldBloc: InputFieldBloc<DateTime>(
         name: 'game-time',
-        validators: [FieldBlocValidators.requiredInputFieldBloc],
         initialValue: game.startDate,
       ),
     );
@@ -66,7 +65,12 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       teamTwoField.value,
     );
 
-    await GamesRepository().updateGame(game.id, {'startDate': dateField.value});
+    if (dateField.value != null) {
+      await GamesRepository().updateGame(
+        game.id,
+        {'startDate': dateField.value},
+      );
+    }
 
     await TeamsRepository().calculateDifferential(game.teamOne.id);
     await TeamsRepository().calculateDifferential(game.teamTwo.id);

@@ -7,8 +7,8 @@ import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/tournaments/details/managing/add_a_game.dart';
 import 'package:pond_hockey/screens/tournaments/details/managing/manage_contributers.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/games_list.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
-import 'package:pond_hockey/screens/tournaments/widgets/manage_games_view.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 
 class ManageTournament extends StatelessWidget {
@@ -32,7 +32,10 @@ class ManageTournament extends StatelessWidget {
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
           children: [
-            ManageGamesView(tournamentId: tournament.id),
+            GamesList(
+              tournamentId: tournament.id,
+              isManaging: true,
+            ),
             _ManageTeamsView(tournament: tournament),
             _TournamentOptionsView(
               tournamentId: tournament.id,
@@ -317,12 +320,11 @@ class _SettingsList extends StatelessWidget {
           text: 'Add a game',
           onTap: () {
             showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AddAGameDialog(tournamentId: tournamentId);
-              }
-            );
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AddAGameDialog(tournamentId: tournamentId);
+                });
           },
           icon: Icons.edit,
         ),

@@ -1,17 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:pond_hockey/enums/division.dart';
-import 'package:pond_hockey/enums/game_type.dart';
-import 'package:pond_hockey/models/game.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
-import 'package:pond_hockey/screens/tournaments/details/viewing/game_item.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/filter_division_dialog.dart';
-import 'package:pond_hockey/screens/tournaments/widgets/filter_games_buttons.dart';
-import 'package:pond_hockey/screens/tournaments/widgets/filter_gametype_dialog.dart';
-import 'package:pond_hockey/services/databases/games_repository.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/games_list.dart';
 import 'package:pond_hockey/services/databases/teams_repository.dart';
 
 class ViewTournament extends StatelessWidget {
@@ -25,7 +19,7 @@ class ViewTournament extends StatelessWidget {
       length: 2,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFE9E9E9),
         body: NestedScrollView(
           headerSliverBuilder: (context, _) {
             return [
@@ -63,157 +57,13 @@ class ViewTournament extends StatelessWidget {
           body: TabBarView(
             physics: NeverScrollableScrollPhysics(),
             children: [
-              _GamesPage(tournament: tournament),
+              GamesList(isManaging: false, tournamentId: tournament.id),
               _TeamsPage(tournament: tournament),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class _GamesPage extends StatefulWidget {
-  const _GamesPage({this.tournament});
-
-  final Tournament tournament;
-
-  @override
-  _GamesPageState createState() => _GamesPageState();
-}
-
-class _GamesPageState extends State<_GamesPage> {
-  Division _selectedDivision;
-  GameType _selectedGameType;
-
-  void _showFilterGameTypeDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return FilterGameTypeDialog(
-          gameType: _selectedGameType,
-          onGameTypeChanged: (value) {
-            setState(() {
-              _selectedGameType = value;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFE9E9E9),
-      body: StreamBuilder(
-        stream: GamesRepository().getGamesStreamFromTournamentId(
-          widget.tournament.id,
-          division: _selectedDivision,
-          pGameType: _selectedGameType,
-        ),
-        builder: (context, snapshot) {
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            shrinkWrap: true,
-            children: [
-              if (!snapshot.hasData)
-                Center(child: CircularProgressIndicator())
-              else if (snapshot.data?.documents?.isNotEmpty)
-                ...buildGamesList(snapshot)
-              else ...[
-                Text(':('),
-                Text('There\'s nothing here!'),
-              ],
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  List<Widget> buildGamesList(AsyncSnapshot snapshot) {
-    final data = snapshot.data as QuerySnapshot;
-    var docs = data.documents;
-    var games = docs.map(Game.fromDocument);
-    var qualifiers =
-        games.where((element) => element.type == GameType.qualifier).toList();
-    var semiFinals =
-        games.where((element) => element.type == GameType.semiFinal).toList();
-    var closings =
-        games.where((element) => element.type == GameType.closing).toList();
-
-    return [
-      FilterGamesButtons(
-        selectedDivision: _selectedDivision,
-        selectedGameType: _selectedGameType,
-        isSeeding: false,
-        onSeedingSubmitted: null,
-        onDivisionChanged: (value) {},
-        onGameTypeChanged: (value) {},
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      Text(
-        'Qualifiers',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'CircularStd',
-        ),
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      ListView.separated(
-        itemCount: qualifiers.length,
-        shrinkWrap: true,
-        primary: false,
-        padding: EdgeInsets.zero,
-        itemBuilder: (cntx, indx) {
-          return GameItem(gameId: qualifiers[indx].id);
-        },
-        separatorBuilder: (cntx, _) => Spacer(),
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      Text(
-        'Semi-finals',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'CircularStd',
-        ),
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      ListView.separated(
-        itemCount: semiFinals.length,
-        shrinkWrap: true,
-        primary: false,
-        padding: EdgeInsets.zero,
-        itemBuilder: (cntx, indx) {
-          return GameItem(gameId: semiFinals[indx].id);
-        },
-        separatorBuilder: (cntx, _) => Spacer(),
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      Text(
-        'Closings',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'CircularStd',
-        ),
-      ),
-      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-      ListView.separated(
-        itemCount: closings.length,
-        shrinkWrap: true,
-        primary: false,
-        padding: EdgeInsets.zero,
-        itemBuilder: (cntx, indx) {
-          return GameItem(gameId: closings[indx].id);
-        },
-        separatorBuilder: (cntx, _) => Spacer(),
-      ),
-    ];
   }
 }
 
