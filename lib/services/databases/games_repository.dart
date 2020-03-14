@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/enums/game_type.dart';
@@ -196,8 +197,8 @@ class GamesRepository {
     return query.documents.isNotEmpty;
   }
 
-  Future<void> updateStatus(String gameId, GameStatus status) async {
-    if (status == GameStatus.finished) {
+  Future<void> updateStatus(String gameId, {@required bool isComplete}) async {
+    if (isComplete) {
       var doc = await ref.document(gameId).get();
       var game = Game.fromDocument(doc);
       if (game.teamOne.score > game.teamTwo.score) {
@@ -211,7 +212,9 @@ class GamesRepository {
       await TeamsRepository().addGamePlayed(game.teamTwo.id);
     }
     return ref.document(gameId).updateData({
-      'status': gameStatus[status],
+      'status': isComplete
+          ? gameStatus[GameStatus.finished]
+          : gameStatus[GameStatus.inProgress],
     });
   }
 }

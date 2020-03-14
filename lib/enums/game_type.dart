@@ -1,7 +1,8 @@
-enum GameType { qualifier, semiFinal, closing }
+enum GameType { qualifier, semiFinal, quarterFinals, finals }
 
 Map<GameType, String> gameType = {
   GameType.qualifier: 'Qualifier',
+  GameType.quarterFinals: 'Quarter final',
   GameType.semiFinal: 'Semi final',
-  GameType.closing: 'Closing',
+  GameType.finals: 'Final',
 };

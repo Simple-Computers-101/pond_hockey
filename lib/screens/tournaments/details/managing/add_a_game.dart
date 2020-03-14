@@ -117,12 +117,16 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
                 value: GameType.qualifier,
               ),
               DropdownMenuItem(
+                child: Text('Quarter-finals'),
+                value: GameType.quarterFinals,
+              ),
+              DropdownMenuItem(
                 child: Text('Semi-final'),
                 value: GameType.semiFinal,
               ),
               DropdownMenuItem(
-                child: Text('Final'),
-                value: GameType.closing,
+                child: Text('Finals'),
+                value: GameType.finals,
               ),
             ],
             onChanged: (value) {

@@ -89,7 +89,7 @@ const db = admin.firestore();
 
 export const updateTournaments = functions.pubsub
   .schedule("*/10 * * * *")
-  .onRun(async context => {
+  .onRun(async _ => {
     const now = admin.firestore.Timestamp.now()
 
     const startJobs = db
@@ -116,6 +116,29 @@ export const updateTournaments = functions.pubsub
 
     endTasks.forEach(snapshot => {
         const job = snapshot.ref.update({status: GameStatus.FINISHED})
+
+        jobs.push(job)
+    })
+
+    return await Promise.all(jobs)
+  });
+
+export const updateGameStatus = functions.pubsub
+  .schedule("*/5 * * * *")
+  .onRun(async _ => {
+    const now = admin.firestore.Timestamp.now()
+
+    const startJobs = db
+      .collection("games")
+      .where("startDate", "<=", now)
+      .where("status", "==", GameStatus.NOT_STARTED)
+
+    const startTasks = await startJobs.get()
+
+    const jobs: Promise<any>[] = []
+
+    startTasks.forEach(snapshot => {
+        const job = snapshot.ref.update({status: GameStatus.IN_PROGRESS})
 
         jobs.push(job)
     })

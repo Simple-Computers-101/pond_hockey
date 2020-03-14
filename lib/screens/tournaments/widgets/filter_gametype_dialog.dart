@@ -40,8 +40,8 @@ class _FilterGameTypeDialogState extends State<FilterGameTypeDialog> {
             value: GameType.semiFinal,
           ),
           DropdownMenuItem(
-            child: Text('Closing'),
-            value: GameType.closing,
+            child: Text('Finals'),
+            value: GameType.finals,
           ),
         ],
         value: _selected,

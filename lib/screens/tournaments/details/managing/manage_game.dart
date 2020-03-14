@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:pond_hockey/bloc/manage_game_form/manage_game_form.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
-import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/game.dart';
 
 class ManageGame extends StatelessWidget {
@@ -50,16 +49,6 @@ class ManageGame extends StatelessWidget {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,
                   ),
-                  Text(
-                    'Press "Submit" to save',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w100,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                  ),
                   _ManageGameForm(formBloc: formBloc),
                 ],
               ),
@@ -78,14 +67,18 @@ class _ManageGameForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _showSnackbar(String message) {
+      Scaffold.of(context).hideCurrentSnackBar();
+      Scaffold.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text(message),
+      ));
+    }
+
     return FormBlocListener<ManageGameFormBloc, String, String>(
       onSubmitting: (_, __) => Center(child: CircularProgressIndicator()),
       onSuccess: (context, _) {
-        Scaffold.of(context).hideCurrentSnackBar();
-        Scaffold.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text('Score has been updated'),
-        ));
+        _showSnackbar('Score has been updated');
       },
       child: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -100,6 +93,12 @@ class _ManageGameForm extends StatelessWidget {
             var twoField = formState
                 .fieldBlocFromPath('team-two_score')
                 .asInputFieldBloc<int>();
+            var gameState = formState
+                .fieldBlocFromPath('game-complete-state')
+                .asBooleanFieldBloc;
+            var gameTime = formState
+                .fieldBlocFromPath('game-time')
+                .asInputFieldBloc<DateTime>();
             return Column(
               children: <Widget>[
                 BlocBuilder<InputFieldBloc<int>, InputFieldBlocState<int>>(
@@ -116,16 +115,18 @@ class _ManageGameForm extends StatelessWidget {
                           child: IconButton(
                             icon: Icon(Icons.remove),
                             padding: const EdgeInsets.all(48),
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                             onPressed: () {
-                              if (state.value > 0) {
-                                oneField.updateValue(state.value - 1);
+                              if (gameState.value == false) {
+                                if (state.value > 0) {
+                                  oneField.updateValue(state.value - 1);
+                                } else {
+                                  _showSnackbar('Score can not be below 0');
+                                }
                               } else {
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Score can not be below 0'),
-                                    duration: Duration(milliseconds: 500),
-                                  ),
-                                );
+                                _showSnackbar('Game is complete');
                               }
                             },
                           ),
@@ -134,6 +135,9 @@ class _ManageGameForm extends StatelessWidget {
                           '${state.value}',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.1,
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                           ),
                         ),
                         Container(
@@ -144,8 +148,15 @@ class _ManageGameForm extends StatelessWidget {
                           child: IconButton(
                             padding: const EdgeInsets.all(48),
                             icon: Icon(Icons.add),
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                             onPressed: () {
-                              oneField.updateValue(state.value + 1);
+                              if (gameState.value == false) {
+                                oneField.updateValue(state.value + 1);
+                              } else {
+                                _showSnackbar('Game is complete');
+                              }
                             },
                           ),
                         ),
@@ -170,16 +181,18 @@ class _ManageGameForm extends StatelessWidget {
                           child: IconButton(
                             padding: const EdgeInsets.all(48),
                             icon: Icon(Icons.remove),
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                             onPressed: () {
-                              if (state.value > 0) {
-                                twoField.updateValue(state.value - 1);
+                              if (gameState.value == false) {
+                                if (state.value > 0) {
+                                  twoField.updateValue(state.value - 1);
+                                } else {
+                                  _showSnackbar('Score can not be below 0');
+                                }
                               } else {
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Score can not be below 0'),
-                                    duration: Duration(milliseconds: 500),
-                                  ),
-                                );
+                                _showSnackbar('Game is complete');
                               }
                             },
                           ),
@@ -188,6 +201,9 @@ class _ManageGameForm extends StatelessWidget {
                           '${state.value}',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.1,
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                           ),
                         ),
                         Container(
@@ -197,9 +213,16 @@ class _ManageGameForm extends StatelessWidget {
                           ),
                           child: IconButton(
                             padding: const EdgeInsets.all(48),
+                            color: gameState.value
+                                ? Color(0xFFadadad)
+                                : Colors.black,
                             icon: Icon(Icons.add),
                             onPressed: () {
-                              twoField.updateValue(state.value + 1);
+                              if (gameState.value == false) {
+                                twoField.updateValue(state.value + 1);
+                              } else {
+                                _showSnackbar('Game is complete');
+                              }
                             },
                           ),
                         ),
@@ -210,31 +233,35 @@ class _ManageGameForm extends StatelessWidget {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                DropdownFieldBlocBuilder<GameStatus>(
-                  selectFieldBloc: formState
-                      .fieldBlocFromPath('game-state')
-                      .asSelectFieldBloc(),
-                  itemBuilder: (context, value) => gameStatus[value],
-                  showEmptyItem: false,
-                  padding: EdgeInsets.zero,
-                  decoration: InputDecoration(
-                    labelText: 'Game state',
-                    border: OutlineInputBorder(),
-                  ),
+                BlocBuilder<BooleanFieldBloc, BooleanFieldBlocState>(
+                  bloc: gameState,
+                  builder: (context, state) {
+                    return RaisedButton(
+                      onPressed: () {
+                        if (state.value == true) {
+                          gameState.updateValue(false);
+                        } else {
+                          gameState.updateValue(true);
+                        }
+                      },
+                      child: Text(
+                        'Mark as ${state.value ? 'not complete' : 'complete'}',
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                BlocBuilder<InputFieldBloc<DateTime>, InputFieldBlocState>(
-                  bloc: formState
-                      .fieldBlocFromPath('game-time')
-                      .asInputFieldBloc<DateTime>(),
+                BlocBuilder<InputFieldBloc<DateTime>,
+                    InputFieldBlocState<DateTime>>(
+                  bloc: gameTime,
                   builder: (context, state) {
                     var lanCode = Localizations.localeOf(context).languageCode;
                     var use24Hour =
                         MediaQuery.of(context).alwaysUse24HourFormat;
                     var format = use24Hour
-                        ? DateFormat('yyyy-MM-dd HH:mm', lanCode)
+                        ? DateFormat('yyyy-MM-dd', lanCode).add_Hm()
                         : DateFormat('yyyy-MM-dd', lanCode).add_jm();
                     var now = DateTime.now();
                     return DateTimeField(
@@ -260,10 +287,7 @@ class _ManageGameForm extends StatelessWidget {
                             ),
                           );
                           final combined = DateTimeField.combine(date, time);
-                          formState
-                              .fieldBlocFromPath('game-time')
-                              .asInputFieldBloc<DateTime>()
-                              .updateValue(combined);
+                          gameTime.updateValue(combined);
                           return combined;
                         } else {
                           formState
@@ -284,7 +308,7 @@ class _ManageGameForm extends StatelessWidget {
                     Color.fromRGBO(255, 75, 43, 1),
                   ],
                   height: MediaQuery.of(context).size.height * 0.15,
-                  text: 'Submit',
+                  text: 'Save',
                 ),
               ],
             );

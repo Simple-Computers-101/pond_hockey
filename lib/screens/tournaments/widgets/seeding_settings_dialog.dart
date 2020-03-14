@@ -17,7 +17,7 @@ class SeedingSettingsDialog extends StatefulWidget {
 class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
   GameType gameType = GameType.qualifier;
   Division division = Division.open;
-  int semiFinalTeams;
+  int quarterFinalTeams;
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +50,16 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
                 value: GameType.qualifier,
               ),
               DropdownMenuItem(
+                child: Text('Quarter-finals'),
+                value: GameType.quarterFinals,
+              ),
+              DropdownMenuItem(
                 child: Text('Semi-finals'),
                 value: GameType.semiFinal,
               ),
               DropdownMenuItem(
-                child: Text('Closing'),
-                value: GameType.closing,
+                child: Text('Finals'),
+                value: GameType.finals,
               ),
             ],
             value: gameType,
@@ -65,36 +69,24 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
               });
             },
           ),
-          if (gameType == GameType.semiFinal)
+          if (gameType == GameType.quarterFinals)
             DropdownButton<int>(
               isExpanded: true,
-              hint: Text('Semi-final teams'),
+              hint: Text('Quarter-final teams'),
               items: [
-                DropdownMenuItem(
-                  child: Text('4'),
-                  value: 4,
-                ),
-                DropdownMenuItem(
-                  child: Text('6'),
-                  value: 6,
-                ),
                 DropdownMenuItem(
                   child: Text('8'),
                   value: 8,
                 ),
                 DropdownMenuItem(
-                  child: Text('10'),
-                  value: 10,
-                ),
-                DropdownMenuItem(
-                  child: Text('12'),
-                  value: 12,
+                  child: Text('16'),
+                  value: 16,
                 ),
               ],
-              value: semiFinalTeams,
+              value: quarterFinalTeams,
               onChanged: (value) {
                 setState(() {
-                  semiFinalTeams = value;
+                  quarterFinalTeams = value;
                 });
               },
             ),
@@ -104,7 +96,7 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
         FlatButton(
           onPressed: () {
             Router.navigator.pop();
-            widget.onSubmit(division, gameType, semiFinalTeams);
+            widget.onSubmit(division, gameType, quarterFinalTeams);
           },
           child: Text('Submit'),
         ),

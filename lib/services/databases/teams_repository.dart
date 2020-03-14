@@ -47,55 +47,76 @@ class TeamsRepository {
       return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
     });
 
-    for (var i = 0; i < teams.length - 1; i++) {
-      if (teams[i].gamesWon == teams[i + 1].gamesWon) {
-        var dif1 = teams[i].pointDifferential;
-        var dif2 = teams[i + 1].pointDifferential;
-        if (dif1 > dif2) {
-          teams.removeAt(i + 1);
-        } else if (dif1 < dif2) {
-          teams.removeAt(i);
-        } else {
+    teams = teams.reversed.toList();
+
+    var analyze = _getTeamsWithSameWins(teams.sublist(number - 1));
+    if (analyze.length > 1) {
+      analyze.sort((teamOne, teamTwo) {
+        return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+      });
+      analyze = analyze.reversed.toList();
+      var greatestDiff = analyze.first.pointDifferential;
+      analyze.removeWhere(
+        (element) => element.pointDifferential < greatestDiff,
+      );
+      if (analyze.length > 1) {
+        for (var i = 0; i < analyze.length; i++) {
           var teamOneScore = 0;
           var teamTwoScore = 0;
           var gamesOne = await GamesRepository().getGamesFromTeamId(
-            teams[i].id,
+            analyze[i].id,
             division: division,
             type: type,
           );
           var gamesTwo = await GamesRepository().getGamesFromTeamId(
-            teams[i + 1].id,
+            analyze[i + 1].id,
             division: division,
             type: type,
           );
           for (final game in gamesOne) {
-            if (game.teamOne.id == teams[i].id) {
+            if (game.teamOne.id == analyze[i].id) {
               teamOneScore += game.teamOne.score;
-            } else if (game.teamTwo.id == teams[i].id) {
+            } else if (game.teamTwo.id == analyze[i].id) {
               teamOneScore += game.teamTwo.score;
             }
           }
           for (final game in gamesTwo) {
-            if (game.teamOne.id == teams[i + 1].id) {
+            if (game.teamOne.id == analyze[i + 1].id) {
               teamTwoScore += game.teamOne.score;
-            } else if (game.teamTwo.id == teams[i + 1].id) {
+            } else if (game.teamTwo.id == analyze[i + 1].id) {
               teamTwoScore += game.teamTwo.score;
             }
           }
           if (teamOneScore > teamTwoScore) {
-            teams.removeAt(i + 1);
+            analyze.removeAt(i + 1);
+            if (analyze.length == 1) break;
           } else if (teamOneScore < teamTwoScore) {
-            teams.removeAt(i);
+            analyze.removeAt(i);
+            if (analyze.length == 1) break;
           }
         }
       }
     }
 
+    assert(analyze.length == 1);
+
+    teams.add(analyze.first);
     teams.sort((teamOne, teamTwo) {
       return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
     });
 
     return teams.reversed.take(number).toList();
+  }
+
+  List<Team> _getTeamsWithSameWins(List<Team> teams) {
+    var teamsWithSameWins = <Team>[];
+    var wins = teams.first.gamesWon;
+    for (final team in teams) {
+      if (team.gamesWon == wins) {
+        teamsWithSameWins.add(team);
+      }
+    }
+    return teamsWithSameWins;
   }
 
   Future<void> addTeamVictory(String teamId) async {

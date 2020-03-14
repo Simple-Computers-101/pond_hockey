@@ -50,9 +50,14 @@ class Game {
       (element) => gameStatus[element] == data['status'],
     );
 
-    final type = gameType.keys.firstWhere(
-      (element) => gameType[element] == data['type'],
-    );
+    var type;
+    if (data['type'] == 'Closing') {
+      type = GameType.finals;
+    } else {
+      type = gameType.keys.firstWhere(
+        (element) => gameType[element] == data['type'],
+      );
+    }
 
     final division = divisionMap.keys.firstWhere(
       (element) => divisionMap[element] == data['division'],
@@ -76,22 +81,22 @@ class Game {
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
-  
+
     return o is Game &&
-      o.id == id &&
-      o.tournament == tournament &&
-      o.division == division &&
-      o.startDate == startDate &&
-      o.round == round;
+        o.id == id &&
+        o.tournament == tournament &&
+        o.division == division &&
+        o.startDate == startDate &&
+        o.round == round;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      tournament.hashCode ^
-      division.hashCode ^
-      startDate.hashCode ^
-      round.hashCode;
+        tournament.hashCode ^
+        division.hashCode ^
+        startDate.hashCode ^
+        round.hashCode;
   }
 }
 

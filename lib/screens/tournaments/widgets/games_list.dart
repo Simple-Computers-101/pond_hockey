@@ -149,12 +149,12 @@ class _GamesListState extends State<GamesList> {
     final docs = snap.data.documents as List<DocumentSnapshot>;
     final games = docs.map(Game.fromDocument);
     final qualifiers =
-        games.where((element) => element.type == GameType.qualifier).toList()
-          ..sort(
-            (gameOne, gameTwo) {
-              return gameOne.startDate.compareTo(gameTwo.startDate);
-            },
-          );
+        games.where((element) => element.type == GameType.qualifier).toList();
+    if (canSortByDate(qualifiers)) {
+      qualifiers.sort((gameOne, gameTwo) {
+        return gameOne.startDate.compareTo(gameTwo.startDate);
+      });
+    }
     final qRoundOne =
         qualifiers.where((element) => element.round == 1).toList();
     final qRoundTwo =
@@ -163,15 +163,13 @@ class _GamesListState extends State<GamesList> {
         qualifiers.where((element) => element.round == 3).toList();
     final qRoundFour =
         qualifiers.where((element) => element.round == 4).toList();
+    final quarterFinals = games
+        .where((element) => element.type == GameType.quarterFinals)
+        .toList();
     final semiFinals =
         games.where((element) => element.type == GameType.semiFinal).toList();
     final closings =
-        games.where((element) => element.type == GameType.closing).toList();
-    final headingStyle = TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'CircularStd',
-    );
+        games.where((element) => element.type == GameType.finals).toList();
     var titleStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.bold,
@@ -251,6 +249,24 @@ class _GamesListState extends State<GamesList> {
                 ),
             ],
           ),
+          if (quarterFinals.isNotEmpty) ...[
+            Text('Quarter-finals', style: titleStyle),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.20,
+              decoration: BoxDecoration(
+                color: Color(0xFF4f4f4f),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
+              child: SubGamesList(
+                data: quarterFinals,
+                isManaging: widget.isManaging,
+              ),
+            ),
+          ],
           if (semiFinals.isNotEmpty) ...[
             Text('Semi-finals', style: titleStyle),
             Container(
@@ -292,6 +308,15 @@ class _GamesListState extends State<GamesList> {
     );
   }
 
+  bool canSortByDate(List<Game> games) {
+    for (final game in games) {
+      if (game.startDate == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Widget buildGamesList(AsyncSnapshot snap) {
     final docs = snap.data.documents as List<DocumentSnapshot>;
     final games = docs.map(Game.fromDocument);
@@ -305,10 +330,23 @@ class _GamesListState extends State<GamesList> {
         qualifiers.where((element) => element.round == 3).toList();
     final qRoundFour =
         qualifiers.where((element) => element.round == 4).toList();
+    final quarterFinals = games
+        .where((element) => element.type == GameType.quarterFinals)
+        .toList();
     final semiFinals =
         games.where((element) => element.type == GameType.semiFinal).toList();
     final closings =
-        games.where((element) => element.type == GameType.closing).toList();
+        games.where((element) => element.type == GameType.finals).toList();
+    if (canSortByDate(qualifiers)) {
+      qualifiers.sort((gameOne, gameTwo) {
+        return gameOne.startDate.compareTo(gameTwo.startDate);
+      });
+    }
+    if (canSortByDate(semiFinals)) {
+      semiFinals.sort((gameOne, gameTwo) {
+        return gameOne.startDate.compareTo(gameTwo.startDate);
+      });
+    }
     final headingStyle = TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.bold,
@@ -329,9 +367,11 @@ class _GamesListState extends State<GamesList> {
       SubGamesList(data: qRoundThree, isManaging: widget.isManaging),
       Text('Round 4', style: headingStyle),
       SubGamesList(data: qRoundFour, isManaging: widget.isManaging),
+      Text('Quarter-finals', style: titleStyle),
+      SubGamesList(data: quarterFinals, isManaging: widget.isManaging),
       Text('Semi-finals', style: titleStyle),
       SubGamesList(data: semiFinals, isManaging: widget.isManaging),
-      Text('Closings', style: titleStyle),
+      Text('Closing Game', style: titleStyle),
       SubGamesList(data: closings, isManaging: widget.isManaging),
     ];
     return ListView.separated(

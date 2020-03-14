@@ -13,7 +13,7 @@ class SeedingHelper {
   static void seedGames(
     Division div,
     GameType type,
-    int semiFinalTeams,
+    int quarterFinalTeams,
     String tournamentId, {
     void Function(String) onError,
   }) async {
@@ -24,9 +24,8 @@ class SeedingHelper {
       tournamentId,
       division: div,
     );
-    if (teams.length < 4 && type != GameType.closing) {
+    if (teams.length < 4 && type != GameType.finals) {
       onError('not_enough_teams');
-
       return;
     }
     var bracket = <List<Team>>[];
@@ -38,12 +37,29 @@ class SeedingHelper {
           (key, value) => value.expand((element) => element).contains('0'),
         );
         break;
+      case GameType.quarterFinals:
+        if (await GamesRepository().areAllGamesCompleted(
+          tournamentId,
+          division: div,
+        )) {
+          var quarterFinals = await _getSemiTeams(
+            tournamentId,
+            quarterFinalTeams,
+            div,
+          );
+          bracket = SemiFinalsSeeding.start(quarterFinals);
+        } else {
+          return onError('incomplete');
+        }
+        break;
       case GameType.semiFinal:
-        if (await GamesRepository()
-            .areAllGamesCompleted(tournamentId, division: div)) {
+        if (await GamesRepository().areAllGamesCompleted(
+          tournamentId,
+          division: div,
+        )) {
           var semiTeams = await _getSemiTeams(
             tournamentId,
-            semiFinalTeams,
+            4,
             div,
           );
           bracket = SemiFinalsSeeding.start(semiTeams);
@@ -51,9 +67,11 @@ class SeedingHelper {
           return onError('incomplete');
         }
         break;
-      case GameType.closing:
-        if (await GamesRepository()
-            .areAllGamesCompleted(tournamentId, division: div)) {
+      case GameType.finals:
+        if (await GamesRepository().areAllGamesCompleted(
+          tournamentId,
+          division: div,
+        )) {
           var teams = await TeamsRepository().getTeamsFromPointDiff(
             tournamentId,
             2,
@@ -65,7 +83,7 @@ class SeedingHelper {
             tournament: tournamentId,
             teamOne: GameTeam.fromTeam(teams[0]),
             teamTwo: GameTeam.fromTeam(teams[1]),
-            type: GameType.closing,
+            type: GameType.finals,
             division: div,
             round: 1,
           );
@@ -104,20 +122,11 @@ class SeedingHelper {
 
   static Future<List<Team>> _getSemiTeams(
       String tournamentId, int semiFinalTeams, Division div) async {
-    List<Team> semiTeams;
-    if (await GamesRepository().alreadySemiFinalGames(tournamentId)) {
-      semiTeams = await TeamsRepository().getTeamsFromPointDiff(
-        tournamentId,
-        semiFinalTeams,
-        division: div,
-      );
-    } else {
-      semiTeams = await TeamsRepository().getTeamsFromPointDiff(
-        tournamentId,
-        semiFinalTeams,
-        division: div,
-      );
-    }
+    var semiTeams = await TeamsRepository().getTeamsFromPointDiff(
+      tournamentId,
+      semiFinalTeams,
+      division: div,
+    );
     return semiTeams;
   }
 }

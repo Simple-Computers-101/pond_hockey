@@ -24,11 +24,9 @@ class ManageGameFormBloc extends FormBloc<String, String> {
       ),
     );
     addFieldBloc(
-      fieldBloc: SelectFieldBloc<GameStatus>(
-        name: 'game-state',
-        items: GameStatus.values,
-        validators: [FieldBlocValidators.requiredSelectFieldBloc],
-        initialValue: game.status,
+      fieldBloc: BooleanFieldBloc(
+        name: 'game-complete-state',
+        initialValue: game.status == GameStatus.finished,
       ),
     );
     addFieldBloc(
@@ -46,17 +44,13 @@ class ManageGameFormBloc extends FormBloc<String, String> {
     final teamTwoField =
         state.fieldBlocFromPath('team-two_score').asInputFieldBloc<int>();
     final statusField =
-        state.fieldBlocFromPath('game-state').asSelectFieldBloc<GameStatus>();
+        state.fieldBlocFromPath('game-complete-state').asBooleanFieldBloc;
     final dateField =
         state.fieldBlocFromPath('game-time').asInputFieldBloc<DateTime>();
 
     if ((game.teamOne.score == teamOneField.value) ||
         (game.teamTwo.score == teamTwoField.value)) {
       yield state.toSuccess(successResponse: 'The scores were the same');
-    }
-
-    if (game.status == statusField.value) {
-      yield state.toSuccess(successResponse: 'GameStatus is the same');
     }
 
     await GamesRepository().updateScores(
@@ -75,7 +69,10 @@ class ManageGameFormBloc extends FormBloc<String, String> {
     await TeamsRepository().calculateDifferential(game.teamOne.id);
     await TeamsRepository().calculateDifferential(game.teamTwo.id);
 
-    await GamesRepository().updateStatus(game.id, statusField.value);
+    await GamesRepository().updateStatus(
+      game.id,
+      isComplete: statusField.value,
+    );
 
     yield state.toSuccess(canSubmitAgain: true);
   }
