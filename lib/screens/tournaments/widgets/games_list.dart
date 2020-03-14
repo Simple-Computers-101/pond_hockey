@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/buttons/gradient_btn.dart';
 import 'package:pond_hockey/enums/division.dart';
@@ -26,6 +27,10 @@ class GamesList extends StatefulWidget {
 class _GamesListState extends State<GamesList> {
   Division _selectedDivision;
   GameType _selectedGameType;
+
+  bool canUseColumns() {
+    return kIsWeb && MediaQuery.of(context).size.width > 1024;
+  }
 
   void _onSeedingSettingsComplete(Division div, GameType type, int teams) {
     SeedingHelper.seedGames(
@@ -128,12 +133,95 @@ class _GamesListState extends State<GamesList> {
               if (!snap.hasData)
                 Center(child: CircularProgressIndicator())
               else if (snap.data?.documents?.isNotEmpty)
-                buildGamesList(snap)
+                !canUseColumns()
+                    ? buildGamesList(snap)
+                    : buildWebGamesList(snap)
               else
                 ...buildNoGames(),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget buildWebGamesList(AsyncSnapshot snap) {
+    final docs = snap.data.documents as List<DocumentSnapshot>;
+    final games = docs.map(Game.fromDocument);
+    final qualifiers =
+        games.where((element) => element.type == GameType.qualifier).toList();
+    final qRoundOne =
+        qualifiers.where((element) => element.round == 1).toList();
+    final qRoundTwo =
+        qualifiers.where((element) => element.round == 2).toList();
+    final qRoundThree =
+        qualifiers.where((element) => element.round == 3).toList();
+    final qRoundFour =
+        qualifiers.where((element) => element.round == 4).toList();
+    final semiFinals =
+        games.where((element) => element.type == GameType.semiFinal).toList();
+    final closings =
+        games.where((element) => element.type == GameType.closing).toList();
+    final headingStyle = TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'CircularStd',
+    );
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.95,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width * 0.20,
+            decoration: BoxDecoration(
+              color: Color(0xFF4f4f4f),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: SubGamesList(
+              data: qRoundOne,
+              isManaging: widget.isManaging,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.20,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: Color(0xFF4f4f4f),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: SubGamesList(
+              data: qRoundTwo,
+              isManaging: widget.isManaging,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.20,
+            decoration: BoxDecoration(
+              color: Color(0xFF4f4f4f),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: SubGamesList(
+              data: qRoundThree,
+              isManaging: widget.isManaging,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.20,
+            decoration: BoxDecoration(
+              color: Color(0xFF4f4f4f),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: SubGamesList(
+              data: qRoundFour,
+              isManaging: widget.isManaging,
+            ),
+          ),
+        ],
       ),
     );
   }

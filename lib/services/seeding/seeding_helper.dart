@@ -41,8 +41,11 @@ class SeedingHelper {
       case GameType.semiFinal:
         if (await GamesRepository()
             .areAllGamesCompleted(tournamentId, division: div)) {
-          var semiTeams =
-              await _getSemiTeams(tournamentId, semiFinalTeams, div);
+          var semiTeams = await _getSemiTeams(
+            tournamentId,
+            semiFinalTeams,
+            div,
+          );
           bracket = SemiFinalsSeeding.start(semiTeams);
         } else {
           return onError('incomplete');
@@ -55,8 +58,7 @@ class SeedingHelper {
             tournamentId,
             2,
             division: div,
-            gameType: GameType.semiFinal,
-            useWins: true,
+            type: GameType.semiFinal,
           );
           var game = Game(
             id: Uuid().v4(),
@@ -108,7 +110,6 @@ class SeedingHelper {
         tournamentId,
         semiFinalTeams,
         division: div,
-        useWins: true,
       );
     } else {
       semiTeams = await TeamsRepository().getTeamsFromPointDiff(

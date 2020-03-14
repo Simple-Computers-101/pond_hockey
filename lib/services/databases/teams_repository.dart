@@ -32,21 +32,69 @@ class TeamsRepository {
     return ref.document(teamId).updateData({'pointDifferential': differential});
   }
 
-  Future<List<Team>> getTeamsFromPointDiff(String tournament, int number,
-      {Division division, GameType gameType, bool useWins = false}) async {
+  Future<List<Team>> getTeamsFromPointDiff(
+    String tournament,
+    int number, {
+    Division division,
+    GameType type,
+  }) async {
     var teams = await getTeamsFromTournamentId(tournament, division: division);
     if (number > teams.length) {
       return [];
     }
-    if (useWins) {
-      teams.sort((teamOne, teamTwo) {
-        return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
-      });
-    } else {
-      teams.sort((teamOne, teamTwo) {
-        return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
-      });
+
+    teams.sort((teamOne, teamTwo) {
+      return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
+    });
+
+    for (var i = 0; i < teams.length - 1; i++) {
+      if (teams[i].gamesWon == teams[i + 1].gamesWon) {
+        var dif1 = teams[i].pointDifferential;
+        var dif2 = teams[i + 1].pointDifferential;
+        if (dif1 > dif2) {
+          teams.removeAt(i + 1);
+        } else if (dif1 < dif2) {
+          teams.removeAt(i);
+        } else {
+          var teamOneScore = 0;
+          var teamTwoScore = 0;
+          var gamesOne = await GamesRepository().getGamesFromTeamId(
+            teams[i].id,
+            division: division,
+            type: type,
+          );
+          var gamesTwo = await GamesRepository().getGamesFromTeamId(
+            teams[i + 1].id,
+            division: division,
+            type: type,
+          );
+          for (final game in gamesOne) {
+            if (game.teamOne.id == teams[i].id) {
+              teamOneScore += game.teamOne.score;
+            } else if (game.teamTwo.id == teams[i].id) {
+              teamOneScore += game.teamTwo.score;
+            }
+          }
+          for (final game in gamesTwo) {
+            if (game.teamOne.id == teams[i + 1].id) {
+              teamTwoScore += game.teamOne.score;
+            } else if (game.teamTwo.id == teams[i + 1].id) {
+              teamTwoScore += game.teamTwo.score;
+            }
+          }
+          if (teamOneScore > teamTwoScore) {
+            teams.removeAt(i + 1);
+          } else if (teamOneScore < teamTwoScore) {
+            teams.removeAt(i);
+          }
+        }
+      }
     }
+
+    teams.sort((teamOne, teamTwo) {
+      return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+    });
+
     return teams.reversed.take(number).toList();
   }
 

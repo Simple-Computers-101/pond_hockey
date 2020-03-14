@@ -72,63 +72,26 @@ class Game {
       round: data['rounds'] ?? 0,
     );
   }
-}
 
-class SemiFinalGame {
-  String id;
-  GameStatus status;
-  GameTeam teamOne;
-  GameTeam teamTwo;
-  String tournament;
-  int round;
-  Division division;
-  DateTime startDate;
-
-  SemiFinalGame({
-    this.id,
-    this.status,
-    this.teamOne,
-    this.teamTwo,
-    this.tournament,
-    this.division,
-    this.startDate,
-    this.round,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'status': gameStatus[status],
-      'teamOne': teamOne.toMap(),
-      'teamTwo': teamTwo.toMap(),
-      'tournament': tournament,
-      'division': divisionMap[division],
-      'startDate': startDate.millisecondsSinceEpoch,
-      'round': round,
-    };
+  @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+  
+    return o is Game &&
+      o.id == id &&
+      o.tournament == tournament &&
+      o.division == division &&
+      o.startDate == startDate &&
+      o.round == round;
   }
 
-  static SemiFinalGame fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
-    final division = divisionMap.keys.firstWhere(
-      (element) => divisionMap[element] == map['division'],
-    );
-
-    final status = gameStatus.keys.firstWhere(
-      (element) => gameStatus[element] == map['status'],
-    );
-
-    return SemiFinalGame(
-      id: map['id'],
-      status: status,
-      teamOne: GameTeam.fromMap(map['teamOne']),
-      teamTwo: GameTeam.fromMap(map['teamTwo']),
-      tournament: map['tournament'],
-      division: division,
-      round: map['round'],
-      startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']),
-    );
+  @override
+  int get hashCode {
+    return id.hashCode ^
+      tournament.hashCode ^
+      division.hashCode ^
+      startDate.hashCode ^
+      round.hashCode;
   }
 }
 

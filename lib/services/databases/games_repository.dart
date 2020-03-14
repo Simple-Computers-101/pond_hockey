@@ -52,6 +52,73 @@ class GamesRepository {
     return query.documents.map(Game.fromDocument).toList();
   }
 
+  Future<List<Game>> getGamesFromTeamId(String teamId,
+      {Division division, GameType type}) async {
+    if (division != null && type != null) {
+      final queryOne = await ref
+          .where('teamOne.id', isEqualTo: teamId)
+          .where('division', isEqualTo: divisionMap[division])
+          .where('type', isEqualTo: gameType[type])
+          .getDocuments();
+      final queryTwo = await ref
+          .where('teamTwo.id', isEqualTo: teamId)
+          .where('division', isEqualTo: divisionMap[division])
+          .where('type', isEqualTo: gameType[type])
+          .getDocuments();
+
+      final docs = <DocumentSnapshot>[]
+        ..addAll(queryOne.documents)
+        ..addAll(queryTwo.documents);
+      final games = docs.map(Game.fromDocument).toList().toSet().toList();
+      return games;
+    } else if (division != null) {
+      final queryOne = await ref
+          .where('teamOne.id', isEqualTo: teamId)
+          .where('division', isEqualTo: divisionMap[division])
+          .getDocuments();
+      final queryTwo = await ref
+          .where('teamTwo.id', isEqualTo: teamId)
+          .where('division', isEqualTo: divisionMap[division])
+          .getDocuments();
+
+      final docs = <DocumentSnapshot>[]
+        ..addAll(queryOne.documents)
+        ..addAll(queryTwo.documents);
+      final games = docs.map(Game.fromDocument).toList().toSet().toList();
+      return games;
+    } else if (type != null) {
+      final queryOne = await ref
+          .where('teamOne.id', isEqualTo: teamId)
+          .where('type', isEqualTo: gameType[type])
+          .getDocuments();
+      final queryTwo = await ref
+          .where('teamTwo.id', isEqualTo: teamId)
+          .where('type', isEqualTo: gameType[type])
+          .getDocuments();
+
+      final docs = <DocumentSnapshot>[]
+        ..addAll(queryOne.documents)
+        ..addAll(queryTwo.documents);
+      final games = docs.map(Game.fromDocument).toList().toSet().toList();
+      return games;
+    } else {
+      final queryOne =
+          await ref.where('teamOne.id', isEqualTo: teamId).getDocuments();
+      final queryTwo =
+          await ref.where('teamTwo.id', isEqualTo: teamId).getDocuments();
+
+      final docs = <DocumentSnapshot>[]
+        ..addAll(queryOne.documents)
+        ..addAll(queryTwo.documents);
+      final games = docs.map(Game.fromDocument).toList().toSet().toList();
+      return games;
+    }
+  }
+
+  List<Game> removeDuplicates(List<Game> games) {
+    return games.toSet().toList();
+  }
+
   Future<bool> areAllGamesCompleted(String tournamentId,
       {Division division}) async {
     var games =
