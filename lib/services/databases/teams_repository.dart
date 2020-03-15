@@ -53,57 +53,57 @@ class TeamsRepository {
     for (var analyzeTeam in analyze) {
       teams.removeWhere((element) => element.id == analyzeTeam.id);
     }
-    if (analyze.length > 1) {
-      analyze.sort((teamOne, teamTwo) {
-        return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
-      });
-      analyze = analyze.reversed.toList();
-      // var greatestDiff = analyze.first.pointDifferential;
-      // analyze.removeWhere(
-      //   (element) => element.pointDifferential < greatestDiff,
-      // );
-      // if (analyze.length > 1) {
-      //   for (var i = 0; i < analyze.length; i++) {
-      //     var teamOneScore = 0;
-      //     var teamTwoScore = 0;
-      //     var gamesOne = await GamesRepository().getGamesFromTeamId(
-      //       analyze[i].id,
-      //       division: division,
-      //       type: type,
-      //     );
-      //     var gamesTwo = await GamesRepository().getGamesFromTeamId(
-      //       analyze[i + 1].id,
-      //       division: division,
-      //       type: type,
-      //     );
-      //     for (final game in gamesOne) {
-      //       if (game.teamOne.id == analyze[i].id) {
-      //         teamOneScore += game.teamOne.score;
-      //       } else if (game.teamTwo.id == analyze[i].id) {
-      //         teamOneScore += game.teamTwo.score;
-      //       }
-      //     }
-      //     for (final game in gamesTwo) {
-      //       if (game.teamOne.id == analyze[i + 1].id) {
-      //         teamTwoScore += game.teamOne.score;
-      //       } else if (game.teamTwo.id == analyze[i + 1].id) {
-      //         teamTwoScore += game.teamTwo.score;
-      //       }
-      //     }
-      //     if (teamOneScore > teamTwoScore) {
-      //       analyze.removeAt(i + 1);
-      //       if (analyze.length == 1) break;
-      //     } else if (teamOneScore < teamTwoScore) {
-      //       analyze.removeAt(i);
-      //       if (analyze.length == 1) break;
-      //     }
-      //   }
-      // }
-    }
+    analyze.sort((teamOne, teamTwo) {
+      return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+    });
+    analyze = analyze.reversed.toList();
+    // if (analyze.length > 1) {
+    // var greatestDiff = analyze.first.pointDifferential;
+    // analyze.removeWhere(
+    //   (element) => element.pointDifferential < greatestDiff,
+    // );
+    // if (analyze.length > 1) {
+    //   for (var i = 0; i < analyze.length; i++) {
+    //     var teamOneScore = 0;
+    //     var teamTwoScore = 0;
+    //     var gamesOne = await GamesRepository().getGamesFromTeamId(
+    //       analyze[i].id,
+    //       division: division,
+    //       type: type,
+    //     );
+    //     var gamesTwo = await GamesRepository().getGamesFromTeamId(
+    //       analyze[i + 1].id,
+    //       division: division,
+    //       type: type,
+    //     );
+    //     for (final game in gamesOne) {
+    //       if (game.teamOne.id == analyze[i].id) {
+    //         teamOneScore += game.teamOne.score;
+    //       } else if (game.teamTwo.id == analyze[i].id) {
+    //         teamOneScore += game.teamTwo.score;
+    //       }
+    //     }
+    //     for (final game in gamesTwo) {
+    //       if (game.teamOne.id == analyze[i + 1].id) {
+    //         teamTwoScore += game.teamOne.score;
+    //       } else if (game.teamTwo.id == analyze[i + 1].id) {
+    //         teamTwoScore += game.teamTwo.score;
+    //       }
+    //     }
+    //     if (teamOneScore > teamTwoScore) {
+    //       analyze.removeAt(i + 1);
+    //       if (analyze.length == 1) break;
+    //     } else if (teamOneScore < teamTwoScore) {
+    //       analyze.removeAt(i);
+    //       if (analyze.length == 1) break;
+    //     }
+    //   }
+    // }
+    // }
 
     teams.addAll(analyze);
     teams.sort((teamOne, teamTwo) {
-      return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+      return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
     });
 
     return teams.reversed.take(number).toList();
