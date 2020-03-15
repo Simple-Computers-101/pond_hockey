@@ -43,6 +43,42 @@ class TeamsRepository {
       return [];
     }
 
+    if (type == GameType.semiFinal) {
+      var winners = <String>[];
+      var games = await GamesRepository().getGamesFromTournamentId(
+        tournament,
+        division: division,
+        type: GameType.quarterFinals,
+      );
+      for (final game in games) {
+        if (game.teamOne.score > game.teamTwo.score) {
+          winners.add(game.teamOne.id);
+        } else if (game.teamTwo.score > game.teamOne.score) {
+          winners.add(game.teamTwo.id);
+        }
+      }
+      teams.removeWhere((element) => winners.contains(element.id) == false);
+      return teams;
+    }
+
+    if (type == GameType.finals) {
+      var winners = <String>[];
+      var games = await GamesRepository().getGamesFromTournamentId(
+        tournament,
+        division: division,
+        type: GameType.semiFinal,
+      );
+      for (final game in games) {
+        if (game.teamOne.score > game.teamTwo.score) {
+          winners.add(game.teamOne.id);
+        } else if (game.teamTwo.score > game.teamOne.score) {
+          winners.add(game.teamTwo.id);
+        }
+      }
+      teams.removeWhere((element) => winners.contains(element.id) == false);
+      return teams;
+    }
+
     teams.sort((teamOne, teamTwo) {
       return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
     });

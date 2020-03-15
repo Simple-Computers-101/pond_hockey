@@ -46,6 +46,7 @@ class SeedingHelper {
             tournamentId,
             quarterFinalTeams,
             div,
+            type,
           );
           bracket = SemiFinalsSeeding.start(quarterFinals);
         } else {
@@ -61,6 +62,7 @@ class SeedingHelper {
             tournamentId,
             4,
             div,
+            type,
           );
           bracket = SemiFinalsSeeding.start(semiTeams);
         } else {
@@ -76,7 +78,7 @@ class SeedingHelper {
             tournamentId,
             2,
             division: div,
-            type: GameType.semiFinal,
+            type: GameType.finals,
           );
           var game = Game(
             id: Uuid().v4(),
@@ -121,11 +123,16 @@ class SeedingHelper {
   }
 
   static Future<List<Team>> _getSemiTeams(
-      String tournamentId, int semiFinalTeams, Division div) async {
+    String tournamentId,
+    int semiFinalTeams,
+    Division div,
+    GameType type,
+  ) async {
     var semiTeams = await TeamsRepository().getTeamsFromPointDiff(
       tournamentId,
       semiFinalTeams,
       division: div,
+      type: type,
     );
     return semiTeams;
   }

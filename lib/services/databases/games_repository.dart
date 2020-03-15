@@ -39,9 +39,15 @@ class GamesRepository {
   }
 
   Future<List<Game>> getGamesFromTournamentId(String tournamentId,
-      {Division division}) async {
+      {Division division, GameType type}) async {
     QuerySnapshot query;
-    if (division != null) {
+    if (type != null && division != null) {
+      query = await ref
+          .where('tournament', isEqualTo: tournamentId)
+          .where('division', isEqualTo: divisionMap[division])
+          .where('type', isEqualTo: gameType[type])
+          .getDocuments();
+    } else if (division != null) {
       query = await ref
           .where('tournament', isEqualTo: tournamentId)
           .where('division', isEqualTo: divisionMap[division])
