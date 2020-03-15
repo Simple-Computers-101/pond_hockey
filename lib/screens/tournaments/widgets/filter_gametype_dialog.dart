@@ -36,6 +36,10 @@ class _FilterGameTypeDialogState extends State<FilterGameTypeDialog> {
             value: GameType.qualifier,
           ),
           DropdownMenuItem(
+            child: Text('Quarter-finals'),
+            value: GameType.quarterFinals,
+          ),
+          DropdownMenuItem(
             child: Text('Semi-finals'),
             value: GameType.semiFinal,
           ),
