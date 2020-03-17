@@ -19,7 +19,7 @@ class TournamentsList extends StatelessWidget {
     } else if (documents is List<Tournament>) {
       tournaments = documents;
     }
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ListView.separated(
         primary: false,

@@ -60,9 +60,10 @@ class TournamentItem extends StatelessWidget {
                         tournament.name,
                         overflow: TextOverflow.clip,
                         style: Theme.of(context).textTheme.headline5.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.05),
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.05,
+                            ),
                       ),
                     ),
                     Column(

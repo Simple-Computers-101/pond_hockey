@@ -170,6 +170,17 @@ class _GamesListState extends State<GamesList> {
         games.where((element) => element.type == GameType.semiFinal).toList();
     final closings =
         games.where((element) => element.type == GameType.finals).toList();
+
+    if (canSortByDate(quarterFinals)) {
+      quarterFinals.sort((gameOne, gameTwo) {
+        return gameOne.startDate.compareTo(gameTwo.startDate);
+      });
+    }
+    if (canSortByDate(semiFinals)) {
+      semiFinals.sort((gameOne, gameTwo) {
+        return gameOne.startDate.compareTo(gameTwo.startDate);
+      });
+    }
     var titleStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.bold,
@@ -249,60 +260,78 @@ class _GamesListState extends State<GamesList> {
                 ),
             ],
           ),
-          if (quarterFinals.isNotEmpty) ...[
-            Text('Quarter-finals', style: titleStyle),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.20,
-              decoration: BoxDecoration(
-                color: Color(0xFF4f4f4f),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              child: SubGamesList(
-                data: quarterFinals,
-                isManaging: widget.isManaging,
-              ),
-            ),
-          ],
-          if (semiFinals.isNotEmpty) ...[
-            Text('Semi-finals', style: titleStyle),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.20,
-              decoration: BoxDecoration(
-                color: Color(0xFF4f4f4f),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              child: SubGamesList(
-                data: semiFinals,
-                isManaging: widget.isManaging,
-              ),
-            ),
-          ],
-          if (closings.isNotEmpty) ...[
-            Text('Closings', style: titleStyle),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.20,
-              decoration: BoxDecoration(
-                color: Color(0xFF4f4f4f),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              child: SubGamesList(
-                data: closings,
-                isManaging: widget.isManaging,
-              ),
-            ),
-          ]
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (quarterFinals.isNotEmpty) ...[
+                Column(
+                  children: [
+                    Text('Quarter-finals', style: titleStyle),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.20,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4f4f4f),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      child: SubGamesList(
+                        data: quarterFinals,
+                        isManaging: widget.isManaging,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (semiFinals.isNotEmpty) ...[
+                Column(
+                  children: [
+                    Text('Semi-finals', style: titleStyle),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.20,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4f4f4f),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      child: SubGamesList(
+                        data: semiFinals,
+                        isManaging: widget.isManaging,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (closings.isNotEmpty) ...[
+                Column(
+                  children: [
+                    Text('Closings', style: titleStyle),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.20,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4f4f4f),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      child: SubGamesList(
+                        data: closings,
+                        isManaging: widget.isManaging,
+                      ),
+                    ),
+                  ],
+                ),
+              ]
+            ],
+          ),
         ],
       ),
     );

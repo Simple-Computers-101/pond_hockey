@@ -1,17 +1,17 @@
 class User {
-  int coins;
+  int credits;
   String email;
   String uid;
   
   User({
-    this.coins,
+    this.credits,
     this.email,
     this.uid,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'coins': coins,
+      'credits': credits,
       'email': email,
       'uid': uid,
     };
@@ -21,7 +21,7 @@ class User {
     if (map == null) return null;
 
     return User(
-      coins: map['coins'],
+      credits: map['credits'],
       email: map['email'],
       uid: map['uid'],
     );

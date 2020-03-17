@@ -180,7 +180,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       {
         'email': currentUser.email,
         'uid': currentUser.uid,
-        'coins': 0,
+        'credits': 0,
       },
     );
   }

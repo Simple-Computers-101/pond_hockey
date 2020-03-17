@@ -69,4 +69,18 @@ class UserRepository {
 
     return User.fromMap(query.documents.first.data);
   }
+
+  Future<User> getUserFromUID(String uid) async {
+    var query = await ref.where('uid', isEqualTo: uid).getDocuments();
+
+    return User.fromMap(query.documents.first.data);
+  }
+
+  Future<User> getCurrentUser() async {
+    var user = await currentUser();
+    if (user != null) {
+      return getUserFromUID(user.uid);
+    }
+    return null;
+  }
 }
