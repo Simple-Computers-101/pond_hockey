@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
+import 'package:pond_hockey/components/buttons/big_circle_btn.dart';
 import 'package:pond_hockey/components/form/background.dart';
 
 class LoginForm extends StatefulWidget {
@@ -33,55 +34,14 @@ class _LoginFormState extends State<LoginForm> {
       border: InputBorder.none,
     );
 
-    return Container(
+    return SizedBox(
       width: widget.orientation == Orientation.portrait
           ? double.infinity
           : MediaQuery.of(context).size.width * 0.5,
       child: FormBuilder(
         key: _formKey,
-        child: FormBackground(
-          bottom: <Widget>[
-            SizedBox(height: 24.0),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.4,
-              height: MediaQuery.of(context).size.height * 0.05,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFC84E89),
-                    Color(0xFFF15F79),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(24),
-                  splashColor: Colors.white.withOpacity(0.05),
-                  onTap: () {
-                    if (_formKey.currentState.validate()) {
-                      FocusScope.of(context).unfocus();
-                      _onLoginButtonPressed();
-                    }
-                  },
-                  child: Center(
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-          fields: <Widget>[
+        child: Column(
+          children: <Widget>[
             Column(
               children: <Widget>[
                 FormFieldBackground(
@@ -111,6 +71,16 @@ class _LoginFormState extends State<LoginForm> {
                       FormBuilderValidators.minLength(6),
                     ],
                   ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                BigCircleButton(
+                  onTap: () {
+                    if (_formKey.currentState.validate()) {
+                      FocusScope.of(context).unfocus();
+                      _onLoginButtonPressed();
+                    }
+                  },
+                  text: 'Sign In',
                 ),
               ],
             ),

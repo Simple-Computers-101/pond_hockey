@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
+import 'package:pond_hockey/components/buttons/big_circle_btn.dart';
 import 'package:pond_hockey/components/form/background.dart';
 
 class CreateAccountForm extends StatefulWidget {
@@ -30,6 +31,15 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
     super.dispose();
   }
 
+  void _onSignUpButtonPressed() async {
+    await BlocProvider.of<LoginBloc>(context).add(
+      SignUpInitial(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const defaultDecoration = InputDecoration(
@@ -43,54 +53,8 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
           : MediaQuery.of(context).size.width * 0.5,
       child: FormBuilder(
         key: _formKey,
-        child: FormBackground(
-          bottom: <Widget>[
-            SizedBox(height: 24.0),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.4,
-              height: MediaQuery.of(context).size.height * 0.07,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFC84E89),
-                    Color(0xFFF15F79),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(24),
-                  splashColor: Colors.white.withOpacity(0.05),
-                  onTap: () async {
-                    if (_formKey.currentState.validate()) {
-                      FocusScope.of(context).unfocus();
-                      await BlocProvider.of<LoginBloc>(context).add(
-                        SignUpInitial(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        ),
-                      );
-                    }
-                  },
-                  child: Center(
-                    child: Text(
-                      'Create Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-          fields: <Widget>[
+        child: Column(
+          children: <Widget>[
             Column(
               children: <Widget>[
                 FormFieldBackground(
@@ -98,7 +62,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     attribute: 'email-sign_up',
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailController,
-                    decoration: defaultDecoration.copyWith(hintText: 'Email'),
+                    decoration: defaultDecoration.copyWith(labelText: 'Email'),
                     validators: [
                       FormBuilderValidators.required(),
                       FormBuilderValidators.email(),
@@ -112,7 +76,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     obscureText: true,
                     maxLines: 1,
                     decoration:
-                        defaultDecoration.copyWith(hintText: 'Password'),
+                        defaultDecoration.copyWith(labelText: 'Password'),
                     validators: [
                       FormBuilderValidators.required(),
                       FormBuilderValidators.minLength(6),
@@ -127,7 +91,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     obscureText: true,
                     maxLines: 1,
                     decoration: defaultDecoration.copyWith(
-                      hintText: 'Confirm Password',
+                      labelText: 'Confirm Password',
                     ),
                     validators: [
                       FormBuilderValidators.required(),
@@ -142,6 +106,16 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                       }
                     ],
                   ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                BigCircleButton(
+                  onTap: () {
+                    if (_formKey.currentState.validate()) {
+                      FocusScope.of(context).unfocus();
+                      _onSignUpButtonPressed();
+                    }
+                  },
+                  text: 'Sign Up',
                 ),
               ],
             ),

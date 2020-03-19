@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:pond_hockey/components/appbar/appbar.dart';
-import 'package:pond_hockey/components/buttons/gradient_btn.dart';
+import 'package:pond_hockey/components/buttons/big_circle_btn.dart';
 import 'package:pond_hockey/components/form/background.dart';
 import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/tournament.dart';
@@ -30,19 +31,22 @@ class AddTournamentScreen extends StatelessWidget {
             height: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFB993D6), Color(0xFF8CA6DB)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                colors: [Color(0xFFFF6464), Color(0xFFFFACAC)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
             child: SafeArea(
-              child: SingleChildScrollView(
+              child: ListView(
                 primary: false,
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: _AddTournamentForm(
-                  orientation: orientation,
-                  formKey: _formKey,
-                ),
+                children: <Widget>[
+                  SvgPicture.asset('assets/svg/create_tournament.svg'),
+                  _AddTournamentForm(
+                    orientation: orientation,
+                    formKey: _formKey,
+                  ),
+                ],
               ),
             ),
           );
@@ -97,12 +101,10 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       scorers: null,
     );
     TournamentsRepository().addTournament(tournament);
-    Router.navigator.pushReplacementNamed(
-      Router.tournaments,
-    );
+    Router.navigator.pushReplacementNamed(Router.tournaments);
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     const defaultDecoration = InputDecoration(
       border: InputBorder.none,
@@ -132,26 +134,8 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
           : null,
       child: FormBuilder(
         key: widget.formKey,
-        child: FormBackground(
-          bottom: <Widget>[
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            GradientButton(
-              width: MediaQuery.of(context).size.width * 0.35,
-              height: MediaQuery.of(context).size.height * 0.09,
-              colors: [
-                Color(0xFFC84E89),
-                Color(0xFFF15F79),
-              ],
-              onTap: () {
-                if (widget.formKey.currentState.validate()) {
-                  FocusScope.of(context).unfocus();
-                  submitForm();
-                }
-              },
-              text: 'Create',
-            ),
-          ],
-          fields: <Widget>[
+        child: Column(
+          children: <Widget>[
             FormFieldBackground(
               height: getFieldHeight(),
               field: FormBuilderTextField(
@@ -197,6 +181,7 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
             ),
             FormFieldBackground(
               height: MediaQuery.of(context).size.height * 0.17,
+              bottom: true,
               field: TextFormField(
                 controller: _detailsController,
                 maxLines: null,
@@ -206,6 +191,16 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
                   hintText: 'Details',
                 ),
               ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            BigCircleButton(
+              text: 'Create',
+              onTap: () {
+                if (widget.formKey.currentState.validate()) {
+                  FocusScope.of(context).unfocus();
+                  submitForm();
+                }
+              },
             ),
           ],
         ),

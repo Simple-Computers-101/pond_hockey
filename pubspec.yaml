@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   google_fonts: ^0.3.9
   auto_route: ^0.3.0
   uuid: ^2.0.4
@@ -18,7 +18,10 @@ dependencies:
   flutter_form_builder: ^3.8.0+1
   enough_mail: ^0.0.5
   datetime_picker_formfield: ^1.0.0
+  flutter_svg: ^0.17.3+1
+  in_app_purchase: ^0.3.1+2
 
+  # Bloc
   bloc: ^3.0.0
   flutter_bloc: ^3.2.0
   equatable: ^1.1.0
@@ -58,6 +61,7 @@ flutter:
 
   assets:
     - assets/img/
+    - assets/svg/
     - google_fonts/
 
   fonts:

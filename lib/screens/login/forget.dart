@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 
-class ForgetPassword extends StatefulWidget {
-  ForgetPassword(this.loginContext);
+class ForgotPassword extends StatefulWidget {
+  ForgotPassword(this.loginContext);
   final BuildContext loginContext;
   @override
   State<StatefulWidget> createState() {
-    return _ForgetPasswordState();
+    return _ForgotPasswordState();
   }
 }
 
-class _ForgetPasswordState extends State<ForgetPassword> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   final _emailController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var isProcessing = false;

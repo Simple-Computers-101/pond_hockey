@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/screens/login/create_account.dart';
@@ -54,61 +55,60 @@ class CreateAccountBody extends StatelessWidget {
                   Color(0xFF757F9A),
                   Color(0xFFD7DDE8),
                 ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
             child: SafeArea(
               child: Center(
-                child: Padding(
+                child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      CreateAccountForm(
-                        orientation: orientation,
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          BlocProvider.of<LoginBloc>(context).add(
-                            ToggleUiButtonPressed(isSignUp: false),
-                          );
-                        },
-                        child: Text("Have an account? Login."),
-                      ),
-                      const Divider(
-                        thickness: 2,
-                        color: Colors.black,
-                        indent: 5,
-                        endIndent: 5,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        Platform.isIOS
-                            ? 'Or sign in with these providers'
-                            : 'Sign in with Google',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                      const SizedBox(height: 10),
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    SvgPicture.asset('assets/svg/login.svg'),
+                    CreateAccountForm(
+                      orientation: orientation,
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        BlocProvider.of<LoginBloc>(context).add(
+                          ToggleUiButtonPressed(isSignUp: false),
+                        );
+                      },
+                      child: Text("Have an account? Login."),
+                    ),
+                    const Divider(
+                      thickness: 2,
+                      color: Colors.black,
+                      indent: 5,
+                      endIndent: 5,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
                       Platform.isIOS
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                GoogleSignInButton(
-                                  onPressed: googleSignIn,
-                                ),
-                                AppleSignInButton(
-                                  onPressed: appleSignIn,
-                                ),
-                              ],
-                            )
-                          : GoogleSignInButton(
+                          ? 'Or sign up with these providers'
+                          : 'Sign up with Google',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    const SizedBox(height: 10),
+                    Platform.isIOS
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              GoogleSignInButton(
+                                onPressed: googleSignIn,
+                              ),
+                              AppleSignInButton(
+                                onPressed: appleSignIn,
+                              ),
+                            ],
+                          )
+                        : GoogleSignInButton(
                             onPressed: googleSignIn,
                             width: MediaQuery.of(context).size.width * 0.5,
                           ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ),

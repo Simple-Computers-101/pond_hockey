@@ -10,3 +10,12 @@ class AuthGuard extends RouteGuard {
     return user != null;
   }
 }
+
+class UnAuthGuard extends RouteGuard {
+  @override
+  Future<bool> canNavigate(
+      BuildContext context, String routeName, Object arguments) async {
+    var user = await FirebaseAuth.instance.currentUser();
+    return user == null;
+  }
+}

@@ -9,8 +9,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:pond_hockey/screens/home/home.dart';
 import 'package:pond_hockey/screens/login/login.dart';
-import 'package:pond_hockey/screens/account/account.dart';
 import 'package:pond_hockey/router/guard.dart';
+import 'package:pond_hockey/screens/login/forget.dart';
+import 'package:pond_hockey/screens/account/account.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/view_tournament.dart';
 import 'package:pond_hockey/models/tournament.dart';
@@ -26,6 +27,7 @@ import 'package:pond_hockey/screens/tournaments/add_teams/add_teams.dart';
 class Router {
   static const home = '/';
   static const login = '/login';
+  static const forgotPassword = '/forgot-password';
   static const account = '/account';
   static const tournaments = '/tournaments';
   static const tournamentDetails = '/tournament-details';
@@ -36,6 +38,7 @@ class Router {
   static const addTournament = '/add-tournament';
   static const addTeams = '/add-teams';
   static const _guardedRoutes = {
+    login: [UnAuthGuard],
     account: [AuthGuard],
     scoreTournament: [AuthGuard],
     manageTournament: [AuthGuard],
@@ -51,29 +54,43 @@ class Router {
         return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) => HomeScreen(),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideTop,
         );
       case Router.login:
         return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) => LoginScreen(),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.fadeIn,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
+        );
+      case Router.forgotPassword:
+        if (hasInvalidArgs<BuildContext>(args)) {
+          return misTypedArgsRoute<BuildContext>(args);
+        }
+        final typedArgs = args as BuildContext;
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              ForgotPassword(typedArgs),
+          settings: settings,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.account:
         return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) => AccountScreen(),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.tournaments:
         return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               TournamentsScreen(),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.tournamentDetails:
-        if (hasInvalidArgs<Tournament>(args, isRequired: true)) {
+        if (hasInvalidArgs<Tournament>(args)) {
           return misTypedArgsRoute<Tournament>(args);
         }
         final typedArgs = args as Tournament;
@@ -81,7 +98,8 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               ViewTournament(tournament: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.scoreTournament:
         if (hasInvalidArgs<Tournament>(args)) {
@@ -92,7 +110,8 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               ScoreTournament(tournament: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.manageTournament:
         if (hasInvalidArgs<Tournament>(args, isRequired: true)) {
@@ -103,7 +122,8 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               ManageTournament(tournament: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.manageGame:
         if (hasInvalidArgs<Game>(args)) {
@@ -114,7 +134,8 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               ManageGame(game: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.teamDetails:
         if (hasInvalidArgs<Team>(args)) {
@@ -125,14 +146,16 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               TeamDetailsScreen(team: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.addTournament:
         return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               AddTournamentScreen(),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRight,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       case Router.addTeams:
         if (hasInvalidArgs<Tournament>(args, isRequired: true)) {
@@ -143,7 +166,8 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               AddTeamsScreen(tournament: typedArgs),
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.slideRight,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          transitionDuration: Duration(milliseconds: 150),
         );
       default:
         return unknownRoutePage(settings.name);

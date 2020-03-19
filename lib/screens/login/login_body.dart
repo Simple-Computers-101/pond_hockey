@@ -24,32 +24,33 @@ class LoginBody extends StatelessWidget {
         var _loginUi = _LoginUI();
         var _signUp = CreateAccountBody();
         return states(
-            (initial) => initial.isSignUp ? _signUp : _loginUi,
-            (loading) => Center(child: CircularProgressIndicator()),
-            (failure) {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                Scaffold.of(context).hideCurrentSnackBar();
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('An error occured: ${failure.error}'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              });
-
-              return failure.isSignUp ? _signUp : _loginUi;
-            },
-            (unverified) => EmailVerification(unverified.user),
-            (success) {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-                await Future.delayed(Duration(seconds: 1));
-                Router.navigator
-                    .pushNamedAndRemoveUntil(Router.home, (route) => false);
-              });
-              return Center(
-                child: Text("Login Success"),
+          (initial) => initial.isSignUp ? _signUp : _loginUi,
+          (loading) => Center(child: CircularProgressIndicator()),
+          (failure) {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('An error occured: ${failure.error}'),
+                  duration: Duration(seconds: 2),
+                ),
               );
             });
+
+            return failure.isSignUp ? _signUp : _loginUi;
+          },
+          (unverified) => EmailVerification(unverified.user),
+          (success) {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+              await Future.delayed(Duration(seconds: 1));
+              Router.navigator
+                  .pushNamedAndRemoveUntil(Router.home, (route) => false);
+            });
+            return Center(
+              child: Text("Login Success"),
+            );
+          },
+        );
       },
     );
   }
@@ -95,96 +96,92 @@ class _LoginUI extends StatelessWidget {
           return Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF757F9A),
-                  Color(0xFFD7DDE8),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                colors: [Color(0xFF757F9A), Color(0xFFD7DDE8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
             child: Center(
-              child: Padding(
+              child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListView(
-                  shrinkWrap: true,
-                  primary: false,
-                  children: <Widget>[
-                    LoginForm(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ForgetPassword(context),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'Forgot password?',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
+                shrinkWrap: true,
+                primary: false,
+                children: <Widget>[
+                  LoginForm(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          // TODO: fix route
+                          Router.navigator.pushNamed('');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ForgotPassword(context),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Forgot password?',
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
-                        FlatButton(
-                          onPressed: () {
-                            BlocProvider.of<LoginBloc>(context).add(
-                              ToggleUiButtonPressed(isSignUp: true),
-                            );
-                          },
-                          child: Text("Create Account"),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          BlocProvider.of<LoginBloc>(context).add(
+                            ToggleUiButtonPressed(isSignUp: true),
+                          );
+                        },
+                        child: Text("Create Account"),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    thickness: 2,
+                    color: Colors.black,
+                    indent: 5,
+                    endIndent: 5,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    Platform.isIOS
+                        ? 'Or sign in with these providers'
+                        : 'Sign in with Google',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  const SizedBox(height: 10),
+                  if (Platform.isIOS)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GoogleSignInButton(
+                          onPressed: googleSignIn,
+                        ),
+                        AppleSignInButton(
+                          onPressed: appleSignIn,
                         ),
                       ],
+                    )
+                  else
+                    GoogleSignInButton(
+                      width: MediaQuery.of(context).size.width / 2,
+                      onPressed: () async {
+                        await BlocProvider.of<LoginBloc>(context)
+                            .signInWithGoogle()
+                            .catchError((error) {
+                          Scaffold.of(context).hideCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Sign in with google failed$error'),
+                              duration: Duration(seconds: 5),
+                            ),
+                          );
+                        });
+                      },
                     ),
-                    const Divider(
-                      thickness: 2,
-                      color: Colors.black,
-                      indent: 5,
-                      endIndent: 5,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      Platform.isIOS
-                          ? 'Or sign in with these providers'
-                          : 'Sign in with Google',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    const SizedBox(height: 10),
-                    if (Platform.isIOS)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GoogleSignInButton(
-                            onPressed: googleSignIn,
-                          ),
-                          AppleSignInButton(
-                            onPressed: appleSignIn,
-                          ),
-                        ],
-                      )
-                    else
-                      GoogleSignInButton(
-                        width: MediaQuery.of(context).size.width / 2,
-                        onPressed: () async {
-                          await BlocProvider.of<LoginBloc>(context)
-                              .signInWithGoogle()
-                              .catchError((error) {
-                            Scaffold.of(context).hideCurrentSnackBar();
-                            Scaffold.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Sign in with google failed$error'),
-                                duration: Duration(seconds: 5),
-                              ),
-                            );
-                          });
-                        },
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
           );
@@ -205,8 +202,9 @@ class _LoginUI extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       children: <Widget>[
                         LoginForm(),
                         Row(
@@ -217,7 +215,7 @@ class _LoginUI extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ForgetPassword(context),
+                                    builder: (_) => ForgotPassword(context),
                                   ),
                                 );
                               },

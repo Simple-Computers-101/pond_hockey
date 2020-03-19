@@ -13,9 +13,6 @@ class LoginScreen extends StatelessWidget {
         title: 'Login / Sign up',
         transparentBackground: true,
       ),
-      extendBody: true,
-      resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       extendBodyBehindAppBar: true,
       body: BlocProvider<LoginBloc>(
         create: (blocContext) {
