@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:pond_hockey/bloc/auth/auth_providers.dart';
 import 'package:pond_hockey/models/user.dart';
 
@@ -18,7 +19,7 @@ class UserRepository {
       {String email}) async {
     final authResult = await _authProvider.signInWithCredential(credential);
     final user = authResult.user;
-    if (email != null){
+    if (email != null) {
       await user.updateEmail(email);
     }
     assert(!user.isAnonymous);
@@ -60,7 +61,7 @@ class UserRepository {
     return await _authProvider.getCurrentUser();
   }
 
-  FirebaseAuth getAuthInstance(){
+  FirebaseAuth getAuthInstance() {
     return _authProvider.authInstance();
   }
 
@@ -82,5 +83,34 @@ class UserRepository {
       return getUserFromUID(user.uid);
     }
     return null;
+  }
+
+  Future<DocumentSnapshot> getUserFromId(String userId) async {
+    final userDoc = await ref.document(userId).get();
+    return userDoc;
+  }
+
+  void addCredits(String userId, int creditsToAdd) {
+    Firestore.instance.runTransaction((transaction) async {
+      final userDoc = await transaction.get(ref.document(userId));
+      await transaction.update(userDoc.reference, {
+        'credits': userDoc.data['credits'] + creditsToAdd,
+      });
+    });
+  }
+
+  void spendCredit(String userId) {
+    Firestore.instance.runTransaction((transaction) async {
+      final userDoc = await transaction.get(ref.document(userId));
+      await transaction.update(userDoc.reference, {
+        'credits': userDoc.data['credits'] - 1,
+      });
+    });
+  }
+
+  Future<void> addPaymentToHistory(String userId, dynamic info) async {
+    final userDoc = ref.document(userId);
+    assert(userDoc != null);
+    userDoc.setData({'paymentHistory': []}, merge: true);
   }
 }

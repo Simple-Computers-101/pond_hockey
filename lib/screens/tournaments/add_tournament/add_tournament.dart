@@ -41,7 +41,10 @@ class AddTournamentScreen extends StatelessWidget {
                 primary: false,
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 children: <Widget>[
-                  SvgPicture.asset('assets/svg/create_tournament.svg'),
+                  SvgPicture.asset(
+                    'assets/svg/create_tournament.svg',
+                    height: MediaQuery.of(context).size.width * 0.35,
+                  ),
                   _AddTournamentForm(
                     orientation: orientation,
                     formKey: _formKey,
@@ -129,13 +132,11 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       width: widget.orientation == Orientation.portrait
           ? MediaQuery.of(context).size.width * 0.75
           : null,
-      height: widget.orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.height * 0.8
-          : null,
       child: FormBuilder(
         key: widget.formKey,
         child: Column(
           children: <Widget>[
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             FormFieldBackground(
               height: getFieldHeight(),
               field: FormBuilderTextField(
@@ -192,7 +193,7 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
                 ),
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             BigCircleButton(
               text: 'Create',
               onTap: () {

@@ -80,19 +80,22 @@ class TeamsRepository {
     }
 
     teams.sort((teamOne, teamTwo) {
+      if (teamOne.gamesWon == teamTwo.gamesWon) {
+        return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+      }
       return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
     });
 
     teams = teams.reversed.toList();
 
-    var analyze = _getTeamsWithSameWins(teams, teams[number].gamesWon);
-    for (var analyzeTeam in analyze) {
-      teams.removeWhere((element) => element.id == analyzeTeam.id);
-    }
-    analyze.sort((teamOne, teamTwo) {
-      return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
-    });
-    analyze = analyze.reversed.toList();
+    // var analyze = _getTeamsWithSameWins(teams, teams[number].gamesWon);
+    // for (var analyzeTeam in analyze) {
+    //   teams.removeWhere((element) => element.id == analyzeTeam.id);
+    // }
+    // analyze.sort((teamOne, teamTwo) {
+    //   return teamOne.pointDifferential.compareTo(teamTwo.pointDifferential);
+    // });
+    // analyze = analyze.reversed.toList();
     // if (analyze.length > 1) {
     // var greatestDiff = analyze.first.pointDifferential;
     // analyze.removeWhere(
@@ -137,10 +140,10 @@ class TeamsRepository {
     // }
     // }
 
-    teams.addAll(analyze);
-    teams.sort((teamOne, teamTwo) {
-      return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
-    });
+    // teams.addAll(analyze);
+    // teams.sort((teamOne, teamTwo) {
+    //   return teamOne.gamesWon.compareTo(teamTwo.gamesWon);
+    // });
 
     return teams.reversed.take(number).toList();
   }

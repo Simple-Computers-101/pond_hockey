@@ -26,7 +26,8 @@ class BigCircleButton extends StatelessWidget {
           child: IconButton(
             icon: Icon(Icons.arrow_forward),
             onPressed: onTap,
-            padding: const EdgeInsets.all(48),
+            iconSize: 48,
+            padding: const EdgeInsets.all(24),
           ),
         ),
       ],

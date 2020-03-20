@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/user.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/screens/tournaments/widgets/buy_credits_sheet.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart';
 import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
@@ -11,6 +13,7 @@ import 'package:pond_hockey/services/databases/user_repository.dart';
 
 class TournamentsScreen extends StatelessWidget {
   final repo = TournamentsRepository();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +87,30 @@ class TournamentsScreen extends StatelessWidget {
           return AlertDialog(
             title: Text('Insufficient credits'),
             content: Text(
-              'You need more credits in order to create a tournament.',
+              '''You need more credits in order to create a tournament.\n\nWould you like to buy more?''',
             ),
             actions: <Widget>[
               FlatButton(
                 onPressed: Router.navigator.pop,
-                child: Text('OK'),
+                child: Text(
+                  'No',
+                  style: TextStyle(color: Color(0xFF4865FF)),
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Router.navigator.pop();
+                  scaffoldKey.currentState
+                      .showBottomSheet((context) => BuyCreditsSheet());
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                color: Color(0xFF4865FF),
+                child: Text(
+                  'Buy more',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           );
@@ -108,6 +129,7 @@ class TournamentsScreen extends StatelessWidget {
         }
         final user = snapshot.data;
         return Scaffold(
+          key: scaffoldKey,
           appBar: CustomAppBar(
             title: canEdit()
                 ? 'Manage Tournaments'
@@ -161,30 +183,76 @@ class ManageableTournamentsList extends StatelessWidget {
               ],
             );
           } else {
-            return Align(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    'Credits: ${user.credits}',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  Text(
-                    'You don\'t have any tournaments!',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Text(
-                    'Create some or be invited.',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ],
-              ),
+            return ListView(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+              primary: false,
+              children: <Widget>[
+                if (editor) CreditsAmount(credits: user.credits),
+                SvgPicture.asset(
+                  'assets/svg/no_data.svg',
+                  height:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.height * 0.25
+                          : MediaQuery.of(context).size.width * 0.25,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                Text(
+                  'You don\'t have any tournaments!',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                        fontFamily: 'CircularStd',
+                      ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                Text(
+                  editor
+                      ? 'Create some or be invited to one.'
+                      : 'You must be invited to one.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                        color: Color(0xFF747474),
+                        fontFamily: 'CircularStd',
+                      ),
+                ),
+              ],
             );
           }
         }
         return SizedBox();
       },
+    );
+  }
+}
+
+class CreditsAmount extends StatelessWidget {
+  const CreditsAmount({@required this.credits});
+
+  final int credits;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: FractionalOffset.topRight,
+      child: Column(
+        children: <Widget>[
+          Text(
+            'Credits',
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1
+                .copyWith(color: Color(0xFF747474), fontFamily: 'CircularStd'),
+          ),
+          Text(
+            '$credits',
+            style: Theme.of(context)
+                .textTheme
+                .headline4
+                .copyWith(color: Colors.black, fontFamily: 'CircularStd'),
+          ),
+        ],
+      ),
     );
   }
 }

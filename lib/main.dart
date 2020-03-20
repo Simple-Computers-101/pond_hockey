@@ -7,7 +7,7 @@ import 'package:pond_hockey/services/email/email_helper.dart';
 import 'package:pond_hockey/theme/style.dart';
 
 void main() {
-  Router.navigator.addGuards([AuthGuard()]);
+  Router.navigator.addGuards([AuthGuard(), UnAuthGuard()]);
   initializeDateFormatting();
   EmailHelper().start();
   runApp(MyApp());

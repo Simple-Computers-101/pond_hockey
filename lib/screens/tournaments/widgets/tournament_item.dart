@@ -1,4 +1,3 @@
-import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/tournament.dart';
@@ -56,9 +55,10 @@ class TournamentItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(
-                      child: TextOneLine(
+                      child: Text(
                         tournament.name,
                         overflow: TextOverflow.clip,
+                        maxLines: 1,
                         style: Theme.of(context).textTheme.headline5.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize:

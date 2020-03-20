@@ -1,7 +1,7 @@
 name: pond_hockey
 description: Pond Hockey Tournament Application
 
-version: 1.1.5+12
+version: 1.1.6
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
@@ -13,7 +13,7 @@ dependencies:
   google_fonts: ^0.3.9
   auto_route: ^0.3.0
   uuid: ^2.0.4
-  assorted_layout_widgets: ^1.0.15
+  # assorted_layout_widgets: ^1.0.15
   intl: ^0.16.1
   flutter_form_builder: ^3.8.0+1
   enough_mail: ^0.0.5

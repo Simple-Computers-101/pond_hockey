@@ -101,7 +101,7 @@ class _GamesListState extends State<GamesList> {
       ];
     }
 
-    return Container(
+    return ColoredBox(
       color: Color(0xFFE9E9E9),
       child: StreamBuilder(
         stream: GamesRepository().getGamesStreamFromTournamentId(
@@ -191,6 +191,7 @@ class _GamesListState extends State<GamesList> {
       child: ListView(
         primary: false,
         shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: 16),
         children: <Widget>[
           Text('Qualifiers', style: titleStyle),
           Row(
@@ -406,6 +407,7 @@ class _GamesListState extends State<GamesList> {
     return ListView.separated(
       primary: false,
       shrinkWrap: true,
+      padding: const EdgeInsets.only(bottom: 16),
       itemBuilder: (_, indx) => data[indx],
       separatorBuilder: (_, index) {
         return SizedBox(height: MediaQuery.of(context).size.height * 0.03);
