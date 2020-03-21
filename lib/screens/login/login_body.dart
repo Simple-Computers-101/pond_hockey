@@ -8,7 +8,6 @@ import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
-import 'package:pond_hockey/screens/login/forget.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
 import 'package:pond_hockey/screens/login/verification.dart';
 import 'package:pond_hockey/screens/login/widgets/auth_buttons.dart';
@@ -93,98 +92,7 @@ class _LoginUI extends StatelessWidget {
     return OrientationBuilder(
       builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF757F9A), Color(0xFFD7DDE8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Center(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                shrinkWrap: true,
-                primary: false,
-                children: <Widget>[
-                  LoginForm(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          // TODO: fix route
-                          Router.navigator.pushNamed('');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ForgotPassword(context),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Forgot password?',
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          BlocProvider.of<LoginBloc>(context).add(
-                            ToggleUiButtonPressed(isSignUp: true),
-                          );
-                        },
-                        child: Text("Create Account"),
-                      ),
-                    ],
-                  ),
-                  const Divider(
-                    thickness: 2,
-                    color: Colors.black,
-                    indent: 5,
-                    endIndent: 5,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    Platform.isIOS
-                        ? 'Or sign in with these providers'
-                        : 'Sign in with Google',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                  const SizedBox(height: 10),
-                  if (Platform.isIOS)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        GoogleSignInButton(
-                          onPressed: googleSignIn,
-                        ),
-                        AppleSignInButton(
-                          onPressed: appleSignIn,
-                        ),
-                      ],
-                    )
-                  else
-                    GoogleSignInButton(
-                      width: MediaQuery.of(context).size.width / 2,
-                      onPressed: () async {
-                        await BlocProvider.of<LoginBloc>(context)
-                            .signInWithGoogle()
-                            .catchError((error) {
-                          Scaffold.of(context).hideCurrentSnackBar();
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Sign in with google failed$error'),
-                              duration: Duration(seconds: 5),
-                            ),
-                          );
-                        });
-                      },
-                    ),
-                ],
-              ),
-            ),
-          );
+          return buildPortraitView(context, googleSignIn, appleSignIn);
         } else {
           return Container(
             decoration: BoxDecoration(
@@ -212,12 +120,8 @@ class _LoginUI extends StatelessWidget {
                           children: <Widget>[
                             FlatButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ForgotPassword(context),
-                                  ),
-                                );
+                                Router.navigator
+                                    .pushNamed(Router.forgotPassword);
                               },
                               child: Text(
                                 'Forgot password?',
@@ -269,6 +173,95 @@ class _LoginUI extends StatelessWidget {
           );
         }
       },
+    );
+  }
+
+  Container buildPortraitView(
+      BuildContext context, void googleSignIn(), void appleSignIn()) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF757F9A), Color(0xFFD7DDE8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          shrinkWrap: true,
+          primary: false,
+          children: <Widget>[
+            LoginForm(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Router.navigator.pushNamed(Router.forgotPassword);
+                  },
+                  child: Text(
+                    'Forgot password?',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    BlocProvider.of<LoginBloc>(context).add(
+                      ToggleUiButtonPressed(isSignUp: true),
+                    );
+                  },
+                  child: Text("Create Account"),
+                ),
+              ],
+            ),
+            const Divider(
+              thickness: 2,
+              color: Colors.black,
+              indent: 5,
+              endIndent: 5,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              Platform.isIOS
+                  ? 'Or sign in with these providers'
+                  : 'Sign in with Google',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            const SizedBox(height: 10),
+            if (Platform.isIOS)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GoogleSignInButton(
+                    onPressed: googleSignIn,
+                  ),
+                  AppleSignInButton(
+                    onPressed: appleSignIn,
+                  ),
+                ],
+              )
+            else
+              GoogleSignInButton(
+                width: MediaQuery.of(context).size.width / 2,
+                onPressed: () async {
+                  await BlocProvider.of<LoginBloc>(context)
+                      .signInWithGoogle()
+                      .catchError((error) {
+                    Scaffold.of(context).hideCurrentSnackBar();
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Sign in with google failed$error'),
+                        duration: Duration(seconds: 5),
+                      ),
+                    );
+                  });
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

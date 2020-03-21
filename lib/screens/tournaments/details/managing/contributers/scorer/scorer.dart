@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/models/tournament.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 
 class ManageScorers extends StatelessWidget {
   ManageScorers({this.tournamentId});
@@ -42,6 +44,28 @@ class ManageScorers extends StatelessWidget {
   }
 
   Widget buildView(AsyncSnapshot snapshot, BuildContext context) {
+    void _removeScorer(Tournament tournament, int index) async {
+      try {
+        await Firestore.instance
+            .collection("tournaments")
+            .document(tournamentId)
+            .updateData({
+          'scorers': FieldValue.arrayRemove(
+            [tournament.scorers[index]],
+          )
+        });
+
+        Router.navigator.pop();
+        // ignore: avoid_catches_without_on_clauses
+      } catch (error) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.code),
+          ),
+        );
+      }
+    }
+
     if (snapshot.hasData) {
       var _tournament = Tournament.fromDocument(snapshot.data);
       if (_tournament.scorers == null) {
@@ -77,43 +101,21 @@ class ManageScorers extends StatelessWidget {
                   ),
                   onTap: () {
                     showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              content: Text("Are you sure to remove this user"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("Cancel"),
-                                ),
-                                FlatButton(
-                                  onPressed: () async {
-                                    try {
-                                      await Firestore.instance
-                                          .collection("tournaments")
-                                          .document(tournamentId)
-                                          .updateData({
-                                        'scorers': FieldValue.arrayRemove(
-                                          [_tournament.scorers[index]],
-                                        )
-                                      });
-
-                                      ///here delete data
-                                      Navigator.of(context).pop();
-                                      // ignore: avoid_catches_without_on_clauses
-                                    } catch (error) {
-                                      Scaffold.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(error.code),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Text("Yes"),
-                                )
-                              ],
-                            ));
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        content: Text("Are you sure to remove this user"),
+                        actions: <Widget>[
+                          SecondaryDialogButton(
+                            onPressed: Router.navigator.pop,
+                            text: 'Cancel',
+                          ),
+                          PrimaryDialogButton(
+                            onPressed: () => _removeScorer(_tournament, index),
+                            text: 'Yes',
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               );
@@ -140,12 +142,9 @@ class ManageScorers extends StatelessWidget {
       ),
       onTap: () {
         showDialog(
-            context: context,
-            builder: (_) {
-              return ScorerDialog(
-                tournamentId: tournamentId,
-              );
-            });
+          context: context,
+          builder: (_) => ScorerDialog(tournamentId: tournamentId),
+        );
       },
     );
   }
@@ -203,33 +202,27 @@ class _ScorerDialogState extends State<ScorerDialog> {
                 isProcessing = true;
               });
               try {
-                // TODO: use query
-                final documents =
-                    await database.collection("users").getDocuments();
-                var uid;
-                for (var element in documents.documents) {
-                  if (element.data["email"] == _emailController.text) {
-                    uid = element["uid"];
-                  }
-                }
+                final query = await database
+                    .collection("users")
+                    .where('email', isEqualTo: _emailController.text.trim())
+                    .getDocuments();
+                var uid = query.documents.first.data['uid'] as String;
                 if (uid != null) {
                   await database
                       .collection("tournaments")
                       .document(widget.tournamentId)
-                      .setData({
+                      .updateData({
                     "scorers": FieldValue.arrayUnion(
                       [
                         {"email": _emailController.text, "uid": uid}
                       ],
                     ),
-                  }, merge: true);
+                  });
 
-                  ///here new data
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
-                    errorMessage =
-                        "No account with that email";
+                    errorMessage = "No account with that email";
                     isProcessing = false;
                   });
                 }

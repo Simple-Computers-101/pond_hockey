@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 
 class ForgotPassword extends StatefulWidget {
-  ForgotPassword(this.loginContext);
-  final BuildContext loginContext;
   @override
   State<StatefulWidget> createState() {
     return _ForgotPasswordState();
@@ -51,7 +49,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         setState(() {
                           isProcessing = true;
                         });
-                        BlocProvider.of<LoginBloc>(widget.loginContext)
+                        BlocProvider.of<LoginBloc>(context)
                             .getAuthInstance()
                             .then((auth) async {
                           await auth

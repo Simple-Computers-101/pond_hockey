@@ -63,13 +63,8 @@ class Router {
           transitionDuration: Duration(milliseconds: 150),
         );
       case Router.forgotPassword:
-        if (hasInvalidArgs<BuildContext>(args)) {
-          return misTypedArgsRoute<BuildContext>(args);
-        }
-        final typedArgs = args as BuildContext;
         return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) =>
-              ForgotPassword(typedArgs),
+          pageBuilder: (ctx, animation, secondaryAnimation) => ForgotPassword(),
           settings: settings,
           transitionsBuilder: TransitionsBuilders.slideBottom,
           transitionDuration: Duration(milliseconds: 150),

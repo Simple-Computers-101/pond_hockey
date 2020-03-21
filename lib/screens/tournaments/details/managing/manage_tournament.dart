@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/appbar/tabbar.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/models/team.dart';
 import 'package:pond_hockey/models/tournament.dart';
@@ -220,18 +221,18 @@ class _TournamentOptionsView extends StatelessWidget {
                         'Are you SURE that you want to delete this tournament?',
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        SecondaryDialogButton(
+                          text: 'No',
+                          onPressed: Router.navigator.pop,
+                        ),
+                        PrimaryDialogButton(
+                          text: 'Yes',
                           onPressed: () {
                             Router.navigator.pop();
                             Router.navigator.pop();
                             TournamentsRepository()
                                 .deleteTournament(tournamentId);
                           },
-                          child: Text('YES'),
-                        ),
-                        FlatButton(
-                          onPressed: Router.navigator.pop,
-                          child: Text('NO'),
                         ),
                       ],
                     );
@@ -320,11 +321,12 @@ class _SettingsList extends StatelessWidget {
           text: 'Add a game',
           onTap: () {
             showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return AddAGameDialog(tournamentId: tournamentId);
-                });
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AddAGameDialog(tournamentId: tournamentId);
+              },
+            );
           },
           icon: Icons.edit,
         ),

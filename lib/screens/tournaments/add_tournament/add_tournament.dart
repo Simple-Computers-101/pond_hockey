@@ -10,6 +10,7 @@ import 'package:pond_hockey/enums/game_status.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
+import 'package:pond_hockey/services/databases/user_repository.dart';
 import 'package:pond_hockey/utils/date_utils.dart';
 import 'package:uuid/uuid.dart';
 
@@ -104,6 +105,7 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
       scorers: null,
     );
     TournamentsRepository().addTournament(tournament);
+    await UserRepository().spendCredit();
     Router.navigator.pushReplacementNamed(Router.tournaments);
   }
 
@@ -193,6 +195,8 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
                 ),
               ),
             ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Text('This will deduct one credit from your account.'),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             BigCircleButton(
               text: 'Create',

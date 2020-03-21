@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/router/router.gr.dart';
@@ -93,16 +94,13 @@ class _SeedingSettingsDialogState extends State<SeedingSettingsDialog> {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        SecondaryDialogButton(onPressed: Router.navigator.pop, text: 'Cancel'),
+        PrimaryDialogButton(
+          text: 'Submit',
           onPressed: () {
             Router.navigator.pop();
             widget.onSubmit(division, gameType, quarterFinalTeams);
           },
-          child: Text('Submit'),
-        ),
-        FlatButton(
-          onPressed: Router.navigator.pop,
-          child: Text('Cancel'),
         ),
       ],
     );

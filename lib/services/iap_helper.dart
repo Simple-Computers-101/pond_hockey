@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:pond_hockey/models/user.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
+import 'package:pond_hockey/utils/product_ids.dart';
 
 class IAPHelper {
   static final IAPHelper _instance = IAPHelper._internal();
@@ -11,9 +12,6 @@ class IAPHelper {
   factory IAPHelper() => _instance;
 
   IAPHelper._internal();
-
-  static const creditsOnePackId = 'credit';
-  static const creditsThreePackId = 'credit_three_pack';
 
   StreamSubscription _sub;
   User user;
@@ -25,7 +23,8 @@ class IAPHelper {
 
   InAppPurchaseConnection _iap;
 
-  Future<void> initialize() async {
+  /// Returns whether or not it was initialized
+  Future<bool> initialize() async {
     if (Platform.isAndroid) {
       InAppPurchaseConnection.enablePendingPurchases();
     }
@@ -34,16 +33,19 @@ class IAPHelper {
     user = await UserRepository().getCurrentUser();
 
     if (isAvailable && user != null) {
-      await Future.wait([_getPastPurchases(), _getProducts()]);
+      await _getPastPurchases();
+      await _getProducts();
       _sub = _iap.purchaseUpdatedStream.listen((data) {
         purchases.addAll(data);
         verifyPurchase();
       });
+      return true;
     }
+    return false;
   }
 
   Future<void> _getProducts() async {
-    final ids = {creditsOnePackId, creditsThreePackId};
+    final ids = {ProductIds.creditsOnePackId, ProductIds.creditsThreePackId};
     final response = await _iap.queryProductDetails(ids);
 
     products = response.productDetails;
@@ -80,9 +82,9 @@ class IAPHelper {
       return null;
     }
 
-    if (purchase.productID == creditsOnePackId) {
+    if (purchase.productID == ProductIds.creditsOnePackId) {
       UserRepository().addCredits(user.uid, 1);
-    } else if (purchase.productID == creditsThreePackId) {
+    } else if (purchase.productID == ProductIds.creditsThreePackId) {
       UserRepository().addCredits(user.uid, 3);
     }
   }

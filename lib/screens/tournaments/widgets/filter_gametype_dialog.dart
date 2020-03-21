@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/router/router.gr.dart';
+import 'package:pond_hockey/theme/dialog.dart';
 
 class FilterGameTypeDialog extends StatefulWidget {
   FilterGameTypeDialog({this.gameType, this.onGameTypeChanged});
@@ -63,6 +64,9 @@ class _FilterGameTypeDialogState extends State<FilterGameTypeDialog> {
             widget.onGameTypeChanged(_selected);
           },
           child: Text('Submit'),
+          textColor: DialogStyles.primaryTextColor,
+          shape: DialogStyles.shape,
+          color: DialogStyles.primaryButtonColor,
         ),
       ],
     );

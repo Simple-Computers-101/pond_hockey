@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:pond_hockey/bloc/auth/auth_providers.dart';
 import 'package:pond_hockey/models/user.dart';
 
@@ -57,7 +56,7 @@ class UserRepository {
     return user;
   }
 
-  Future<FirebaseUser> currentUser() async {
+  Future<FirebaseUser> currentFirebaseUser() async {
     return await _authProvider.getCurrentUser();
   }
 
@@ -78,15 +77,15 @@ class UserRepository {
   }
 
   Future<User> getCurrentUser() async {
-    var user = await currentUser();
+    var user = await currentFirebaseUser();
     if (user != null) {
       return getUserFromUID(user.uid);
     }
     return null;
   }
 
-  Future<DocumentSnapshot> getUserFromId(String userId) async {
-    final userDoc = await ref.document(userId).get();
+  Future<DocumentSnapshot> getUserDocFromUid(String uid) async {
+    final userDoc = await ref.document(uid).get();
     return userDoc;
   }
 
@@ -99,9 +98,15 @@ class UserRepository {
     });
   }
 
-  void spendCredit(String userId) {
+  Future<void> spendCredit({String userId}) async {
+    String usableUserId;
+    if (userId == null) {
+      usableUserId = (await getCurrentUser()).uid;
+    } else {
+      usableUserId = userId;
+    }
     Firestore.instance.runTransaction((transaction) async {
-      final userDoc = await transaction.get(ref.document(userId));
+      final userDoc = await transaction.get(ref.document(usableUserId));
       await transaction.update(userDoc.reference, {
         'credits': userDoc.data['credits'] - 1,
       });

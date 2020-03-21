@@ -1,41 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:pond_hockey/services/iap_helper.dart';
+import 'package:pond_hockey/utils/product_ids.dart';
 
 class BuyCreditsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: IAPHelper().initialize(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        final products = IAPHelper().products;
-        assert(products.length == 2);
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.20,
-          decoration: BoxDecoration(
-              color: Color(0xFFFCFCFC),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(25),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, -2),
-                  blurRadius: 4,
-                  color: Colors.black.withOpacity(0.25),
-                )
-              ]),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              _ProductItem(prod: products[0]),
-              _ProductItem(prod: products[1]),
-            ],
-          ),
-        );
-      },
+    final products = IAPHelper().products;
+    assert(products.length == 2);
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _ProductItem(prod: products[0]),
+          _ProductItem(prod: products[1]),
+        ],
+      ),
     );
   }
 }
@@ -44,6 +25,26 @@ class _ProductItem extends StatelessWidget {
   const _ProductItem({@required this.prod});
 
   final ProductDetails prod;
+
+  String _getProductName() {
+    switch (prod.id) {
+      case ProductIds.creditsOnePackId:
+        return 'One Credit';
+      case ProductIds.creditsThreePackId:
+        return 'Credits (Three Pack)';
+    }
+    return null;
+  }
+
+  String _getImageName() {
+    switch (prod.id) {
+      case ProductIds.creditsOnePackId:
+        return 'assets/img/one_coin.png';
+      case ProductIds.creditsThreePackId:
+        return 'assets/img/three_coins.png';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,14 @@ class _ProductItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(prod.title),
+              Text(
+                _getProductName() ?? 'Unknown',
+                textAlign: TextAlign.center,
+              ),
+              Image.asset(
+                _getImageName(),
+                width: MediaQuery.of(context).size.width * 0.05,
+              ),
               Text(prod.price),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
@@ -36,17 +37,17 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
       widget.tournamentId,
       division: division,
     );
-    setState(() {
-      _teams = teams;
-    });
+    if (mounted) {
+      setState(() {
+        _teams = teams;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_teams == null) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+      return Center(child: CircularProgressIndicator());
     }
     return AlertDialog(
       scrollable: true,
@@ -168,11 +169,12 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        SecondaryDialogButton(
+          text: 'Cancel',
           onPressed: Router.navigator.pop,
-          child: Text('Cancel'),
         ),
-        FlatButton(
+        PrimaryDialogButton(
+          text: 'Submit',
           onPressed: () {
             if (teamOne == null || teamTwo == null) return;
             var game = Game(
@@ -187,7 +189,6 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
             GamesRepository().addGame(game);
             Router.navigator.pop();
           },
-          child: Text('Submit'),
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/models/tournament.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -109,21 +110,20 @@ class _EditorState extends State<ManageEditors> {
       builder: (_) => AlertDialog(
         content: Text("Are you sure to remove this user?"),
         actions: <Widget>[
-          FlatButton(
+          SecondaryDialogButton(
+            text: 'Cancel',
             onPressed: Router.navigator.pop,
-            child: Text("Cancel"),
           ),
-          FlatButton(
+          PrimaryDialogButton(
+            text: 'Yes',
             onPressed: () async {
               try {
                 await Firestore.instance
                     .collection("tournaments")
                     .document(widget.tournamentId)
-                    .updateData({
-                  'editors': FieldValue.arrayRemove(
-                    [tournament.editors[index]],
-                  )
-                });
+                    .setData({
+                  'editors': FieldValue.arrayRemove([tournament.editors[index]])
+                }, merge: true);
 
                 ///here delete data
                 Router.navigator.pop();
@@ -136,7 +136,6 @@ class _EditorState extends State<ManageEditors> {
                 );
               }
             },
-            child: Text("Yes"),
           ),
         ],
       ),
@@ -168,6 +167,7 @@ class _EditorState extends State<ManageEditors> {
 class EditorDialog extends StatefulWidget {
   EditorDialog({@required this.tournamentId});
   final String tournamentId;
+
   @override
   State<StatefulWidget> createState() {
     return _EditorDialogState();
@@ -178,8 +178,49 @@ class _EditorDialogState extends State<EditorDialog> {
   var database = Firestore.instance;
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  var errorMessage;
   var isProcessing = false;
+  String errorMessage;
+
+  void _addEditor() async {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        isProcessing = true;
+      });
+
+      try {
+        final documents = await database.collection("users").getDocuments();
+        String uid;
+        for (final doc in documents.documents) {
+          if (doc.data["email"] == _emailController.text.trim()) {
+            uid = doc["uid"];
+          }
+        }
+        if (uid != null) {
+          await database
+              .collection("tournaments")
+              .document(widget.tournamentId)
+              .setData({
+            "editors": FieldValue.arrayUnion([
+              {"email": _emailController.text, "uid": uid}
+            ])
+          }, merge: true);
+          Navigator.of(context).pop();
+        } else {
+          setState(() {
+            errorMessage = "No account with that email";
+            isProcessing = false;
+          });
+        }
+      }
+      // ignore: avoid_catches_without_on_clauses
+      catch (error) {
+        setState(() {
+          errorMessage = error.code;
+          isProcessing = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,50 +249,7 @@ class _EditorDialogState extends State<EditorDialog> {
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () async {
-            if (_formKey.currentState.validate()) {
-              setState(() {
-                isProcessing = true;
-              });
-
-              try {
-                final documents =
-                    await database.collection("users").getDocuments();
-                var uid;
-                for (var element in documents.documents) {
-                  if (element.data["email"] == _emailController.text) {
-                    uid = element["uid"];
-                  }
-                }
-                if (uid != null) {
-                  await database
-                      .collection("tournaments")
-                      .document(widget.tournamentId)
-                      .setData({
-                    "editors": FieldValue.arrayUnion(
-                      [
-                        {"email": _emailController.text, "uid": uid}
-                      ],
-                    ),
-                  }, merge: true);
-                  Navigator.of(context).pop();
-                } else {
-                  setState(() {
-                    errorMessage =
-                        "No account with that email";
-                    isProcessing = false;
-                  });
-                }
-              }
-              // ignore: avoid_catches_without_on_clauses
-              catch (error) {
-                setState(() {
-                  errorMessage = error.code;
-                  isProcessing = false;
-                });
-              }
-            }
-          },
+          onPressed: _addEditor,
           child: Text("Add"),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 
@@ -16,7 +17,7 @@ class _FilterDivisionDialogState extends State<FilterDivisionDialog> {
   Division _selected;
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     _selected = widget.division;
   }
@@ -49,12 +50,12 @@ class _FilterDivisionDialogState extends State<FilterDivisionDialog> {
         },
       ),
       actions: <Widget>[
-        FlatButton(
+        PrimaryDialogButton(
           onPressed: () {
             Router.navigator.pop();
             widget.onDivisionChanged(_selected);
           },
-          child: Text('Submit'),
+          text: 'Submit',
         ),
       ],
     );

@@ -165,7 +165,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<FirebaseUser> currentUser() async {
-    return await userRepository.currentUser();
+    return await userRepository.currentFirebaseUser();
   }
 
   Future<FirebaseAuth> getAuthInstance() async {

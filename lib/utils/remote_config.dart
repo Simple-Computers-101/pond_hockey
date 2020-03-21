@@ -7,6 +7,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
+import 'package:pond_hockey/router/router.gr.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const appStoreUrl =
@@ -70,13 +72,13 @@ _showVersionDialog(context) async {
               title: Text(title),
               content: Text(message),
               actions: <Widget>[
-                FlatButton(
-                  child: Text(btnLabel),
-                  onPressed: () => _launchURL(appStoreUrl),
+                SecondaryDialogButton(
+                  text: btnLabelCancel,
+                  onPressed: Router.navigator.pop,
                 ),
-                FlatButton(
-                  child: Text(btnLabelCancel),
-                  onPressed: () => Navigator.pop(context),
+                PrimaryDialogButton(
+                  text: btnLabel,
+                  onPressed: () => _launchURL(appStoreUrl),
                 ),
               ],
             )
@@ -84,13 +86,13 @@ _showVersionDialog(context) async {
               title: Text(title),
               content: Text(message),
               actions: <Widget>[
-                FlatButton(
-                  child: Text(btnLabel),
-                  onPressed: () => _launchURL(playStoreUrl),
+                SecondaryDialogButton(
+                  text: btnLabelCancel,
+                  onPressed: Router.navigator.pop,
                 ),
-                FlatButton(
-                  child: Text(btnLabelCancel),
-                  onPressed: () => Navigator.pop(context),
+                PrimaryDialogButton(
+                  text: btnLabel,
+                  onPressed: () => _launchURL(playStoreUrl),
                 ),
               ],
             );

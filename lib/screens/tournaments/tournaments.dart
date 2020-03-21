@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
+import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/user.dart';
 import 'package:pond_hockey/router/router.gr.dart';
@@ -10,6 +11,7 @@ import 'package:pond_hockey/screens/tournaments/widgets/tournament_viewing.dart'
 import 'package:pond_hockey/screens/tournaments/widgets/tournaments_list.dart';
 import 'package:pond_hockey/services/databases/tournaments_repository.dart';
 import 'package:pond_hockey/services/databases/user_repository.dart';
+import 'package:pond_hockey/services/iap_helper.dart';
 
 class TournamentsScreen extends StatelessWidget {
   final repo = TournamentsRepository();
@@ -80,6 +82,46 @@ class TournamentsScreen extends StatelessWidget {
       );
     }
 
+    void _showBillingUnavailableDialog() {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Billing Unavailable'),
+            content: Text(
+              '''Unfortunately billing is not available at this time.\n\nTry again later.''',
+            ),
+            actions: <Widget>[
+              PrimaryDialogButton(
+                onPressed: Router.navigator.pop,
+                text: 'Okay',
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    Future<void> _checkCanPurchase() async {
+      final canPurchase = await IAPHelper().initialize();
+      if (canPurchase) {
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => BuyCreditsSheet(),
+          enableDrag: false,
+          isScrollControlled: false,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(15),
+            ),
+          ),
+        );
+      } else {
+        _showBillingUnavailableDialog();
+      }
+    }
+
     void _showInsufficientCreditsDialog() {
       showDialog(
         context: context,
@@ -90,27 +132,17 @@ class TournamentsScreen extends StatelessWidget {
               '''You need more credits in order to create a tournament.\n\nWould you like to buy more?''',
             ),
             actions: <Widget>[
-              FlatButton(
+              SecondaryDialogButton(
+                text: 'No',
                 onPressed: Router.navigator.pop,
-                child: Text(
-                  'No',
-                  style: TextStyle(color: Color(0xFF4865FF)),
-                ),
               ),
-              FlatButton(
+              PrimaryDialogButton(
+                text: 'Buy more',
                 onPressed: () {
+                  // close dialog
                   Router.navigator.pop();
-                  scaffoldKey.currentState
-                      .showBottomSheet((context) => BuyCreditsSheet());
+                  _checkCanPurchase();
                 },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                color: Color(0xFF4865FF),
-                child: Text(
-                  'Buy more',
-                  style: TextStyle(color: Colors.white),
-                ),
               ),
             ],
           );
