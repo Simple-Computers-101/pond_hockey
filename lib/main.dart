@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pond_hockey/router/guard.dart';
@@ -7,7 +8,6 @@ import 'package:pond_hockey/services/email/email_helper.dart';
 import 'package:pond_hockey/theme/style.dart';
 
 void main() {
-  Router.navigator.addGuards([AuthGuard(), UnAuthGuard()]);
   initializeDateFormatting();
   EmailHelper().start();
   runApp(MyApp());
@@ -21,9 +21,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Pond Hockey',
         theme: Style().lightTheme,
-        navigatorKey: Router.navigator.key,
-        onGenerateRoute: Router.onGenerateRoute,
-        initialRoute: Router.home,
+        builder: ExtendedNavigator<Router>(
+          router: Router(),
+          guards: [AuthGuard(), UnAuthGuard()],
+        ),
       ),
     );
   }

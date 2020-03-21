@@ -49,14 +49,14 @@ packages:
       name: auto_route
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1"
+    version: "0.4.0"
   auto_route_generator:
     dependency: "direct dev"
     description:
       name: auto_route_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.2"
+    version: "0.4.0"
   bloc:
     dependency: "direct main"
     description:
@@ -168,7 +168,7 @@ packages:
       name: cloud_firestore_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1+1"
+    version: "0.1.1+2"
   code_builder:
     dependency: transitive
     description:
@@ -287,7 +287,7 @@ packages:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.5+2"
+    version: "0.15.5+3"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
@@ -369,7 +369,7 @@ packages:
       name: flutter_form_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.6"
+    version: "0.10.7"
   flutter_form_builder:
     dependency: "direct main"
     description:
@@ -442,14 +442,14 @@ packages:
       name: google_fonts
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.9"
+    version: "0.3.10"
   google_sign_in:
     dependency: "direct main"
     description:
       name: google_sign_in
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.4"
+    version: "4.2.0"
   google_sign_in_platform_interface:
     dependency: transitive
     description:
@@ -631,7 +631,7 @@ packages:
       name: package_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.1"
+    version: "1.9.2"
   package_info:
     dependency: "direct main"
     description:
@@ -694,7 +694,7 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0+1"
+    version: "1.9.0"
   petitparser:
     dependency: transitive
     description:
@@ -785,7 +785,7 @@ packages:
       name: shelf_packages_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "2.0.0"
   shelf_static:
     dependency: transitive
     description:
@@ -965,7 +965,7 @@ packages:
       name: vm_service
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.1"
+    version: "4.0.0"
   watcher:
     dependency: transitive
     description:

@@ -85,8 +85,7 @@ class _AccountScreenState extends State<AccountScreen> {
               FlatButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut().then((value) {
-                    Router.navigator
-                        .pushNamedAndRemoveUntil(Router.home, (route) => false);
+                    Router.navigator.popUntil(ModalRoute.withName('/'));
                   });
                 },
                 child: Text('Sign out'),

@@ -24,19 +24,19 @@ class TournamentItem extends StatelessWidget {
             switch (mode) {
               case ViewingMode.viewing:
                 Router.navigator.pushNamed(
-                  Router.tournamentDetails,
+                  Routes.tournamentDetails,
                   arguments: tournament,
                 );
                 break;
               case ViewingMode.scoring:
                 Router.navigator.pushNamed(
-                  Router.scoreTournament,
+                  Routes.scoreTournament,
                   arguments: tournament,
                 );
                 break;
               case ViewingMode.editing:
                 Router.navigator.pushNamed(
-                  Router.manageTournament,
+                  Routes.manageTournament,
                   arguments: tournament,
                 );
                 break;

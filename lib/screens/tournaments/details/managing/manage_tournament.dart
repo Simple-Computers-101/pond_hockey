@@ -66,7 +66,7 @@ class _ManageTeamsViewState extends State<_ManageTeamsView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Router.navigator.pushNamed(
-            Router.addTeams,
+            Routes.addTeams,
             arguments: widget.tournament,
           );
         },

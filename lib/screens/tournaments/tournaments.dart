@@ -174,7 +174,7 @@ class TournamentsScreen extends StatelessWidget {
                     if (user.credits == 0) {
                       _showInsufficientCreditsDialog();
                     } else {
-                      Router.navigator.pushNamed(Router.addTournament);
+                      Router.navigator.pushNamed(Routes.addTournament);
                     }
                   },
                 )

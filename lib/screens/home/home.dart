@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
         GlobalKey<ScaffoldState> scaffoldKey, bool hasKey) {
       if (hasKey) {
         TournamentViewing.of(context).changeMode(ViewingMode.scoring);
-        Router.navigator.pushNamed(Router.tournaments);
+        Router.navigator.pushNamed(Routes.tournaments);
         // TODO: fix
       } else {
         _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
             action: SnackBarAction(
               label: "log in",
               onPressed: () async {
-                Router.navigator.pushNamed(Router.login);
+                Router.navigator.pushNamed(Routes.login);
               },
             ),
           ),
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
     ) {
       if (hasKey) {
         TournamentViewing.of(context).changeMode(ViewingMode.editing);
-        Router.navigator.pushNamed(Router.tournaments);
+        Router.navigator.pushNamed(Routes.tournaments);
       } else {
         _scaffoldKey.currentState.removeCurrentSnackBar();
         _scaffoldKey.currentState.showSnackBar(
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
             action: SnackBarAction(
               label: "log in",
               onPressed: () async {
-                Router.navigator.pushNamed(Router.login);
+                Router.navigator.pushNamed(Routes.login);
               },
             ),
           ),
@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(50),
                           onTap: () => Router.navigator.pushNamed(
-                            Router.account,
+                            Routes.account,
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -142,7 +142,7 @@ class HomeScreen extends StatelessWidget {
                             onPressed: () {
                               TournamentViewing.of(context)
                                   .changeMode(ViewingMode.viewing);
-                              Router.navigator.pushNamed(Router.tournaments);
+                              Router.navigator.pushNamed(Routes.tournaments);
                             },
                             text: 'View Results',
                           ),
@@ -193,7 +193,7 @@ class HomeScreen extends StatelessWidget {
                                   TournamentViewing.of(context)
                                       .changeMode(ViewingMode.viewing);
                                   Router.navigator
-                                      .pushNamed(Router.tournaments);
+                                      .pushNamed(Routes.tournaments);
                                 },
                                 text: 'View Results',
                               ),

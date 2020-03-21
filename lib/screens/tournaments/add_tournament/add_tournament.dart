@@ -106,7 +106,7 @@ class _AddTournamentFormState extends State<_AddTournamentForm> {
     );
     TournamentsRepository().addTournament(tournament);
     await UserRepository().spendCredit();
-    Router.navigator.pushReplacementNamed(Router.tournaments);
+    Router.navigator.pushReplacementNamed(Routes.tournaments);
   }
 
   @override

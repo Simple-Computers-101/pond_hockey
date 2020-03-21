@@ -42,12 +42,9 @@ class LoginBody extends StatelessWidget {
           (success) {
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
               await Future.delayed(Duration(seconds: 1));
-              Router.navigator
-                  .pushNamedAndRemoveUntil(Router.home, (route) => false);
+              Router.navigator.pushReplacementNamed(Routes.home);
             });
-            return Center(
-              child: Text("Login Success"),
-            );
+            return Center(child: Text("Login Success"));
           },
         );
       },
@@ -121,7 +118,7 @@ class _LoginUI extends StatelessWidget {
                             FlatButton(
                               onPressed: () {
                                 Router.navigator
-                                    .pushNamed(Router.forgotPassword);
+                                    .pushNamed(Routes.forgotPassword);
                               },
                               child: Text(
                                 'Forgot password?',
@@ -198,7 +195,7 @@ class _LoginUI extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   onPressed: () {
-                    Router.navigator.pushNamed(Router.forgotPassword);
+                    Router.navigator.pushNamed(Routes.forgotPassword);
                   },
                   child: Text(
                     'Forgot password?',

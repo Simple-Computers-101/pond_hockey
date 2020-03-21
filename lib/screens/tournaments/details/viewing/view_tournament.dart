@@ -136,7 +136,7 @@ class __TeamsPageState extends State<_TeamsPage> {
                           title: Text(team.name),
                           trailing: Icon(Icons.chevron_right),
                           onTap: () => Router.navigator.pushNamed(
-                            Router.teamDetails,
+                            Routes.teamDetails,
                             arguments: team,
                           ),
                         ),

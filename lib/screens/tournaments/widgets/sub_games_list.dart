@@ -23,7 +23,7 @@ class SubGamesList extends StatelessWidget {
           onTap: isManaging
               ? () {
                   Router.navigator.pushNamed(
-                    Router.manageGame,
+                    Routes.manageGame,
                     arguments: game,
                   );
                 }
