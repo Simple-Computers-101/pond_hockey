@@ -39,6 +39,8 @@ class ManageGameFormBloc extends FormBloc<String, String> {
 
   @override
   Stream<FormBlocState<String, String>> onSubmitting() async* {
+    yield state.toLoading();
+
     final teamOneField =
         state.fieldBlocFromPath('team-one_score').asInputFieldBloc<int>();
     final teamTwoField =

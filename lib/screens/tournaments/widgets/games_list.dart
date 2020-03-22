@@ -263,7 +263,6 @@ class _GamesListState extends State<GamesList> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (quarterFinals.isNotEmpty) ...[
                 Column(

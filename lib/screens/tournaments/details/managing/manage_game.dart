@@ -76,7 +76,7 @@ class _ManageGameForm extends StatelessWidget {
     }
 
     return FormBlocListener<ManageGameFormBloc, String, String>(
-      onSubmitting: (_, __) => Center(child: CircularProgressIndicator()),
+      onSubmitting: (_, __) => LinearProgressIndicator(),
       onSuccess: (context, _) {
         _showSnackbar('Score has been updated');
       },

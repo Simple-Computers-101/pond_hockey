@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_bloc.dart';
 import 'package:pond_hockey/bloc/login/login_events.dart';
 import 'package:pond_hockey/bloc/login/login_state.dart';
+import 'package:pond_hockey/components/loading/loading.dart';
 import 'package:pond_hockey/router/router.gr.dart';
 import 'package:pond_hockey/screens/login/create_account_body.dart';
 import 'package:pond_hockey/screens/login/login_form.dart';
@@ -24,7 +25,7 @@ class LoginBody extends StatelessWidget {
         var _signUp = CreateAccountBody();
         return states(
           (initial) => initial.isSignUp ? _signUp : _loginUi,
-          (loading) => Center(child: CircularProgressIndicator()),
+          (loading) => LoadingScreen(),
           (failure) {
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
               Scaffold.of(context).hideCurrentSnackBar();

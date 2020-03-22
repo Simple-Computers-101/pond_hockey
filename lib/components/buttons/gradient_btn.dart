@@ -7,6 +7,7 @@ class GradientButton extends StatelessWidget {
     this.text,
     this.colors,
     this.onTap,
+    this.disabled,
   });
 
   final double width;
@@ -14,6 +15,7 @@ class GradientButton extends StatelessWidget {
   final String text;
   final List<Color> colors;
   final VoidCallback onTap;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class GradientButton extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
           splashColor: Colors.white.withOpacity(0.05),
-          onTap: onTap,
+          onTap: disabled ? null : onTap,
           child: Center(
             child: Text(
               text,

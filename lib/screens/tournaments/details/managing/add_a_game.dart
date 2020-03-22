@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
+import 'package:pond_hockey/components/loading/loading.dart';
 import 'package:pond_hockey/enums/division.dart';
 import 'package:pond_hockey/enums/game_type.dart';
 import 'package:pond_hockey/models/game.dart';
@@ -47,7 +48,7 @@ class _AddAGameDialogState extends State<AddAGameDialog> {
   @override
   Widget build(BuildContext context) {
     if (_teams == null) {
-      return Center(child: CircularProgressIndicator());
+      return LoadingScreen();
     }
     return AlertDialog(
       scrollable: true,

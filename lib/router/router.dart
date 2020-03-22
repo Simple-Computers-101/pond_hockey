@@ -14,10 +14,7 @@ import 'package:pond_hockey/screens/tournaments/details/viewing/view_team.dart';
 import 'package:pond_hockey/screens/tournaments/details/viewing/view_tournament.dart';
 import 'package:pond_hockey/screens/tournaments/tournaments.dart';
 
-@CustomAutoRouter(
-  transitionsBuilder: TransitionsBuilders.slideBottom,
-  durationInMilliseconds: 150,
-)
+@CustomAutoRouter(transitionsBuilder: TransitionsBuilders.slideBottom)
 class $Router {
   @initial
   HomeScreen home;

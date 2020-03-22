@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pond_hockey/components/appbar/appbar.dart';
 import 'package:pond_hockey/components/dialog/dialog_buttons.dart';
+import 'package:pond_hockey/components/loading/loading.dart';
 import 'package:pond_hockey/enums/viewing_mode.dart';
 import 'package:pond_hockey/models/user.dart';
 import 'package:pond_hockey/router/router.gr.dart';
@@ -34,7 +35,7 @@ class TournamentsScreen extends StatelessWidget {
     }
 
     Widget buildLoading() {
-      return Center(child: CircularProgressIndicator());
+      return LoadingScreen();
     }
 
     Widget buildError(Object error) {
@@ -205,7 +206,7 @@ class ManageableTournamentsList extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting ||
             !snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return LoadingScreen();
         } else if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data.isNotEmpty) {
             return ListView(
